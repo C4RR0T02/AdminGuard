@@ -7,9 +7,13 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/generate', methods=['GET'])
-def test():
-    return render_template('generate.html')
+@app.route('/script-generate', methods=['GET'])
+def scriptGenerate():
+    return render_template('script-generate.html')
+
+@app.route('/template-generate', methods=['GET'])
+def templateGenerate():
+    return render_template('template-generate.html')
 
 
 # main driver function
