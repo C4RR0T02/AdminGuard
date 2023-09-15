@@ -37,8 +37,11 @@
         []
         /path/to/file
         /[path]/[to]/[file]/
+        <username>
 
 ### Patterns marking the end of the command
+
+- filter using tag and getting tag text using the .text
 
         </fixtext>
 
