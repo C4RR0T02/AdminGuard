@@ -4,6 +4,19 @@ from urllib.parse import unquote
 import math
 import re
 
+# Find any text between square brackets
+square_bracket_regex = re.compile(r"\[.*\]", re.IGNORECASE)
+# Find any text between slashes matching /path/to/file
+path_to_file_regex = re.compile(r"\/path\/to\/file", re.IGNORECASE)
+# Find any text between angle brackets
+angle_bracket_regex = re.compile(r"<.*>", re.IGNORECASE)
+# Find any text which contain a slash
+slash_regex = re.compile(r"\/", re.IGNORECASE)
+# Find any text which contain an underscore
+underscore_regex = re.compile(r"_", re.IGNORECASE)
+# Find any text which contain a caret
+caret_regex = re.compile(r"\^", re.IGNORECASE)
+
 # Classes
 
 class StigRule:
@@ -19,6 +32,7 @@ class StigRule:
         # @rule_description: Rule Description of the rule
         # @check_content: Check Content of the rule
         # @category_score: Category Score of the rule
+        # @user_input: User Input of the rule
 
         self.rule_name = rule_name
         self.rule_title = rule_title
@@ -31,6 +45,7 @@ class StigRule:
         self.rule_description = rule_description
         self.check_content = check_content
         self.category_score = "undefined"
+        self.user_input = []
 
     def calculateScore(self):
         # Defining Variables
@@ -91,14 +106,80 @@ class StigRule:
             # Return an error message if the commands cannot be extracted
             return "An error occured while extracting the commands from the" + str(field) + "field."
 
+    def getUserInputToFill(self, command_list):
+        # Defining Variables
+        user_input_fields = []
+        field_text_to_fill = ""
+
+        # Looping all commands in command_list
+        for command in command_list:
+            # Extracting the fields from the command
+            # Find the text between square brackets
+            if square_bracket_regex.search(command):
+                # Grab the text matching the pattern
+                field_text_to_fill = square_bracket_regex.search(command).group()
+                # Remove the square brackets from the text
+                field_text_to_fill = re.sub(r"[\[\]]", "", field_text_to_fill)
+
+                # TODO: Find a better logic for the filtering out of possible regex
+                if not caret_regex.search(field_text_to_fill):
+                    # Replace slashes with spaces
+                    if slash_regex.search(field_text_to_fill):
+                        field_text_to_fill = field_text_to_fill.replace("/", " ")
+                    # Replace underscores with spaces
+                    if underscore_regex.search(field_text_to_fill):
+                        field_text_to_fill = field_text_to_fill.replace("_", " ")
+            
+            # Find the pattern /path/to/file
+            if path_to_file_regex.search(command):
+                # Grab the text matching the pattern
+                field_text_to_fill = path_to_file_regex.search(command).group()
+                # Replace slashes with spaces
+                field_text_to_fill = field_text_to_fill.replace("/", " ")
+
+            # Find the text between angle brackets
+            if angle_bracket_regex.search(command):
+                # Grab the text matching the pattern
+                field_text_to_fill = angle_bracket_regex.search(command).group()
+                # Remove the angle brackets from the text
+                field_text_to_fill = re.sub(r"[<>]", "", field_text_to_fill)
+            
+            # Check if the field_text_to_fill is longer than 3 characters
+            if len(field_text_to_fill) > 3:
+                # Append the field_text_to_fill to the user_input_fields list
+                user_input_fields.append(field_text_to_fill)
+            else:
+                # Append an empty string to the user_input_fields list as it is likely a regex
+                user_input_fields.append("")
+        return user_input_fields
+    
+    # def getUserInput(self, user_input_list):
+    #     self.user_input = user_input_list
+    
+    def replaceUserInputOfCommand(self, command_list, user_input):
+        # Defining Variables
+        new_command_list = []
+
+        # Looping through the command_list and user_input
+        for command, input in zip(command_list, user_input):
+            # Replace the text in the command with the user input if it meets the criteria
+            # Find the text between square brackets
+            if square_bracket_regex.search(command) and len(re.sub(r"[\[\]]", "", square_bracket_regex.search(command).group())) > 3:
+                command = square_bracket_regex.sub(input, command)
+            # Find the pattern /path/to/file
+            if path_to_file_regex.search(command):
+                command = path_to_file_regex.sub(input, command)
+            # Find the text between angle brackets
+            if angle_bracket_regex.search(command) and len(angle_bracket_regex.search(command).group()) > 3:
+                command = angle_bracket_regex.sub(input, command)
+            # Append the command to the new_command_list
+            new_command_list.append(command)
+        return new_command_list
+
     def __str__(self) -> str:
         return f"{str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_severity)}"
 
-# Defining Variables
-
-
-
-# Functions
+# Functions not within a class
 
 def parseRulesFromXml(filename):
     # Defining Variables
@@ -155,71 +236,20 @@ def parseRulesFromXml(filename):
     return rule_list
 
 
-# def extractCommandsFromRule(rule):
-    
-# TODO: Give better names to the variables
-def useRegex(input_text):
-    field_text_to_fill = ""
-    # Find any text between square brackets
-    square_bracket_regex = re.compile(r"\[.*\]", re.IGNORECASE)
-    # Find any text between slashes matching /path/to/file
-    path_to_file_regex = re.compile(r"^\/path\/to\/file$", re.IGNORECASE)
-    # Find any text between angle brackets
-    angle_bracket_regex = re.compile(r"<.*>", re.IGNORECASE)
-    # Find any text which contain a slash
-    slash_regex = re.compile(r"\/", re.IGNORECASE)
-    # Find any text which contain an underscore
-    underscore_regex = re.compile(r"_", re.IGNORECASE)
-    # Find any text which contain a caret
-    caret_regex = re.compile(r"\^", re.IGNORECASE)
-
-    # Find the text between square brackets
-    if square_bracket_regex.search(input_text):
-        # Grab the text matching the pattern
-        field_text_to_fill = square_bracket_regex.search(input_text).group()
-        # Remove the square brackets from the text
-        field_text_to_fill = re.sub(r"[\[\]]", "", field_text_to_fill)
-        # Check if the text contains a caret or is shorter than 3 characters
-        # If it does, it is a possible regex and should be ignored
-        if not caret_regex.search(field_text_to_fill) and len(field_text_to_fill) > 3:
-            # Replace slashes with spaces
-            if slash_regex.search(field_text_to_fill):
-                field_text_to_fill = field_text_to_fill.replace("/", " ")
-            # Replace underscores with spaces
-            if underscore_regex.search(field_text_to_fill):
-                field_text_to_fill = field_text_to_fill.replace("_", " ")
-            # print("--------------------------------------------")
-            # print(field_text_to_fill)
-            # print("--------------------------------------------")
-    
-    # Find the pattern /path/to/file
-    if path_to_file_regex.search(input_text):
-        # Grab the text matching the pattern
-        field_text_to_fill = path_to_file_regex.search(input_text).group()
-        # Replace slashes with spaces
-        field_text_to_fill = field_text_to_fill.replace("/", " ")
-        # print("++++++++++++++++++++++++++++++++++++++++++++")
-        # print(field_text_to_fill)
-        # print("++++++++++++++++++++++++++++++++++++++++++++")
-    
-    # Find the text between angle brackets
-    if angle_bracket_regex.search(input_text):
-        # Grab the text matching the pattern
-        field_text_to_fill = angle_bracket_regex.search(input_text).group()
-        # Remove the angle brackets from the text
-        field_text_to_fill = re.sub(r"[<>]", "", field_text_to_fill)
-        # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        # print(field_text_to_fill)
-        # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    
-    return input_text
-    
 
 # Main
 rule_list = parseRulesFromXml("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
 
 for rule in rule_list:
-    command_list1 = rule.getCommands(rule.check_content)
-    for command in command_list1:
-        print(useRegex(command))
+    #print(rule.getUserInput(rule.getCommands(rule.check_content)))
+    print(rule.replaceUserInputOfCommand(rule.getCommands(rule.check_content), rule.user_input))
 
+# Links to external sites used
+
+# XML MANIPULATION
+# BeautifulSoup - https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+
+# REGEX
+# Regex - https://docs.python.org/3/library/re.html
+# Regex Generator - https://regex-generator.olafneumann.org/?sampleText=&flags=Pi
+# Regex Checker - https://regex101.com/r/NYVFkU/1
