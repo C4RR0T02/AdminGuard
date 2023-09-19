@@ -1,9 +1,12 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>AdminGuard</title>
-        <link rel="stylesheet" href='/static/main.css' />
     </head>
     <body>
+        <div>
+            <img src="/static/img/AdminGuardLogo.webp" alt="AdminGuard Logo" width="150" height="150">
+        </div>
         <h1>AdminGuard:</h1>
         <h1>Strengthening OS Security from Within</h1>
         <div>
@@ -16,3 +19,68 @@
         </div>
     </body>
 </html>
+
+<style>
+    body {
+        background: #333333;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; 
+        margin: 0; 
+        font-family: Verdana, sans-serif;
+        color: white;
+    }
+    
+    h1 {
+        font-family: Verdana, sans-serif;
+        font-size: 2.5em;
+        color: white;
+        text-align: center;
+    }
+    
+    p {
+        font-family: Georgia, serif;
+        font-size: 1.8em;
+        color: white;
+    }
+    
+    button {
+        font-family: Verdana, sans-serif;
+        background-color: 3563f2;
+        border: none;
+        padding: 10px 25px;
+        font-size: 1.2em;
+        width: 300px;
+        margin: 15px;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    button:hover {
+        background-color: 5c8ff3; 
+    }
+    
+    a {
+        color: white;
+        text-decoration: none;
+    }
+    
+    div {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        justify-content: center;
+    }
+    
+    @media screen and (max-width: 600px) {
+        h1 {
+            font-size: 1.8em;
+        }
+        button {
+            width: 100%;
+            max-width: none;
+        }
+    }
+</style>
