@@ -108,8 +108,23 @@ Example:
 4. Add to the baseline command list
 5. Make the file downloadable
 
+# Functions Available for Usage
+|Function|Purpose|
+|---|---|
+|getRequiredInput(rule_list)|Get all required input from user for checking and fixing|
+|createScriptFromRules(rules, user_check_input, user_fix_input, user_enable_list)|Script Generator|
+|parseRulesFromXml(filename)|Parse the XML file and calculate and store all required fields|
 
+# Class Functions `RuleInput`
+|Function|Purpose|
+|---|---|
+|replaceUserInputOfCommand(self, command_list, user_input)||
 
+# Class Functions `StigRule`
+|Function|Purpose|
+|---|---|
+|calculateScore(self)|Calculate Severity Scoring and assign it back to the rule|
+|getCommands(self, field)|Get all the commands before checking for Regex|
 
 
 ## Resources
