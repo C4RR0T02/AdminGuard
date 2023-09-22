@@ -34,7 +34,7 @@ class Guide:
     def __str__(self) -> str:
         return f"{str(self.guide_name)} - {str(self.file_content)} - {str(self.stig_rule_list)}"
 
-class StigRule(Guide):
+class StigRule():
     def __init__(self, rule_name, rule_title, vuln_id, rule_id, rule_weight, rule_severity, stig_id, rule_fix_text, rule_description, check_content):
         # @rule_name: Name of the rule
         # @rule_title: Title of the rule
@@ -106,7 +106,7 @@ class StigRule(Guide):
         return f"{str(self.rule_name)} - {str(self.rule_title)} - {str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_weight)} - {str(self.rule_severity)} - {str(self.stig_id)} - {str(self.rule_fix_text)} - {str(self.rule_description)} - {str(self.check_content)} - {str(self.category_score)}"
 
 
-class RuleInput(Guide):
+class RuleInput():
 
     def __init__(self, vuln_id, enabled, check_replacement, fix_replacement):
         # @vuln_id: Vuln ID of the rule
@@ -270,8 +270,8 @@ def replaceUserInputOfCommand(command_list, user_input):
 
 def createScriptFromRules(rules, rule_input_list):
     # Defining Variables
-    check_script = "#!/bin/bash" + "\n"
-    fix_script = "#!/bin/bash" + "\n"
+    check_script = "#!/bin/bash" + "\n" + "mkdir AdminGuard" + "\n" + "cd AdminGuard" + "\n" + "touch check_script_logs.txt" + "\n"
+    fix_script = "#!/bin/bash" + "\n" + "mkdir AdminGuard" + "\n" + "cd AdminGuard" + "\n" + "touch fix_script_logs.txt" + "\n"
     user_check_command_list = []
     user_fix_command_list = []
 
@@ -283,14 +283,15 @@ def createScriptFromRules(rules, rule_input_list):
         # TODO: Fix the logic below
         for check_command in user_check_command_list:
             if len(check_command) != 0:
-                check_script += check_command + " >> script_logs.txt" + "\n"
+                check_script += check_command + " >> check_script_logs.txt" + "\n"
         for fix_command in user_fix_command_list:
             if len(fix_command) != 0:
-                fix_script += fix_command + " >> script_logs.txt" + "\n"
-    linux_check_script = open(guide.guide_name.split("/")[-1].split(".")[0] + " - " + "CheckScript.sh", "a")
-    linux_check_script.write(check_script)
-    linux_fix_script = open(guide.guide_name.split("/")[-1].split(".")[0] + " - " + "FixScript.sh", "a")
-    linux_fix_script.write(fix_script)
+                fix_script += fix_command + " >> fix_script_logs.txt" + "\n"
+
+    with open(guide.guide_name.split("/")[-1].split(".")[0] + " - " + "CheckScript.sh", "w") as linux_check_script:
+        linux_check_script.write(check_script)
+    with open(guide.guide_name.split("/")[-1].split(".")[0] + " - " + "FixScript.sh", "w") as linux_fix_script:
+        linux_fix_script.write(fix_script)
     return linux_check_script, linux_fix_script
 
 def getRequiredInput(rule_list):
