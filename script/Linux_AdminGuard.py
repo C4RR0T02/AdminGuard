@@ -226,23 +226,18 @@ def createScript(guide, user_input):
     with open(guide_file_name + " - " + "FixScript.sh", "w") as linux_fix_script:
         linux_fix_script.write(fix_script)
 
-user_input = {
-    "V-230309": {
-        "check": [
-            {'[PART]': 'yum', '[Test]': 'install'},
-            {'<file>': 'woo'}
-        ],
+# user_input = {
+#     "V-230309": {
+#         "check": [
+#             {'[PART]': 'yum', '[Test]': 'install'},
+#             {'<file>': 'woo'}
+#         ],
 
-        "fix": [{}],    
-    },
-}
-
-
+#         "fix": [{}],    
+#     },
+# }
 
 
-guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
+# guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
 
-print(createScript(guide, user_input))
-
-# print(guide.stig_rule_dict.keys())
-# print(user_input.keys())
+# print(createScript(guide, user_input))
