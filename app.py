@@ -32,14 +32,12 @@ def scriptGenerate():
             uploaded_file.save(upload_file_path)
             guide = parseGuide(upload_file_path)
             guide_dictionary[uploaded_file.filename] = guide
-            print(guide_dictionary)
             return redirect(url_for('scriptFields', guide_name=uploaded_file.filename))
     return render_template('script-generate.html')
 
 @app.route('/script-generate/<guide_name>', methods=['GET', 'POST'])
 def scriptFields(guide_name):
     if request.method == 'GET':
-        print("Guide Name: " + guide_name)
         guide = guide_dictionary[guide_name]
         rule_header_list = ["Vulnerability ID", "Rule ID", "Severity"]
         rule_list = []
