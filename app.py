@@ -17,7 +17,6 @@ app.config['upload_folder'] = upload_folder
 
 @app.route('/', methods=['GET'])
 def index():
-    print("Index page")
     return render_template('index.html')
 
 @app.route('/script-generate', methods=['GET','POST'])
@@ -39,15 +38,22 @@ def scriptGenerate():
 def scriptFields(guide_name):
     if request.method == 'GET':
         guide = guide_dictionary[guide_name]
-        rule_header_list = ["Vulnerability ID", "Rule ID", "Severity"]
         rule_list = []
         for rule in guide.stig_rule_dict.values():
             temp_rule_dict = {}
-            temp_rule_dict["Vulnerability ID"] = rule.vuln_id
-            temp_rule_dict["Rule ID"] = rule.rule_id
-            temp_rule_dict["Severity"] = rule.rule_severity
+            temp_rule_dict["rule_name"] = rule.rule_name
+            temp_rule_dict["rule_title"] = rule.rule_title
+            temp_rule_dict["vuln_id"] = rule.vuln_id
+            temp_rule_dict["rule_id"] = rule.rule_id
+            temp_rule_dict["stig_id"] = rule.stig_id
+            temp_rule_dict["rule_fix_text"] = rule.rule_fix_text
+            temp_rule_dict["rule_description"] = rule.rule_description
+            temp_rule_dict["check_content"] = rule.check_content
+            temp_rule_dict["category_score"] = rule.category_score
+            temp_rule_dict["check_commands"] = rule.check_commands
+            temp_rule_dict["fix_commands"] = rule.fix_commands
             rule_list.append(temp_rule_dict)
-        return render_template('script-fields.html', rule_header_list=rule_header_list, rule_list=rule_list)
+        return render_template('script-fields.html', StigContentList=rule_list)
     # guide.check_commands
     # guide.fix_commands
     if request.method == 'POST':
@@ -69,8 +75,4 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-# References:
-# https://code-maven.com/slides/python/flask-internal-redirect-parameters
-# https://www.geeksforgeeks.org/redirecting-to-url-in-flask/
-# https://www.codingninjas.com/studio/library/file-uploading-in-flask
-# https://www.geeksforgeeks.org/how-to-upload-file-in-python-flask/
+

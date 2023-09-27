@@ -1,3 +1,35 @@
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var collapseButtons = document.querySelectorAll(".accordion-button");
+    collapseButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            var accordionContainers = document.querySelectorAll(".accordion-collapse");
+            accordionContainers.forEach(function (container) {
+                if (container !== button.nextElementSibling) {
+                    container.classList.remove("show");
+                }
+            });
+        });
+    });
+
+    var collapseAllButton = document.getElementById("collapseAllButton");
+    collapseAllButton.addEventListener("click", function () {
+        var accordionContainers = document.querySelectorAll(".accordion-collapse");
+        accordionContainers.forEach(function (container) {
+            container.classList.remove("show");
+        });
+    });
+
+    var expandAllButton = document.getElementById("expandAllButton");
+    expandAllButton.addEventListener("click", function () {
+        var accordionContainers = document.querySelectorAll(".accordion-collapse");
+        accordionContainers.forEach(function (container) {
+            container.classList.add("show");
+        });
+    });
+  });
+</script>
+
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -6,30 +38,130 @@
         <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     </head>
-    <body>
-        <div>
-            <h1>Edit STIG Rules</h1>
-
-            <form method="POST" action="" enctype="multipart/form-data">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                      <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                          Vulnerability ID: {{ vuln_id }} &emsp; Rule ID: {{ rule_id }} &emsp; Severity: {{ severity }} 
+    <body class="bg-dark text-white">
+        <div class="mt-5">
+            <h1 class="text-center">Customize STIG Rules</h1>
+            <div class="container">
+              <div class="d-flex justify-content-center input-group my-4 mx-5">
+                <input type="text" class="form-control me-2" placeholder="Search">
+                <button type="button" id="test" class="btn btn-primary me-2">Reset Filter</button>
+                <button type="button" id="collapseAllButton" class="btn btn-primary me-2">Collapse All Rules</button>
+                <button type="button" id="expandAllButton" class="btn btn-primary">Expand All Rules</button>
+              </div>
+            </div>
+            {% for stig_content in StigContentList %}
+            <form class="mt-2 mx-5" method="POST" action="" enctype="multipart/form-data">
+              <div class="accordion" :id=stig_content.vuln_id>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ stig_content.vuln_id }}" aria-expanded="true" aria-controls="collapse{{ stig_content.vuln_id }}">
+                        <div class="d-flex flex-row">
+                          <p class="m-3">
+                            <strong>
+                              Vulnerability ID:
+                            </strong> 
+                            {{ stig_content.vuln_id }} &emsp; 
+                            <strong>
+                              Rule ID:
+                            </strong> 
+                            {{ stig_content.rule_id }} &emsp; 
+                            <strong>
+                              Severity:
+                            </strong> 
+                            {{ stig_content.category_score }} &emsp; 
+                            <strong>
+                              Enable:
+                            </strong> 
+                          </p>
+                        </div>
+                        <div>
                           <label class="switch">
                             <input type="checkbox">
                             <span class="slider round"></span>
                           </label>
-                        </button>
-                      </h2>
-                      <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                          <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
                         </div>
+                      </button>
+                    </h2>
+                    <div id="collapse{{ stig_content.vuln_id }}" class="accordion-collapse collapse show" data-bs-parent="#{{ stig_content.vuln_id }}accordion">
+                      <div class="accordion-body">
+                        <strong>Title: </strong>
+                        {{ stig_content.rule_title }}
+                        <br>
+                        <strong>Vulnerability Description:</strong>
+                        <br>
+                        {{ stig_content.rule_description }}
+                        <br>
+                        <strong>Vulnerability Fix:</strong>
+                        <br>
+                        {{ stig_content.rule_fix_text }}
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
             </form>
+            {% endfor %}
         </div>
     </body>
 </html>
+
+<style>
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  input:checked + .slider {
+    background-color: #4BB543;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px #4BB543;
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
+</style>
