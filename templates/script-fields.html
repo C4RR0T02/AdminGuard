@@ -42,9 +42,22 @@
         <div class="mt-5">
             <h1 class="text-center">Customize STIG Rules</h1>
             <div class="container">
-              <div class="d-flex justify-content-center input-group my-4 mx-5">
-                <input type="text" class="form-control me-2" placeholder="Search">
-                <button type="button" id="test" class="btn btn-primary me-2">Reset Filter</button>
+              <div class="d-flex justify-content-center input-group my-4 width">
+                <!-- TODO: Look into implementing filtering system for rules -->
+                <!-- <input type="text" class="form-control rounded me-2" placeholder="Search">
+                <select name="Severity" id="severity" class="form-control rounded me-2" onchange="checkValue(StigContentList)">
+                  <option value="All" selected>All</option>
+                  <option value="undefined">undefined</option>
+                  <option value="Very Low">Very Low</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Very High">Very High</option>
+                  <option value="Extreme">Extreme</option>
+                </select>
+                <button type="button" class="btn btn-primary me-2">Search</button>
+                <button type="reset" value="Reset" class="btn btn-primary me-5">Reset Filter</button>
+                <button type="button" id="collapseAllButton" class="btn btn-primary me-2">Collapse All Rules</button> -->
                 <button type="button" id="collapseAllButton" class="btn btn-primary me-2">Collapse All Rules</button>
                 <button type="button" id="expandAllButton" class="btn btn-primary">Expand All Rules</button>
               </div>

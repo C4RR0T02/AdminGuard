@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import unquote
 import math
 import re
+import os
 
 # Find any text between square brackets
 square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
@@ -201,8 +202,12 @@ def parseGuide(filename):
     return guide
 
 def createScript(guide, user_input):
+    user_wd = os.getcwd() + "/out-files/"
     check_script = "#!/bin/bash" + "\n" + "mkdir AdminGuard" + "\n" + "cd AdminGuard" + "\n" + "touch check_script_logs.txt" + "\n"
     fix_script = "#!/bin/bash" + "\n" + "mkdir AdminGuard" + "\n" + "cd AdminGuard" + "\n" + "touch fix_script_logs.txt" + "\n"
+
+    if not os.path.isdir(user_wd):
+        os.mkdir(user_wd)
 
     for vuln_id in user_input.keys():
         if vuln_id in guide.stig_rule_dict.keys():
@@ -221,11 +226,12 @@ def createScript(guide, user_input):
                     fix_script += parsed_command + " >> fix_script_logs.txt" + "\n"
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0]
-    with open(guide_file_name + " - " + "CheckScript.sh", "w") as linux_check_script:
-        linux_check_script.write(check_script)
-    with open(guide_file_name + " - " + "FixScript.sh", "w") as linux_fix_script:
-        linux_fix_script.write(fix_script)
+    with open(user_wd + guide_file_name + " - " + "CheckScript.sh", "wb") as linux_check_script:
+        linux_check_script.write(check_script.encode())
+    with open(user_wd + guide_file_name + " - " + "FixScript.sh", "wb") as linux_fix_script:
+        linux_fix_script.write(fix_script.encode())
 
+# Test replacement of commands from user input
 # user_input = {
 #     "V-230309": {
 #         "check": [
@@ -237,6 +243,14 @@ def createScript(guide, user_input):
 #     },
 # }
 
+
+# Test with no user input
+# user_input = {
+#     "V-230222": {
+#         "check": [{}],
+#         "fix": [{}],    
+#     },
+# }
 
 # guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
 
