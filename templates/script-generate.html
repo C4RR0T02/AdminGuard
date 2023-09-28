@@ -1,10 +1,39 @@
+<script>
+    function submit() {
+        document.getElementById("uploadform").submit();
+    }
+    
+</script>
+
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <title>AdminGuard</title>
+        <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     </head>
-    <body>
-        <h1>Script Generator</h1>
-        
+    <body class="bg-dark text-white">
+        <div class="mt-5">
+            <h1 class="text-center mb-5">STIG Script Generator</h1>
+            
+            <form id="uploadform" class="mt-5 text-left rounded" method="POST" action="" enctype="multipart/form-data" accept=".xml">
+                <h1 class="text-center my-3">Upload STIG File</h1>
+                <p class="ms-5">
+                    <input type="file" name="file">
+                </p>
+                <p class="m-5">
+                    <input type="submit" value="Submit" onclick="submit(); this.disabled = true;">
+                </p>
+            </form>
+        </div>
     </body>
 </html>
+
+<style>
+    #uploadform {
+        border: 5px solid white;
+        width: 80%;
+        margin: auto;
+    }
+</style>
