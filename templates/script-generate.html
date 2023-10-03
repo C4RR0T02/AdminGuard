@@ -2,7 +2,6 @@
     function submit() {
         document.getElementById("uploadform").submit();
     }
-    
 </script>
 
 <html>
@@ -19,12 +18,34 @@
             
             <form id="uploadform" class="mt-5 text-left rounded" method="POST" action="" enctype="multipart/form-data" accept=".xml">
                 <h1 class="text-center my-3">Upload STIG File</h1>
-                <p class="ms-5">
-                    <input type="file" name="file">
-                </p>
-                <p class="m-5">
-                    <input type="submit" value="Submit" onclick="submit(); this.disabled = true;">
-                </p>
+                <div class="d-flex flex-column">
+                    <label class="mx-5 rounded my-3 text-center" for="file-input-btn">
+                        <img src="/static/bootstrap-icons-1.11.1/cloud-arrow-up-fill.svg" width="250" height="250"></img>
+                        <input id="file-input-btn" type="file" name="file" />
+                        <br>
+                        <span id="file-chosen" class="fs-3" onclick="getFileName()">No file chosen</span>
+                    </label>
+                    <script>
+                        const fileButton = document.getElementById('file-input-btn');
+
+                        const fileChosen = document.getElementById('file-chosen');
+
+                        fileButton.addEventListener('change', function(){
+                            fileChosen.textContent = this.files[0].name
+                        })
+                    </script>
+
+                    <label class="text-white mx-5 mt-3 mb-5 rounded text-center fs-3">
+                        <input type="submit" id="submit" onclick="submit();" />
+                        Upload File
+                    </label>
+                    <script>
+                        function submit() {
+                            document.getElementById("uploadform").submit();
+                            document.getElementById("submit").disabled = true;
+                        }
+                    </script>
+                </div>
             </form>
         </div>
     </body>
@@ -35,5 +56,21 @@
         border: 5px solid white;
         width: 80%;
         margin: auto;
+    }
+
+    input[type="file"], input[type="submit"] {
+        display: none;
+    }
+
+    label {
+        border: 2px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+
+    label:disabled {
+        cursor: not-allowed;
+        background-color: #ccc;
     }
 </style>
