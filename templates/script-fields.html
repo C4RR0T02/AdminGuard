@@ -1,33 +1,5 @@
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var collapseButtons = document.querySelectorAll(".accordion-button");
-    collapseButtons.forEach(function (button) {
-        button.addEventListener("click", function () {
-            var accordionContainers = document.querySelectorAll(".accordion-collapse");
-            accordionContainers.forEach(function (container) {
-                if (container !== button.nextElementSibling) {
-                    container.classList.remove("show");
-                }
-            });
-        });
-    });
 
-    var collapseAllButton = document.getElementById("collapseAllButton");
-    collapseAllButton.addEventListener("click", function () {
-        var accordionContainers = document.querySelectorAll(".accordion-collapse");
-        accordionContainers.forEach(function (container) {
-            container.classList.remove("show");
-        });
-    });
-
-    var expandAllButton = document.getElementById("expandAllButton");
-    expandAllButton.addEventListener("click", function () {
-        var accordionContainers = document.querySelectorAll(".accordion-collapse");
-        accordionContainers.forEach(function (container) {
-            container.classList.add("show");
-        });
-    });
-  });
 </script>
 
 <html>
@@ -43,7 +15,7 @@
             <h1 class="text-center">Customize STIG Rules</h1>
             <div class="container">
               <div class="d-flex justify-content-center input-group my-4 width">
-                <!-- TODO: Look into implementing filtering system for rules -->
+                <!-- TODO: Look into implementing filtering system for rules or just scrap it and throw into backlog -->
                 <!-- <input type="text" class="form-control rounded me-2" placeholder="Search">
                 <select name="Severity" id="severity" class="form-control rounded me-2" onchange="checkValue(StigContentList)">
                   <option value="All" selected>All</option>
@@ -56,64 +28,91 @@
                   <option value="Extreme">Extreme</option>
                 </select>
                 <button type="button" class="btn btn-primary me-2">Search</button>
-                <button type="reset" value="Reset" class="btn btn-primary me-5">Reset Filter</button>
-                <button type="button" id="collapseAllButton" class="btn btn-primary me-2">Collapse All Rules</button> -->
-                <button type="button" id="collapseAllButton" class="btn btn-primary me-2">Collapse All Rules</button>
-                <button type="button" id="expandAllButton" class="btn btn-primary">Expand All Rules</button>
+                <button type="reset" value="Reset" class="btn btn-primary me-5">Reset Filter</button> -->
               </div>
             </div>
-            {% for stig_content in StigContentList %}
-            <form class="mt-2 mx-5" method="POST" action="" enctype="multipart/form-data">
-              <div class="accordion" :id=stig_content.vuln_id>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ stig_content.vuln_id }}" aria-expanded="true" aria-controls="collapse{{ stig_content.vuln_id }}">
-                        <div class="d-flex flex-row">
-                          <p class="m-3">
-                            <strong>
-                              Vulnerability ID:
-                            </strong> 
-                            {{ stig_content.vuln_id }} &emsp; 
-                            <strong>
-                              Rule ID:
-                            </strong> 
-                            {{ stig_content.rule_id }} &emsp; 
-                            <strong>
-                              Severity:
-                            </strong> 
-                            {{ stig_content.category_score }} &emsp; 
-                            <strong>
-                              Enable:
-                            </strong> 
-                          </p>
+            <form method="POST" action="" enctype="multipart/form-data">
+              {% for stig_content in StigContentList %}
+                <div class="mt-2 mx-5">
+                  <div class="accordion">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ stig_content.vuln_id }}" aria-expanded="true" aria-controls="collapse-{{ stig_content.vuln_id }}">
+                          <div class="d-flex justify-content-between w-100">
+                            <div class="d-flex">
+                              <p class="m-3">
+                                <strong>
+                                  Vulnerability ID:
+                                </strong> 
+                                {{ stig_content.vuln_id }} &emsp; 
+                                <strong>
+                                  Rule ID:
+                                </strong> 
+                                {{ stig_content.rule_id }} &emsp; 
+                                <strong>
+                                  Severity:
+                                </strong> 
+                                {{ stig_content.category_score }} &emsp; 
+                                
+                              </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 px-2">
+                              <strong>
+                                Enable:
+                              </strong> 
+                              <label class="switch">
+                                <input type="checkbox" name="{{ stig_content.vuln_id }}" checked>
+                                <span class="slider round"></span>
+                              </label>
+                            </div>
+                          </div>
+                        </button>
+                      </h2>
+                      <div id="collapse-{{ stig_content.vuln_id }}" class="accordion-collapse collapse show" data-bs-parent="#{{ stig_content.vuln_id }}accordion">
+                        <div class="accordion-body">
+                          <strong>Title: </strong>
+                          {{ stig_content.rule_title }}
+                          <br>
+                          <strong>Vulnerability Description: </strong>
+                          <br>
+                          {{ stig_content.rule_description }}
+                          <br>
+                          <strong>Vulnerability Fix: </strong>
+                          <br>
+                          {{ stig_content.rule_fix_text }}
+                          
+                          {% for fix_commands in stig_content.fix_commands %}
+                            {% if fix_command == stig_content.fix_commands[0] %}
+                              <hr>
+                              <strong>Fields to replace: </strong>
+                            {% endif %}
+                            
+                            {% for fields in fix_commands.replacements %}
+                              <hr>
+                              <strong>Fields to replace: </strong>
+                              <br>
+                              <span>
+                                Command:  
+                                <code>
+                                  {{ fix_commands.command }}
+                                </code>
+                              </span>
+                              <div class="d-flex">
+                                <label for="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}" data-fields="{{ fields }}" class="me-2">{{ fields }} :</label>
+                                <input type="text" id="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}" name="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}" style="flex:1" required />
+                              </div>
+                            {% endfor %}
+                          {% endfor %}
                         </div>
-                        <div>
-                          <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                          </label>
-                        </div>
-                      </button>
-                    </h2>
-                    <div id="collapse{{ stig_content.vuln_id }}" class="accordion-collapse collapse show" data-bs-parent="#{{ stig_content.vuln_id }}accordion">
-                      <div class="accordion-body">
-                        <strong>Title: </strong>
-                        {{ stig_content.rule_title }}
-                        <br>
-                        <strong>Vulnerability Description: </strong>
-                        <br>
-                        {{ stig_content.rule_description }}
-                        <br>
-                        <strong>Vulnerability Fix: </strong>
-                        <br>
-                        {{ stig_content.rule_fix_text }}
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              {% endfor %}
+              <div class="d-flex justify-content-center my-5">
+                <button type="submit" class="btn btn-primary">Generate Script</button>
             </form>
-            {% endfor %}
+            
         </div>
     </body>
 </html>
@@ -150,7 +149,7 @@
     height: 24px;
     width: 24px;
     left: 4px;
-    bottom: 4px;
+    bottom: 2.5px;
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
