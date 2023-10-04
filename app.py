@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flaskext.markdown import Markdown
 from script.Linux_AdminGuard import *
 import os
 
 # Flask Server
 app = Flask(__name__)
+Markdown(app)
+
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 app.config['UPLOAD_EXTENSIONS'] = ['.xml']
 
@@ -14,6 +17,8 @@ upload_folder = os.path.join(path, 'uploads')
 if not os.path.isdir(upload_folder):
     os.mkdir(upload_folder)
 app.config['upload_folder'] = upload_folder
+
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -30,8 +35,8 @@ def scriptGenerate():
             upload_file_path = os.path.join(app.config['upload_folder'], uploaded_file.filename)
             uploaded_file.save(upload_file_path)
             guide = parseGuide(upload_file_path)
-            guide_dictionary[uploaded_file.filename] = guide
-            return redirect(url_for('scriptFields', guide_name=uploaded_file.filename))
+            guide_dictionary[uploaded_file.filename.split('.')[0]] = guide
+            return redirect(url_for('scriptFields', guide_name=uploaded_file.filename.split('.')[0]))
     return render_template('script-generate.html')
 
 @app.route('/script-generate/<guide_name>', methods=['GET', 'POST'])
@@ -54,8 +59,6 @@ def scriptFields(guide_name):
             temp_rule_dict["fix_commands"] = rule.fix_commands
             rule_list.append(temp_rule_dict)
         return render_template('script-fields.html', StigContentList=rule_list)
-    # guide.check_commands
-    # guide.fix_commands
     if request.method == 'POST':
         return redirect(url_for('scriptDownload', guide_name=guide_name))
     return render_template("script-fields.html")
@@ -68,7 +71,13 @@ def scriptFields(guide_name):
 def templateGenerate():
     return render_template('template-generate.html')
 
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     return render_template('404.html'), 404,  # Page Not Found
 
+# @app.errorhandler(500)
+# def internal_server_error(e):
+#     return render_template('500.html'), 500  # Internal Server Error
 
 # main driver function
 if __name__ == '__main__':
