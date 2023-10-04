@@ -136,14 +136,13 @@ class Command:
 
 class RuleInput:
 
-    def __init__(self, vuln_id, enabled, check_replacement, fix_replacement):
+    def __init__(self, vuln_id, check_replacement, fix_replacement):
         self.vuln_id = vuln_id
-        self.enabled = enabled
         self.check_replacement = check_replacement
         self.fix_replacement = fix_replacement
 
     def __str__(self) -> str:
-        return f"{str(self.vuln_id)} - {str(self.enabled)} - {str(self.check_replacement)} - {str(self.fix_replacement)}"
+        return f"{str(self.vuln_id)} - {str(self.check_replacement)} - {str(self.fix_replacement)}"
 
 # Functions not within a class
 
@@ -255,3 +254,5 @@ def createScript(guide, user_input):
 # guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
 
 # print(createScript(guide, user_input))
+# print(guide.stig_rule_dict["V-230309"].check_commands[1].replacements)
+# getRuleInput(guide)
