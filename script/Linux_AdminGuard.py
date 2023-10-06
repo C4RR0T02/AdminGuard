@@ -9,7 +9,7 @@ import os
 square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
 # Find any text between slashes matching /path/to/file
 path_to_file_regex = re.compile(r"\/path\/to\/file", re.IGNORECASE)
-path_to_file__bracket_regex = re.compile(r"/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/", re.IGNORECASE)
+path_to_file_bracket_regex = re.compile(r"/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/", re.IGNORECASE)
 # Find any text between angle brackets
 angle_bracket_regex = re.compile(r"<[^>]+>", re.IGNORECASE)
 # Find any text which contain a slash
@@ -59,12 +59,13 @@ class StigRule:
 
             field_command = field_line.replace("$ ", "").strip()
 
-            if path_to_file__bracket_regex.findall(field_command):
-                for command in path_to_file__bracket_regex.findall(field_command):
+            if path_to_file_bracket_regex.findall(field_command):
+                for command in path_to_file_bracket_regex.findall(field_command):
                     field_text_to_fill.append(command)
             else:
                 for command in square_bracket_regex.findall(field_command):
-                    field_text_to_fill.append(command)
+                    if not_regex_regex.findall(command):
+                        field_text_to_fill.append(command)
 
             for command in path_to_file_regex.findall(field_command):
                 field_text_to_fill.append(command)
@@ -126,7 +127,8 @@ class Command:
                 replacement_value = target_replacements[replacement_key]
                 new_command = new_command.replace(replacement_key, replacement_value)
             else:
-                print(f"Replacement Key: {replacement_key} not found in target_replacements")
+                # print(f"Replacement Key: {replacement_key} not found in target_replacements")
+                pass
         
         return new_command
     
@@ -213,16 +215,24 @@ def createScript(guide, user_input):
             target_rule = guide.stig_rule_dict[vuln_id]
             if "check" in user_input[vuln_id]:
                 check_inputs = user_input[vuln_id]["check"]
-                for check_command, replacement_dict in zip(target_rule.check_commands, check_inputs):
-                    parsed_command = check_command.replaceCommand(replacement_dict)
-                    check_script += "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
-                    check_script += parsed_command + " >> check_script_logs.txt" + "\n"
+                for check_rules in check_inputs:
+                    print(check_rules.keys())
+                    #for rule_commands in check_rules.keys():
+                        #print(target_rule.check_commands)
+                        # replacement_dict = check_rules[rule_commands]
+                        # parsed_command = check_command.replaceCommand(replacement_dict)
+                        # print(parsed_command)
+                        # check_script += "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
+                        # check_script += parsed_command + " >> check_script_logs.txt" + "\n"
             if "fix" in user_input[vuln_id]:
-                fix_inputs = user_input[vuln_id]["fix"]
-                for fix_command, replacement_dict in zip(target_rule.fix_commands, fix_inputs):
-                    parsed_command = fix_command.replaceCommand(replacement_dict)
-                    fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
-                    fix_script += parsed_command + " >> fix_script_logs.txt" + "\n"
+                fix_rule_inputs = user_input[vuln_id]["fix"]
+                for fix_rules in fix_rule_inputs:
+                    for rule_commands in fix_rules.keys():
+                        for fix_command in target_rule.fix_commands:
+                            replacement_dict = fix_rules[rule_commands]
+                            parsed_command = fix_command.replaceCommand(replacement_dict)
+                            fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
+                            fix_script += parsed_command + " >> fix_script_logs.txt" + "\n"
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0]
     with open(user_wd + guide_file_name + " - " + "CheckScript.sh", "wb") as linux_check_script:
@@ -231,28 +241,37 @@ def createScript(guide, user_input):
         linux_fix_script.write(fix_script.encode())
 
 # Test replacement of commands from user input
-# user_input = {
-#     "V-230309": {
-#         "check": [
-#             {'[PART]': 'yum', '[Test]': 'install'},
-#             {'<file>': 'woo'}
-#         ],
-
-#         "fix": [{}],    
-#     },
-# }
+user_input = {
+    "V-230309": {
+        "check": [
+            {'sudo find [PART] -xdev -type f -perm -0002 -print [Test]': {'[PART]': 'yum', '[Test]': 'install'}},
+            {'sudo grep <file> /home/*/.*': {'<file>': 'woo'}}
+        ],
+        "fix": [
+            {'sudo chmod 0755 <file>': {'<file>': 'woo'}},
+        ],    
+    },
+    "V-230327": {
+        "check": [
+            {'sudo chgrp <group> <file>': {'<group>': 'yum', '<file>': 'install'}},
+        ],
+        "fix": [
+            {'': {}},
+        ],    
+    },
+}
 
 
 # Test with no user input
 # user_input = {
 #     "V-230222": {
-#         "check": [{}],
-#         "fix": [{}],    
+#         "check": [{'':{}}],
+#         "fix": [{'':{}}],    
 #     },
 # }
 
-# guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
+guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
 
-# print(createScript(guide, user_input))
+print(createScript(guide, user_input))
 # print(guide.stig_rule_dict["V-230309"].check_commands[1].replacements)
 # getRuleInput(guide)
