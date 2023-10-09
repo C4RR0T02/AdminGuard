@@ -203,63 +203,63 @@ def parseGuide(filename):
     return guide
 
 def createScript(guide, user_input):
-    user_wd = os.getcwd() + "/out-files/"
     check_script = "#!/bin/bash" + "\n" + "mkdir AdminGuard" + "\n" + "cd AdminGuard" + "\n" + "touch check_script_logs.txt" + "\n"
     fix_script = "#!/bin/bash" + "\n" + "mkdir AdminGuard" + "\n" + "cd AdminGuard" + "\n" + "touch fix_script_logs.txt" + "\n"
 
-    if not os.path.isdir(user_wd):
-        os.mkdir(user_wd)
-
-    for vuln_id in user_input.keys():
+    # TODO: Fix Logic for check and fix commands
+    for vuln_id, vuln_data in user_input.items():
         if vuln_id in guide.stig_rule_dict.keys():
             target_rule = guide.stig_rule_dict[vuln_id]
             if "check" in user_input[vuln_id]:
                 check_inputs = user_input[vuln_id]["check"]
                 for check_rules in check_inputs:
-                    print(check_rules.keys())
-                    #for rule_commands in check_rules.keys():
-                        #print(target_rule.check_commands)
-                        # replacement_dict = check_rules[rule_commands]
-                        # parsed_command = check_command.replaceCommand(replacement_dict)
-                        # print(parsed_command)
-                        # check_script += "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
-                        # check_script += parsed_command + " >> check_script_logs.txt" + "\n"
-            if "fix" in user_input[vuln_id]:
-                fix_rule_inputs = user_input[vuln_id]["fix"]
+                    for replacement_dict in check_rules.items():
+                        for check_command in target_rule.check_commands:
+                            parsed_command = check_command.replaceCommand(replacement_dict)
+                            check_script += "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
+                            check_script += parsed_command + " >> check_script_logs.txt" + "\n"
+            if "fix" in vuln_data:
+                fix_rule_inputs = vuln_data["fix"]
                 for fix_rules in fix_rule_inputs:
-                    for rule_commands in fix_rules.keys():
+                    for replacement_dict in fix_rules.items():
                         for fix_command in target_rule.fix_commands:
-                            replacement_dict = fix_rules[rule_commands]
                             parsed_command = fix_command.replaceCommand(replacement_dict)
                             fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
                             fix_script += parsed_command + " >> fix_script_logs.txt" + "\n"
 
-    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0]
-    with open(user_wd + guide_file_name + " - " + "CheckScript.sh", "wb") as linux_check_script:
+
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split("\\")[-1]
+
+    output_folder = os.path.join(os.getcwd(),"out-files")
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    
+    with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.sh", "wb") as linux_check_script:
         linux_check_script.write(check_script.encode())
-    with open(user_wd + guide_file_name + " - " + "FixScript.sh", "wb") as linux_fix_script:
+    with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh", "wb") as linux_fix_script:
         linux_fix_script.write(fix_script.encode())
 
 # Test replacement of commands from user input
-user_input = {
-    "V-230309": {
-        "check": [
-            {'sudo find [PART] -xdev -type f -perm -0002 -print [Test]': {'[PART]': 'yum', '[Test]': 'install'}},
-            {'sudo grep <file> /home/*/.*': {'<file>': 'woo'}}
-        ],
-        "fix": [
-            {'sudo chmod 0755 <file>': {'<file>': 'woo'}},
-        ],    
-    },
-    "V-230327": {
-        "check": [
-            {'sudo chgrp <group> <file>': {'<group>': 'yum', '<file>': 'install'}},
-        ],
-        "fix": [
-            {'': {}},
-        ],    
-    },
-}
+# user_input = {
+#     "V-230309": {
+#         "check": [
+#             {'sudo find [PART] -xdev -type f -perm -0002 -print [Test]': {'[PART]': 'yum', '[Test]': 'install'}},
+#             {'sudo grep <file> /home/*/.*': {'<file>': 'woo'}}
+#         ],
+#         "fix": [
+#             {'sudo find [PART] -xdev -type f -perm -0002 -print [Test]': {'[PART]': 'yum', '[Test]': 'install'}},
+#             {'sudo chmod 0755 <file>': {'<file>': 'woo'}},
+#         ],    
+#     },
+#     "V-230327": {
+#         "check": [
+#             {'': {}},
+#         ],
+#         "fix": [
+#             {'sudo chgrp <group> <file>': {'<group>': 'yum', '<file>': 'install'}},
+#         ],    
+#     },
+# }
 
 
 # Test with no user input
@@ -270,8 +270,8 @@ user_input = {
 #     },
 # }
 
-guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
+# guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
 
-print(createScript(guide, user_input))
+# print(createScript(guide, user_input))
 # print(guide.stig_rule_dict["V-230309"].check_commands[1].replacements)
 # getRuleInput(guide)

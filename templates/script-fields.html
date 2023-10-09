@@ -85,7 +85,7 @@
                               <span>
                                 Command:  
                                 <code>
-                                  {{ fix_commands.command }}
+                                  {{ fix_commands.command|markdown }}
                                 </code>
                               </span>
                               {% for fields in fix_commands.replacements %}
@@ -147,7 +147,7 @@
                       fixRulesinput = [];
                       ruleDictionary = {};
                       
-                      var checkbox = document.getElementsByName(stig_content.vuln_id + "switch");
+                      var checkbox = document.getElementsByName(stig_content.vuln_id + "-switch");
                       if (checkbox.checked == true) {
                         for (fix_commands in stig_content.fix_commands) {
                           for (fields in fix_commands.replacements) {
@@ -155,13 +155,13 @@
                             userInputField.className += " required";
                             
                           }
+                        }
 
-                          for (check_commands in stig_content.check_commands) {
-                            replaceCheckDictionaryValues = {};
-                            for (fields in check_commands.replacements) {
-                              userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + check_commands.command + "-check");
-                              userInputField.className += " required";
-                            }
+                        for (check_commands in stig_content.check_commands) {
+                          replaceCheckDictionaryValues = {};
+                          for (fields in check_commands.replacements) {
+                            userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + check_commands.command + "-check");
+                            userInputField.className += " required";
                           }
                         }
                       }

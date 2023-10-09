@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 from flaskext.markdown import Markdown
 from script.Linux_AdminGuard import *
 import os
@@ -10,6 +10,8 @@ Markdown(app)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 app.config['UPLOAD_EXTENSIONS'] = ['.xml']
 
+
+
 guide_dictionary = {}
 form_data_rule_dictionary = {}
 
@@ -17,7 +19,14 @@ path = os.getcwd()
 upload_folder = os.path.join(path, 'uploads')
 if not os.path.isdir(upload_folder):
     os.mkdir(upload_folder)
+    print("created upload folder")
+download_folder = os.path.join(path, 'out-files')
+if not os.path.isdir(download_folder):
+    os.mkdir(download_folder)
+    print("created download folder")
+
 app.config['upload_folder'] = upload_folder
+app.config['download_folder'] = download_folder
 
 
 
@@ -42,7 +51,7 @@ def scriptGenerate():
 
 @app.route('/script-generate/<guide_name>', methods=['GET', 'POST'])
 def scriptFields(guide_name):
-    guide = guide_dictionary[guide_name]
+    guide = guide_dictionary.get(guide_name)
     rule_list = []
     for rule in guide.stig_rule_dict.values():
         temp_rule_dict = {}
@@ -108,12 +117,24 @@ def scriptFields(guide_name):
 
 @app.route('/script-generate/<guide_name>/download', methods=['GET', 'POST'])
 def scriptDownload(guide_name):
-    guide = guide_dictionary[guide_name]
+    guide = guide_dictionary.get(guide_name)
     user_input = form_data_rule_dictionary
-    print(user_input)
     if request.method == 'GET':
-        return render_template('script-download.html')
+        createScript(guide, user_input)
+        downloadCheckScript = url_for('downloadScript', guide_name=guide_name, file='checkscript')
+        downloadFixScript = url_for('downloadScript', guide_name=guide_name, file='fixscript')
+        return render_template('script-download.html', downloadFixScript = downloadFixScript, downloadCheckScript = downloadCheckScript)
     return render_template('script-download.html')
+
+@app.route('/script-generate/<guide_name>/download/<file>', methods=['GET'])
+def downloadScript(guide_name, file):
+    if file == 'checkscript':
+        checkscript = os.path.join(download_folder, guide_name + '-CheckScript.sh')
+        print(checkscript)
+        return send_file(checkscript, as_attachment=True)
+    if file == 'fixscript':
+        fixscript = os.path.join(download_folder, guide_name + '-FixScript.sh')
+        return send_file(fixscript, as_attachment=True)
 
 @app.route('/template-generate', methods=['GET'])
 def templateGenerate():

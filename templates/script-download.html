@@ -6,7 +6,50 @@
         <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     </head>
-    <body class="bg-dark text-white position-absolute top-50 start-50 translate-middle">
-        <p>Hello World!</p>
+    <body class="bg-dark text-white">
+        <div class="mt-5">
+            <h1 class="text-center mb-5">Download Scripts</h1>
+            <div class="d-flex flex-column">
+                <label class="mx-5 rounded my-3 text-center">
+                    <img src="/static/bootstrap-icons-1.11.1/list-check.svg" width="200" height="200" class="m-5"></img>
+                    <a href="{{ downloadCheckScript }}" download="{{ guide_name }}-CheckScript.sh">
+                        <button class="btn btn-primary btn-lg btn-block my-3">
+                            Download Check Script
+                        </button>
+                    </a>
+                </label>
+                <label class="mx-5 rounded my-3 text-center">
+                    <img src="/static/bootstrap-icons-1.11.1/tools.svg" width="200" height="200" class="m-5"></img>
+                    <a href="{{ downloadFixScript }}" download="{{ guide_name }}-FixScript.sh">
+                        <button class="btn btn-primary btn-lg btn-block my-3">
+                            Download Fix Script
+                        </button>
+                    </a>
+                </label>
+            </div>
+            <button>
+                <a href="/">Home</a>
+            </button>
+        </div>
     </body>
 </html>
+
+<style>
+    #uploadform {
+        border: 5px solid white;
+        width: 80%;
+        margin: auto;
+    }
+
+    input[type="file"], input[type="submit"] {
+        display: none;
+    }
+
+    label {
+        border: 2px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+
+</style>
