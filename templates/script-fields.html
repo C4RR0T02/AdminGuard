@@ -49,7 +49,6 @@
                                   Severity:
                                 </strong> 
                                 {{ stig_content.category_score }} &emsp; 
-                                
                               </p>
                             </div>
                             <div class="d-flex align-items-center gap-2 px-2">
@@ -109,13 +108,13 @@
                               <span>
                                 Command:  
                                 <code>
-                                  {{ check_commands.command }}
+                                  {{ check_commands.command|markdown }}
                                 </code>
                               </span>
                               {% for fields in check_commands.replacements %}
                                 <div class="d-flex">
-                                  <label for="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}-fix" data-fields="{{ fields }}" class="me-2 my-1">{{ fields }} :</label>
-                                  <input type="text" id="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}" name="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}-fix" style="flex:1" class="my-1" />
+                                  <label for="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}-check" data-fields="{{ fields }}" class="me-2 my-1">{{ fields }} :</label>
+                                  <input type="text" id="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}" name="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}-check" style="flex:1" class="my-1" />
                                   <hr>
                                 </div>
                               {% endfor %}
@@ -148,20 +147,20 @@
                       ruleDictionary = {};
                       
                       var checkbox = document.getElementsByName(stig_content.vuln_id + "-switch");
+
                       if (checkbox.checked == true) {
                         for (fix_commands in stig_content.fix_commands) {
                           for (fields in fix_commands.replacements) {
-                            userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + fix_commands.command + "-fix");
-                            userInputField.className += " required";
-                            
+                            userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + fix_commands.command);
+                            userInputField.required = true;
                           }
                         }
 
                         for (check_commands in stig_content.check_commands) {
                           replaceCheckDictionaryValues = {};
                           for (fields in check_commands.replacements) {
-                            userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + check_commands.command + "-check");
-                            userInputField.className += " required";
+                            userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + check_commands.command);
+                            userInputField.required = true;
                           }
                         }
                       }
