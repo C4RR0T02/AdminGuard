@@ -7,11 +7,6 @@ import os
 app = Flask(__name__)
 Markdown(app)
 
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
-app.config['UPLOAD_EXTENSIONS'] = ['.xml']
-
-
-
 guide_dictionary = {}
 form_data_rule_dictionary = {}
 
@@ -27,8 +22,8 @@ if not os.path.isdir(download_folder):
 
 app.config['upload_folder'] = upload_folder
 app.config['download_folder'] = download_folder
-
-
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+app.config['UPLOAD_EXTENSIONS'] = ['.xml']
 
 @app.route('/', methods=['GET'])
 def index():
@@ -77,7 +72,6 @@ def scriptFields(guide_name):
         for rule_data in form_data_dict.keys():
             rule_data_field = rule_data.split('-')
             if len(rule_data_field) <= 3:
-                # TODO: Add Logic to check for value if checked
                 if form_data_dict[rule_data] == 'on':
                     rule_vuln_id_list.append(rule_data_field[0] + "-" + rule_data_field[1])
             if len(rule_data_field) > 3:
@@ -123,7 +117,7 @@ def scriptDownload(guide_name):
         createScript(guide, user_input)
         downloadCheckScript = url_for('downloadScript', guide_name=guide_name, file='checkscript')
         downloadFixScript = url_for('downloadScript', guide_name=guide_name, file='fixscript')
-        return render_template('script-download.html', downloadFixScript = downloadFixScript, downloadCheckScript = downloadCheckScript)
+        return render_template('script-download.html', guide_name=guide_name, downloadFixScript = downloadFixScript, downloadCheckScript = downloadCheckScript)
     return render_template('script-download.html')
 
 @app.route('/script-generate/<guide_name>/download/<file>', methods=['GET'])
