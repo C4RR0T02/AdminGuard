@@ -5,28 +5,26 @@
         <title>AdminGuard</title>
         <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+				{# <script>
+					document.addEventListener("DOMContentLoaded", function () {
+						const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+						checkboxes.forEach(checkbox => {
+							checkbox.addEventListener('change', function () {
+								const vulnId = this.getAttribute('data-vuln-id');
+								const fields = document.querySelectorAll(`[id^="${vulnId}-"]`);
+
+								fields.forEach(field => {
+									field.required = this.checked;
+								});
+							});
+						});
+					});
+				</script> #}
     </head>
     <body class="bg-dark text-white">
         <div class="mt-5">
             <h1 class="text-center">Customize STIG Rules</h1>
-            <div class="container">
-              <div class="d-flex justify-content-center input-group my-4 width">
-                <!-- TODO: Look into implementing filtering system for rules or just scrap it and throw into backlog -->
-                <!-- <input type="text" class="form-control rounded me-2" placeholder="Search">
-                <select name="Severity" id="severity" class="form-control rounded me-2" onchange="checkValue(StigContentList)">
-                  <option value="All" selected>All</option>
-                  <option value="undefined">undefined</option>
-                  <option value="Very Low">Very Low</option>
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                  <option value="Very High">Very High</option>
-                  <option value="Extreme">Extreme</option>
-                </select>
-                <button type="button" class="btn btn-primary me-2">Search</button>
-                <button type="reset" value="Reset" class="btn btn-primary me-5">Reset Filter</button> -->
-              </div>
-            </div>
             <form id="stigEnableForm" method="POST" action="" enctype="multipart/form-data" onsubmit="onSubmit()">
               {% for stig_content in StigContentList %}
                 <div class="mt-2 mx-5">
@@ -56,8 +54,7 @@
                                 Enable:
                               </strong> 
                               <label class="switch">
-                                {# <input type="checkbox" name="{{ stig_content.vuln_id }}-switch"> #}
-                                <input type="checkbox" name="{{ stig_content.vuln_id }}-switch" checked>
+                                <input type="checkbox" name="{{ stig_content.vuln_id }}-switch" data-vuln-id="{{ stig_content.vuln_id }}" checked>
                                 <span class="slider round"></span>
                               </label>
                             </div>
