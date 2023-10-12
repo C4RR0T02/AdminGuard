@@ -237,7 +237,6 @@ run_command() {
 }
 """
 
-
     for vuln_id in user_input.keys():
         target_rule = guide.stig_rule_dict[vuln_id]
         for command_type in user_input[vuln_id].keys():
@@ -245,22 +244,35 @@ run_command() {
                 for check_rules, command_target in zip(user_input[vuln_id][command_type], target_rule.check_commands):
                     for command in check_rules:
                         if command == '':
-                            continue
+                            pass
                         if command_target.command == command:
                             replacement_dict = check_rules[command]
+                            for replacement_values in replacement_dict.values():
+                                if replacement_values == '':
+                                    return "Error: Replacement Values cannot be empty"
                             parsed_command = command_target.replaceCommand(replacement_dict)
                             check_script += "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
                             check_script += "run_command '" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+                        if command_target.command != command:
+                            check_script += "echo " + command_target.command + " >> check_script_logs.txt" + "\n"
+                            check_script += "run_command '" + command_target.command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+
             if command_type == "fix":
                 for fix_rules, command_target in zip(user_input[vuln_id][command_type], target_rule.fix_commands):
                     for command in fix_rules:
                         if command == '':
-                            continue
+                            pass
                         if command_target.command == command:
                             replacement_dict = fix_rules[command]
+                            for replacement_values in replacement_dict.values():
+                                if replacement_values == '':
+                                    return "Error: Replacement Values cannot be empty"
                             parsed_command = command_target.replaceCommand(replacement_dict)
                             fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
                             fix_script +="run_command '" +  parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+                        if command_target.command != command:
+                            fix_script += "echo " + command_target.command + " >> fix_script_logs.txt" + "\n"
+                            fix_script +="run_command '" +  command_target.command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split("\\")[-1]
 
@@ -291,6 +303,14 @@ run_command() {
 #         ],
 #         "fix": [
 #             {'sudo chgrp <group> <file>': {'<group>': 'yum', '<file>': 'install'}},
+#         ],    
+#     },
+#     "V-230222": {
+#         "check": [
+#             {'': {}},
+#         ],
+#         "fix": [
+#             {'': {}},
 #         ],    
 #     },
 # }
