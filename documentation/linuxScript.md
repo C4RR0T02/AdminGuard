@@ -4,8 +4,9 @@
 
 - Rule Name (title)
 - Vul ID (Group ID)
-- Rule ID ()
-- STIG ID ()
+- Rule ID (rule.id)
+- STIG ID (version)
+- Weight (rule.weight)
 - Severity (rule.severity)
 - Classification ()
 - Group Title (title)
@@ -111,21 +112,33 @@ Example:
 # Functions Available for Usage
 |Function|Purpose|
 |---|---|
-|getRequiredInput(rule_list)|Get all required input from user for checking and fixing|
-|createScriptFromRules(rules, user_check_input, user_fix_input, user_enable_list)|Script Generator|
-|parseRulesFromXml(filename)|Parse the XML file and calculate and store all required fields|
+|parseGuide(filename)|Parse the Linux STIG guide and create the Guide and StigRule object|
+|createScript(guide, user_input)|Create the script files for export based on user Input|
 
-# Class Functions `RuleInput`
+# Class Functions `Guide`
 |Function|Purpose|
 |---|---|
-|replaceUserInputOfCommand(self, command_list, user_input)||
+|__init__(self, guide_name, file_content, stig_rule_dict)|Create Guide objects|
+|__str__(self) -> str|Easily print out formatted Guide Objects|
 
 # Class Functions `StigRule`
 |Function|Purpose|
 |---|---|
-|calculateScore(self)|Calculate Severity Scoring and assign it back to the rule|
-|getCommands(self, field)|Get all the commands before checking for Regex|
+|__init__(self, rule_name, rule_title, vuln_id, rule_id, rule_weight, rule_severity, stig_id, rule_fix_text, rule_description, check_content)|Create StigRule objects|
+|_getRequiredFields(self, field)|Locate commands and extract out any field information where user inputs are required|
+|_calculateScore(self)|Calculate severity category score|
+|__str__(self) -> str|Easily print out formatted StigRules|
 
+# Class Functions `Command`
+|Function|Purpose|
+|---|---|
+|__init__(self, command, replacements)|Create Command objects|
+|replaceCommand(self, target_replacements)|Perform replacement of fields based on the user input parsed|
+|__repr__(self) -> str|Easily print out the data of the formatted Commands|
 
-## Resources
-https://www.guru99.com/manipulating-xml-with-python.html
+# Class Functions `RuleInput`
+|Function|Purpose|
+|---|---|
+|__init__(self, vuln_id, check_replacement, fix_replacement)||
+|__str__(self) -> str|Easily print out the formatted RuleInput|
+
