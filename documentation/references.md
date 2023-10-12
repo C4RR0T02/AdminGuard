@@ -3,20 +3,20 @@
 ## Icons
 https://cloudconvert.com/png-to-ico
 
-
 ## Python Flask
 https://code-maven.com/slides/python/flask-internal-redirect-parameters
 https://www.geeksforgeeks.org/redirecting-to-url-in-flask/
 https://www.codingninjas.com/studio/library/file-uploading-in-flask
 
-
-
 ## XML Manipulation
 https://www.guru99.com/manipulating-xml-with-python.html
 
-## Bash Script
+## Bash Scripting
 https://www.redhat.com/sysadmin/bash-error-handling
 
+## Powershell Scripting
+https://learn.microsoft.com/en-us/powershell/module/
+https://adamtheautomator.com/powershell-grep/
 
 ## WebUI
 https://getbootstrap.com/docs/5.3/getting-started/introduction/

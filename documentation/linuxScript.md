@@ -96,7 +96,8 @@
 
 ## Steps for Script
 
-1. Display all Ruling with the following
+1. User upload script
+2. Display all Ruling with the following
 
 Example: 
 
@@ -104,10 +105,10 @@ Example:
 |--|--|--|--|--|
 |V-230222|SV-230222r627750_rule|CAT II|More Information|Enable|
 
-2. Check if the settings are enabled or disabled
-3. Filter out the commands in the Check Text
-4. Add to the baseline command list
-5. Make the file downloadable
+3. Check if the settings are enabled or disabled
+4. Filter out the commands in the Check Text
+5. Add to the baseline command list
+6. Make the file downloadable
 
 # Functions Available for Usage
 |Function|Purpose|
