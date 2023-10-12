@@ -1,7 +1,3 @@
-<script>
-
-</script>
-
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,29 +5,27 @@
         <title>AdminGuard</title>
         <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+				{# <script>
+					document.addEventListener("DOMContentLoaded", function () {
+						const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+						checkboxes.forEach(checkbox => {
+							checkbox.addEventListener('change', function () {
+								const vulnId = this.getAttribute('data-vuln-id');
+								const fields = document.querySelectorAll(`[id^="${vulnId}-"]`);
+
+								fields.forEach(field => {
+									field.required = this.checked;
+								});
+							});
+						});
+					});
+				</script> #}
     </head>
     <body class="bg-dark text-white">
         <div class="mt-5">
             <h1 class="text-center">Customize STIG Rules</h1>
-            <div class="container">
-              <div class="d-flex justify-content-center input-group my-4 width">
-                <!-- TODO: Look into implementing filtering system for rules or just scrap it and throw into backlog -->
-                <!-- <input type="text" class="form-control rounded me-2" placeholder="Search">
-                <select name="Severity" id="severity" class="form-control rounded me-2" onchange="checkValue(StigContentList)">
-                  <option value="All" selected>All</option>
-                  <option value="undefined">undefined</option>
-                  <option value="Very Low">Very Low</option>
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                  <option value="Very High">Very High</option>
-                  <option value="Extreme">Extreme</option>
-                </select>
-                <button type="button" class="btn btn-primary me-2">Search</button>
-                <button type="reset" value="Reset" class="btn btn-primary me-5">Reset Filter</button> -->
-              </div>
-            </div>
-            <form method="POST" action="" enctype="multipart/form-data">
+            <form id="stigEnableForm" method="POST" action="" enctype="multipart/form-data" onsubmit="onSubmit()">
               {% for stig_content in StigContentList %}
                 <div class="mt-2 mx-5">
                   <div class="accordion">
@@ -53,7 +47,6 @@
                                   Severity:
                                 </strong> 
                                 {{ stig_content.category_score }} &emsp; 
-                                
                               </p>
                             </div>
                             <div class="d-flex align-items-center gap-2 px-2">
@@ -61,7 +54,7 @@
                                 Enable:
                               </strong> 
                               <label class="switch">
-                                <input type="checkbox" name="{{ stig_content.vuln_id }}" checked>
+                                <input type="checkbox" name="{{ stig_content.vuln_id }}-switch" data-vuln-id="{{ stig_content.vuln_id }}" checked>
                                 <span class="slider round"></span>
                               </label>
                             </div>
@@ -75,33 +68,54 @@
                           <br>
                           <strong>Vulnerability Description: </strong>
                           <br>
-                          {{ stig_content.rule_description }}
-                          <br>
+                          {{ stig_content.rule_description|markdown }}
                           <strong>Vulnerability Fix: </strong>
                           <br>
-                          {{ stig_content.rule_fix_text }}
+                          {{ stig_content.rule_fix_text|markdown }}
                           
                           {% for fix_commands in stig_content.fix_commands %}
-                            {% if fix_command == stig_content.fix_commands[0] %}
-                              <hr>
-                              <strong>Fields to replace: </strong>
-                            {% endif %}
-                            
-                            {% for fields in fix_commands.replacements %}
+                            {% if fix_commands.replacements|length >= 1 %}
                               <hr>
                               <strong>Fields to replace: </strong>
                               <br>
                               <span>
                                 Command:  
                                 <code>
-                                  {{ fix_commands.command }}
+                                  {{ fix_commands.command|markdown }}
                                 </code>
                               </span>
-                              <div class="d-flex">
-                                <label for="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}" data-fields="{{ fields }}" class="me-2">{{ fields }} :</label>
-                                <input type="text" id="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}" name="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}" style="flex:1" required />
-                              </div>
-                            {% endfor %}
+                              {% for fields in fix_commands.replacements %}
+                                <div class="d-flex">
+                                  <label for="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}-fix" data-fields="{{ fields }}" class="me-2 my-1">{{ fields }} :</label>
+                                  <input type="text" id="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}" name="{{ stig_content.vuln_id }}-{{ fields }}-{{ fix_commands.command }}-fix" style="flex:1" class="my-1" />
+                                </div>
+                                <hr>
+                              {% endfor %}
+                            {% endif %}
+                          {% endfor %}
+                          <strong>Vulnerability Fix Check: </strong>
+                          <br>
+                          {{ stig_content.check_content }}
+                          
+                          {% for check_commands in stig_content.check_commands %}
+                            {% if check_commands.replacements|length >= 1 %}
+                              <hr>
+                              <strong>Fields to replace: </strong>
+                              <br>
+                              <span>
+                                Command:  
+                                <code>
+                                  {{ check_commands.command|markdown }}
+                                </code>
+                              </span>
+                              {% for fields in check_commands.replacements %}
+                                <div class="d-flex">
+                                  <label for="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}-check" data-fields="{{ fields }}" class="me-2 my-1">{{ fields }} :</label>
+                                  <input type="text" id="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}" name="{{ stig_content.vuln_id }}-{{ fields }}-{{ check_commands.command }}-check" style="flex:1" class="my-1" />
+                                  <hr>
+                                </div>
+                              {% endfor %}
+                            {% endif %}
                           {% endfor %}
                         </div>
                       </div>
@@ -110,9 +124,48 @@
                 </div>
               {% endfor %}
               <div class="d-flex justify-content-center my-5">
-                <button type="submit" class="btn btn-primary">Generate Script</button>
+                <button type="submit" class="btn btn-primary" id="get-form-data">Generate Script</button>
+                <script>
+                  function submitForm() {
+                    document.getElementById("submit").className += " pe-none";
+                    document.getElementById("submit").innerHTML = 
+                    `<div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>`;
+                    enabledRulesinput = {};
+                    var stigContentList = [
+                      {% for stig_content in StigContentList %}
+                        "{{ stig_content.vuln_id }}"{% if not loop.last %},{% endif %}
+                      {% endfor %}
+                    ];
+                    for (stig_content in stigContentList) {
+                      checkRulesinput = [];
+                      fixRulesinput = [];
+                      ruleDictionary = {};
+                      
+                      var checkbox = document.getElementsByName(stig_content.vuln_id + "-switch");
+
+                      if (checkbox.checked == true) {
+                        for (fix_commands in stig_content.fix_commands) {
+                          for (fields in fix_commands.replacements) {
+                            userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + fix_commands.command);
+                            userInputField.required = true;
+                          }
+                        }
+
+                        for (check_commands in stig_content.check_commands) {
+                          replaceCheckDictionaryValues = {};
+                          for (fields in check_commands.replacements) {
+                            userInputField = document.getElementById(stig_content.vuln_id + "-" + fields + "-" + check_commands.command);
+                            userInputField.required = true;
+                          }
+                        }
+                      }
+                    }
+                  }
+                </script>
+              </div>
             </form>
-            
         </div>
     </body>
 </html>
