@@ -248,7 +248,7 @@ run_command() {
                         if command_target.command == command:
                             replacement_dict = check_rules[command]
                             for replacement_values in replacement_dict.values():
-                                if replacement_values == '':
+                                if len(replacement_values) < 1:
                                     return "Error: Replacement Values cannot be empty"
                             parsed_command = command_target.replaceCommand(replacement_dict)
                             check_script += "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
@@ -265,7 +265,7 @@ run_command() {
                         if command_target.command == command:
                             replacement_dict = fix_rules[command]
                             for replacement_values in replacement_dict.values():
-                                if replacement_values == '':
+                                if len(replacement_values) < 1:
                                     return "Error: Replacement Values cannot be empty"
                             parsed_command = command_target.replaceCommand(replacement_dict)
                             fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
@@ -327,5 +327,4 @@ run_command() {
 # guide = parseGuide("./script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml")
 
 # print(createScript(guide, user_input))
-# print(guide.stig_rule_dict["V-230309"].check_commands[1].replacements)
 # getRuleInput(guide)
