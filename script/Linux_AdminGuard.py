@@ -54,10 +54,12 @@ class StigRule:
         for field_line in field_split:
             field_text_to_fill = []
     
+            field_line = field_line.strip()
+
             if not field_line.startswith("$ "):
                 continue
 
-            field_command = field_line.replace("$ ", "").strip()
+            field_command = field_line.replace("$ ", "")
 
             if path_to_file_bracket_regex.findall(field_command):
                 for command in path_to_file_bracket_regex.findall(field_command):
@@ -202,6 +204,7 @@ def parseGuide(filename):
 
     return guide
 
+
 def createScript(guide, user_input):
     check_script = """#!/bin/bash
 mkdir AdminGuard
@@ -237,90 +240,75 @@ run_command() {
 }
 """
 
-    for vuln_id in user_input.keys():
-        target_rule = guide.stig_rule_dict[vuln_id]
-        for command_type in user_input[vuln_id].keys():
-            if command_type == "check":
-                for check_rules, command_target in zip(user_input[vuln_id][command_type], target_rule.check_commands):
-                    for command in check_rules:
-                        if command == '':
-                            pass
-                        if command_target.command == command:
-                            replacement_dict = check_rules[command]
-                            for replacement_values in replacement_dict.values():
-                                if len(replacement_values) < 1:
-                                    return "Error: Replacement Values cannot be empty"
-                            parsed_command = command_target.replaceCommand(replacement_dict)
-                            check_script += "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
-                            check_script += "run_command '" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
-                        if command_target.command != command:
-                            check_script += "echo " + command_target.command + " >> check_script_logs.txt" + "\n"
-                            check_script += "run_command '" + command_target.command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
-
-            if command_type == "fix":
-                for fix_rules, command_target in zip(user_input[vuln_id][command_type], target_rule.fix_commands):
-                    for command in fix_rules:
-                        if command == '':
-                            pass
-                        if command_target.command == command:
-                            replacement_dict = fix_rules[command]
-                            for replacement_values in replacement_dict.values():
-                                if len(replacement_values) < 1:
-                                    return "Error: Replacement Values cannot be empty"
-                            parsed_command = command_target.replaceCommand(replacement_dict)
-                            fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
-                            fix_script +="run_command '" +  parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
-                        if command_target.command != command:
-                            fix_script += "echo " + command_target.command + " >> fix_script_logs.txt" + "\n"
-                            fix_script +="run_command '" +  command_target.command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
-
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split("\\")[-1]
 
     output_folder = os.path.join(os.getcwd(),"out-files")
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
-    
-    with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.sh", "wb") as linux_check_script:
-        linux_check_script.write(check_script.encode())
-    with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh", "wb") as linux_fix_script:
-        linux_fix_script.write(fix_script.encode())
+
+    for vuln_id in user_input:
+        target_rule = guide.stig_rule_dict[vuln_id]
+
+        user_check_input = user_input[vuln_id]["check"]
+        for check_cmd_index, check_cmd in enumerate(target_rule.check_commands):
+            replacement_dict = user_check_input.get(check_cmd_index, None)
+            if not replacement_dict:
+                if check_cmd.replacements:
+                    raise Exception(f"Missing check replacement values for {check_cmd.command}")
+                parsed_command = check_cmd.command
+            else:
+                parsed_command = check_cmd.replaceCommand(replacement_dict)
+            
+            check_script = check_script + "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
+            check_script = check_script + "run_command '" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+        
+        with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.sh", "wb") as linux_check_script:
+            print(check_script)
+            linux_check_script.write(check_script.encode())
+
+
+    for vuln_id in user_input:
+        target_rule = guide.stig_rule_dict[vuln_id]
+
+        user_fix_input = user_input[vuln_id]["fix"]
+        for fix_cmd_index, fix_cmd in enumerate(target_rule.fix_commands):
+            replacement_dict = user_fix_input.get(fix_cmd_index, None)
+            if not replacement_dict:
+                if fix_cmd.replacements:
+                    raise Exception(f"Missing check replacement values for {fix_cmd.command}")
+                parsed_command = fix_cmd.command
+            else:
+                parsed_command = fix_cmd.replaceCommand(replacement_dict)
+
+            fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
+            fix_script +="run_command '" +  parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh", "wb") as linux_fix_script:
+            linux_fix_script.write(fix_script.encode())
+
+
+
 
 # Test replacement of commands from user input
 # user_input = {
 #     "V-230309": {
-#         "check": [
-#             {'sudo find [PART] -xdev -type f -perm -0002 -print [Test]': {'[PART]': 'yum', '[Test]': 'install'}},
-#             {'sudo grep <file> /home/*/.*': {'<file>': 'woo'}}
-#         ],
-#         "fix": [
-#             {'sudo find [PART] -xdev -type f -perm -0002 -print [Test]': {'[PART]': 'yum', '[Test]': 'install'}},
-#             {'sudo chmod 0755 <file>': {'<file>': 'woo'}},
-#         ],    
+#         "check": {
+#             1: {'[PART]': 'yum', '[Test]': 'install'},
+#             2: {'<file>': 'woo'},
+#         },
+#         "fix": {
+#             1: {'[PART]': 'yum', '[Test]': 'install'},
+#             2: {'<file>': 'woo'},
+#         },    
 #     },
 #     "V-230327": {
-#         "check": [
-#             {'': {}},
-#         ],
-#         "fix": [
-#             {'sudo chgrp <group> <file>': {'<group>': 'yum', '<file>': 'install'}},
-#         ],    
+#         "check": {},
+#         "fix": {
+#             0: {'<group>': 'yum', '<file>': 'install'}
+#         }, 
 #     },
 #     "V-230222": {
-#         "check": [
-#             {'': {}},
-#         ],
-#         "fix": [
-#             {'': {}},
-#         ],    
-#     },
-# }
-
-
-# Test with no user input
-# user_input = {
-#     "V-230222": {
-#         "check": [{'':{}}],
-#         "fix": [{'':{}}],    
+#         "check": {},
+#         "fix": {},    
 #     },
 # }
 

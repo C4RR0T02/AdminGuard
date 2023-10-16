@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file
 from flaskext.markdown import Markdown
+from wtforms import BooleanField, StringField, validators
+from wtforms.form import BaseForm
 from script.Linux_AdminGuard import *
+
 import os
 
 # Flask Server
@@ -41,75 +44,88 @@ def scriptGenerate():
             uploaded_file.save(upload_file_path)
             guide = parseGuide(upload_file_path)
             guide_dictionary[uploaded_file.filename.split('.')[0]] = guide
-            return redirect(url_for('scriptFields', guide_name=uploaded_file.filename.split('.')[0]))
+            return redirect(url_for('scriptFieldsGet', guide_name=uploaded_file.filename.split('.')[0]))
     return render_template('script-generate.html')
 
-@app.route('/script-generate/<guide_name>', methods=['GET', 'POST'])
-def scriptFields(guide_name):
-    guide = guide_dictionary.get(guide_name)
-    rule_list = []
-    for rule in guide.stig_rule_dict.values():
-        temp_rule_dict = {}
-        temp_rule_dict["rule_name"] = rule.rule_name
-        temp_rule_dict["rule_title"] = rule.rule_title
-        temp_rule_dict["vuln_id"] = rule.vuln_id
-        temp_rule_dict["rule_id"] = rule.rule_id
-        temp_rule_dict["stig_id"] = rule.stig_id
-        temp_rule_dict["rule_fix_text"] = rule.rule_fix_text
-        temp_rule_dict["rule_description"] = rule.rule_description
-        temp_rule_dict["check_content"] = rule.check_content
-        temp_rule_dict["category_score"] = rule.category_score
-        temp_rule_dict["check_commands"] = rule.check_commands
-        temp_rule_dict["fix_commands"] = rule.fix_commands
-        rule_list.append(temp_rule_dict)
-    if request.method == 'GET':
-        return render_template('script-fields.html', StigContentList=rule_list)
-    if request.method == 'POST':
-        form_data = request.form
-        form_data_dict = dict(form_data)
-        form_data_rule_list = []
-        rule_vuln_id_list = []
-        for rule_data in form_data_dict.keys():
-            rule_data_field = rule_data.split('-')
-            if len(rule_data_field) <= 3:
-                if form_data_dict[rule_data] == 'on':
-                    rule_vuln_id_list.append(rule_data_field[0] + "-" + rule_data_field[1])
-            if len(rule_data_field) > 3:
-                rule_vuln_id = rule_data_field[0] + "-" + rule_data_field[1]
-                rule_field_for_input = rule_data_field[2]
-                rule_command = rule_data_field[3:-1]
-                rule_action = rule_data_field[-1]
-                rule_user_input = form_data_dict[rule_data]
-                full_command = ""
-                for i, split_text in enumerate(rule_command):
-                    full_command += split_text
-                    if i < len(rule_command) - 1:
-                        full_command += "-"
-                if rule_vuln_id in rule_vuln_id_list:
-                    form_data_rule_list.append([rule_vuln_id, rule_field_for_input, full_command, rule_action, rule_user_input])
-        for rule in form_data_rule_list:
-            vuln_id = rule[0]
-            field_for_input = rule[1]
-            command = rule[2]
-            action = rule[3]
-            user_input = rule[4]
-            if vuln_id in form_data_rule_dictionary.keys():
-                if action in form_data_rule_dictionary[vuln_id].keys():
-                    replacements = form_data_rule_dictionary[vuln_id][action]
-                    for command_dictionary in replacements:
-                        if command in command_dictionary.keys():
-                            continue    
-                        else:
-                            replacements.append({command: {field_for_input: user_input}})
-                            form_data_rule_dictionary[vuln_id][action] = replacements
-                else:
-                    form_data_rule_dictionary[vuln_id][action] = [{command: {field_for_input: user_input}}]
-            else:
-                form_data_rule_dictionary[vuln_id] = {action: [{command: {field_for_input: user_input}}]}
-        return redirect(url_for('scriptDownload', guide_name=guide_name))
-    return render_template("script-fields.html")
+def enableCheck(enable_id):
+    def check(form, field):
+        if form[enable_id].data:
+            if not field.data:
+                raise validators.ValidationError('Field must be filled.')
+    return check
 
-@app.route('/script-generate/<guide_name>/download', methods=['GET', 'POST'])
+def createGuideForm(guide: Guide, formdata = None):
+    form_fields = dict()
+    for rule in guide.stig_rule_dict.values():
+        form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable", default=False)
+        for cmd_index, cmd in enumerate(rule.check_commands):
+            if not cmd.replacements:
+                continue
+            for replacement in cmd.replacements:
+                form_fields[f"{rule.vuln_id}.check.{cmd_index}.{replacement}"] = StringField(replacement, [enableCheck(f"{rule.vuln_id}.enable")])
+        
+        for cmd_index, cmd in enumerate(rule.fix_commands):
+            if not cmd.replacements:
+                continue
+            for replacement in cmd.replacements:
+                form_fields[f"{rule.vuln_id}.fix.{cmd_index}.{replacement}"] = StringField(replacement, [enableCheck(f"{rule.vuln_id}.enable")])
+
+    form = BaseForm(form_fields)
+    form.process(formdata)
+    return form
+
+@app.route('/script-generate/<guide_name>', methods=['GET'])
+def scriptFieldsGet(guide_name):
+    guide = guide_dictionary.get(guide_name)
+    if guide is None:
+        return "Guide not found", 404
+    
+    form = createGuideForm(guide)
+    return render_template('script-fields.html', enumerate=enumerate, guide=guide, form=form)
+
+@app.route('/script-generate/<guide_name>', methods=['POST'])
+def scriptFieldsPost(guide_name):
+    guide = guide_dictionary.get(guide_name)
+    if guide is None:
+        return "Guide not found", 404
+
+    form = createGuideForm(guide, request.form)
+    if not form.validate():
+        return render_template('script-fields.html', enumerate=enumerate, guide=guide, form=form)
+    
+    user_input = dict()
+    for key, value in form.data.items():
+        key_split = key.split('.')
+        vuln_id = key_split[0]
+        data_type = key_split[1]
+
+        if not form.data[f"{vuln_id}.enable"]:
+            continue
+
+        if vuln_id not in user_input:
+            user_input[vuln_id] = {"check": dict(), "fix": dict()}
+        
+        if data_type == "check":
+            check_dict = user_input[vuln_id]["check"]
+            cmd_index = int(key_split[2])
+            replacement = key_split[3]
+            if cmd_index not in check_dict:
+                check_dict[cmd_index] = dict()
+            check_dict[cmd_index][replacement] = value
+
+        if data_type == "fix":
+            fix_dict = user_input[vuln_id]["fix"]
+            cmd_index = int(key_split[2])
+            replacement = key_split[3]
+            if cmd_index not in fix_dict:
+                fix_dict[cmd_index] = dict()
+            fix_dict[cmd_index][replacement] = value
+
+    createScript(guide, user_input)
+
+    return redirect(url_for('scriptDownload', guide_name=guide_name))
+
+@app.route('/script-generate/<guide_name>/download', methods=['GET'])
 def scriptDownload(guide_name):
     guide = guide_dictionary.get(guide_name)
     user_input = form_data_rule_dictionary
@@ -124,10 +140,13 @@ def scriptDownload(guide_name):
 def downloadScript(guide_name, file):
     if file == 'checkscript':
         checkscript = os.path.join(download_folder, guide_name + '-CheckScript.sh')
-        print(checkscript)
+        if not os.path.isfile(checkscript):
+            return "Check Script not found", 404
         return send_file(checkscript, as_attachment=True)
     if file == 'fixscript':
         fixscript = os.path.join(download_folder, guide_name + '-FixScript.sh')
+        if not os.path.isfile(fixscript):
+            return "Fix Script not found", 404
         return send_file(fixscript, as_attachment=True)
 
 @app.route('/template-generate', methods=['GET'])
