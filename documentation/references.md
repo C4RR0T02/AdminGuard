@@ -30,6 +30,7 @@ https://www.redhat.com/sysadmin/bash-error-handling
 https://learn.microsoft.com/en-us/powershell/module/
 https://adamtheautomator.com/powershell-grep/
 https://shellgeek.com/command-to-open-active-directory-users-and-computers/
+https://stackoverflow.com/questions/18780956/suppress-console-output-in-powershell
 
 ## WebUI
 https://getbootstrap.com/docs/5.3/getting-started/introduction/
