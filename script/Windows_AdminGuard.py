@@ -3,6 +3,10 @@ from bs4 import BeautifulSoup
 from urllib.parse import unquote
 import math
 import os
+import re
+
+# Find any text between square brackets
+square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
 
 # Classes
 
@@ -28,34 +32,36 @@ class StigRule:
         self.rule_description = rule_description
         self.check_content = check_content
         self.category_score = self._calculateScore()
-        # self.check_commands = self._getRequiredFields(self.check_content)
-        # self.fix_commands = self._getRequiredFields(self.rule_fix_text)
+        self.check_commands = self._getRequiredFields(self.check_content)
+        self.fix_commands = self._getRequiredFields(self.rule_fix_text)
 
     def _getRequiredFields(self, field):
         command_list = []
+        powershell_command_list = getPowerShellCommands()
         
         field_split = field.split("\n")
         for field_line in field_split:
-            field_text_to_fill = []
-    
-            if not field_line.startswith('Open "'):
-                pass
+            field_command = ""
 
-            if not field_line.startswith('Enter "'):
-                pass
+            if field_line.startswith('Enter "'):
+                if not 'Enter "q" at the' in field_line:
+                    field_command = field_line.replace('Enter "', "").strip()
+                    field_command = field_command.replace('"', "").strip()
+                    if field_command.endswith('.'):
+                        field_command = field_command[:-1]
 
-            if not field_line.startswith('Enter "'):
-                pass
-
-            field_command = field_line.replace("$ ", "").strip()
-
-            
-
-            new_command = Command(field_command, field_text_to_fill)
+            for powershell_command in powershell_command_list:
+                if powershell_command.startswith("# "):
+                    continue
+                if field_line.startswith(powershell_command):
+                    field_command = field_line.strip()
+                    if field_command.endswith('.'):
+                        field_command = field_command[:-1]
+                    
+            new_command = Command(field_command, "")
             command_list.append(new_command)
 
         return command_list
-  
 
     def _calculateScore(self):
         severity_Dictionary = {
@@ -92,6 +98,20 @@ class StigRule:
     def __str__(self) -> str:
         return f"{str(self.rule_name)} - {str(self.rule_title)} - {str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_weight)} - {str(self.rule_severity)} - {str(self.stig_id)} - {str(self.rule_fix_text)} - {str(self.rule_description)} - {str(self.check_content)} - {str(self.category_score)}"
 
+class Command:
+    def __init__(self, command, replacements):
+        self.command = command
+        self.replacements = replacements
+
+    def replaceCommand(self):
+        if self.replacements == "":
+            return self.command
+        else:
+            new_command = self.replacements
+        return new_command
+    
+    def __repr__(self) -> str:
+        return f"Command({str(self.command)} - {str(self.replacements)})"
 
 def parseGuide(filename):
     # Defining Variables
@@ -144,18 +164,85 @@ def parseGuide(filename):
     
     # Create Guide Object
     guide = Guide(filename, group_id_tags, rule_dictionary)
-
     return guide
+
+def getPowerShellCommands():
+    current_directory = os.getcwd()
+    filepath = os.path.join(current_directory, 'script\powershell_commands.txt')
+    with open(filepath, 'r', encoding='utf-8') as powershell_command_file:
+        powershell_commands = powershell_command_file.read().splitlines()
+    return powershell_commands
+
+def createScript(guide, user_input):
+
+    check_script = """mkdir AdminGuard | out-null
+cd AdminGuard
+New-Item -Name 'check_script_logs.txt' -ItemType 'file' | out-null
+
+function run_command {
+    param (
+        [string]$cmd,
+        [string]$description
+    )
+
+    $output = Invoke-Expression $cmd 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Error while running $description"
+        "Error while running $description" | Out-File -Append -FilePath "error_logs.txt"
+    }
+}
+"""
+
+    fix_script = """mkdir AdminGuard | out-null
+cd AdminGuard
+New-Item -Name 'fix_script_logs.txt' -ItemType 'file' | out-null
+
+function run_command {
+    param (
+        [string]$cmd,
+        [string]$description
+    )
+
+    $output = Invoke-Expression $cmd 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Error while running $description"
+        "Error while running $description" | Out-File -Append -FilePath "error_logs.txt"
+    }
+}
+"""
+
+    
+
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split("\\")[-1]
+
+    output_folder = os.path.join(os.getcwd(),"out-files")
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    
+    with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.sh", "wb") as linux_check_script:
+        linux_check_script.write(check_script.encode())
+    with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh", "wb") as linux_fix_script:
+        linux_fix_script.write(fix_script.encode())
 
 
 # Test replacement of commands from user input
-
+user_input = {
+    
+}
 
 
 # Test with no user input
+user_input = {
+    
+}
+
 
 
 guide = parseGuide("./script/testXmlFiles/U_MS_Windows_Server_2022_STIG_V1R3_Manual-xccdf.xml")
 
-for rule in guide.stig_rule_dict:
-    print(guide.stig_rule_dict[rule])
+createScript(guide, user_input)
+
+# for rule in guide.stig_rule_dict:
+#     guide.stig_rule_dict[rule].check_commands
+#     guide.stig_rule_dict[rule].fix_commands
+
