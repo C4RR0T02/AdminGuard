@@ -1,5 +1,10 @@
 # Reference Links
 
+## STIG Guide
+https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R11_STIG.zip
+https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_MS_Windows_Server_2022_V1R3_STIG.zip 
+https://public.cyber.mil/stigs/srg-stig-tools/ 
+
 ## Icons
 https://cloudconvert.com/png-to-ico
 
@@ -8,8 +13,15 @@ https://code-maven.com/slides/python/flask-internal-redirect-parameters
 https://www.geeksforgeeks.org/redirecting-to-url-in-flask/
 https://www.codingninjas.com/studio/library/file-uploading-in-flask
 
+## REGEX
+https://docs.python.org/3/library/re.html
+https://regex-generator.olafneumann.org/?sampleText=&flags=Pi
+https://regex101.com/r/NYVFkU/1
+
 ## XML Manipulation
 https://www.guru99.com/manipulating-xml-with-python.html
+https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+https://www.digitalocean.com/community/tutorials/python-read-file-open-write-delete-copy
 
 ## Bash Scripting
 https://www.redhat.com/sysadmin/bash-error-handling
@@ -17,6 +29,7 @@ https://www.redhat.com/sysadmin/bash-error-handling
 ## Powershell Scripting
 https://learn.microsoft.com/en-us/powershell/module/
 https://adamtheautomator.com/powershell-grep/
+https://shellgeek.com/command-to-open-active-directory-users-and-computers/
 
 ## WebUI
 https://getbootstrap.com/docs/5.3/getting-started/introduction/

@@ -98,6 +98,12 @@
 
 ```
 
+## Output File
+
+```ps1
+append "| Out-File [file/path]"
+```
+
 ## Steps for Script
 
 1. User upload script and commands of powershell on their device
