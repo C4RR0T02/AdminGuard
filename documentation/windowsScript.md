@@ -98,6 +98,27 @@
 
 ```
 
+### Split English from CLI Command
+
+```py
+array = ['Enter "Get-AdUser -Identity [application account name] -Properties PasswordLastSet | FT Name, PasswordLastSet", where [application account name] is the name of the manually managed application/service account.',"Enter 'Get-AdUser -Identity [application account name] -Properties PasswordLastSet | FT Name, PasswordLastSet', where [application account name] is the name of the manually managed application/service account."]
+
+
+for field_line in array:
+  if field_line.startswith('Enter "') or field_line.startswith("Enter '"):
+    if not 'Enter "q" at the' in field_line:
+      field_command = field_line.replace('Enter "', "").replace("Enter '", "").strip()
+      line_end_index = field_command.rfind('"')
+      if line_end_index != -1:
+        field_command = field_command[:line_end_index]
+        print(field_command)
+      line_end_index = field_command.rfind("'")
+      if line_end_index != -1:
+        field_command = field_command[:line_end_index]
+        print(field_command)
+
+```
+
 ## Output File
 
 ```ps1

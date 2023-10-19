@@ -23,6 +23,10 @@ https://www.guru99.com/manipulating-xml-with-python.html
 https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 https://www.digitalocean.com/community/tutorials/python-read-file-open-write-delete-copy
 
+## String Manipulation
+https://www.w3schools.com/python/ref_string_rfind.asp
+
+
 ## Bash Scripting
 https://www.redhat.com/sysadmin/bash-error-handling
 
