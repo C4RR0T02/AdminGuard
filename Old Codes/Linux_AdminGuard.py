@@ -322,21 +322,3 @@ rule_input_list = getUserInputFromSite(user_check_input, user_fix_input, user_en
 
 createScriptFromRules(guide.stig_rule_list, rule_input_list)
 
-# Links to external sites used
-
-# PYTHON DOCUMENTATIONS
-# XML Manipulation - https://www.crummy.com/software/BeautifulSoup/bs4/doc/
-# File Manipulation - https://www.digitalocean.com/community/tutorials/python-read-file-open-write-delete-copy
-
-# REGEX
-# Regex - https://docs.python.org/3/library/re.html
-# Regex Generator - https://regex-generator.olafneumann.org/?sampleText=&flags=Pi
-# Regex Checker - https://regex101.com/r/NYVFkU/1
-
-# CHATGPT
-# ChatGPT - https://chat.openai.com/
-
-# STIG
-# STIG Red Hat Enterprise Linux 8 STIG - Ver 3, Rel 12 - https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R11_STIG.zip
-# STIG Windows Server 2022 - Ver 1, Rel 3 - https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_MS_Windows_Server_2022_V1R3_STIG.zip 
-# STIG Viewer - https://public.cyber.mil/stigs/srg-stig-tools/ 

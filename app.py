@@ -35,6 +35,7 @@ def index():
 @app.route('/script-generate', methods=['GET','POST'])
 def scriptGenerate():
     if request.method == 'POST':
+        selected_guide_type = request.form.get('guide_type', default=None)
         uploaded_file = request.files['file']
         if uploaded_file.filename != '':
             file_ext = os.path.splitext(uploaded_file.filename)[1]
@@ -44,7 +45,9 @@ def scriptGenerate():
             uploaded_file.save(upload_file_path)
             guide = parseGuide(upload_file_path)
             guide_dictionary[uploaded_file.filename.split('.')[0]] = guide
-            return redirect(url_for('scriptFieldsGet', guide_name=uploaded_file.filename.split('.')[0]))
+            guide_dictionary["guide_type"] = selected_guide_type
+            return redirect(url_for('scriptFields', guide_name=uploaded_file.filename.split('.')[0]))
+
     return render_template('script-generate.html')
 
 def enableCheck(enable_id):
