@@ -12,7 +12,17 @@
                 `<div class="spinner-border" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>`;
+
+                const windowsRadio = document.getElementById('windows');
+                const linuxRadio = document.getElementById('linux');
+
+                if (!windowsRadio.checked && !linuxRadio.checked) {
+                    alert('Please select a guide type (Windows or Linux).');
+                    return false;
+                }
+                return true;
             }
+
         </script>
     </head>
     <body class="bg-dark text-white">
@@ -22,23 +32,51 @@
             <form id="uploadform" class="mt-5 text-left rounded" method="POST" action="" enctype="multipart/form-data" accept=".xml" onsubmit="onSubmit()">
                 <h1 class="text-center my-3">Upload STIG File</h1>
                 <div class="d-flex flex-column">
+                    <label class="mx-5 rounded my-3 text-center">
+                        <div class="mx-5 pt-3 d-flex flex-row gap-3 justify-content-center fs-4">
+                            <label class="container" style="border: none;">
+                                <input type="radio" id="windows" name="guide_type" value="Windows">
+                                <span class="checkmark"></span>
+                                <span>Windows</span>
+                            </label>
+                            <label class="container" style="border: none;">
+                                <input type="radio" id="linux" name="guide_type" value="Linux">
+                                <span class="checkmark"></span>
+                                <span>Linux</span>
+                            </label>
+                        </div>
+                    </label>
                     <label class="mx-5 rounded my-3 text-center" for="file-input-btn">
                         <img src="/static/bootstrap-icons-1.11.1/cloud-arrow-up-fill.svg" width="250" height="250"></img>
                         <input id="file-input-btn" type="file" name="file" />
                         <br>
-                        <span id="file-chosen" class="fs-3" onclick="getFileName()">No file chosen</span>
+                        <span id="file-chosen" class="fs-3"">No file chosen</span>
                     </label>
                     <script>
+
+                        function setSelectedGuideType() {
+                            var selectedRadio = document.querySelector('input[name="guide_type"]:checked');
+                            if (selectedRadio) {
+                                document.getElementById('selected_guide_type').value = selectedRadio.value;
+                            }
+                        }
+
                         const fileButton = document.getElementById('file-input-btn');
 
                         const fileChosen = document.getElementById('file-chosen');
 
                         fileButton.addEventListener('change', function(){
-                            fileChosen.textContent = this.files[0].name
+                            if (this.files.length > 0) {
+                                fileChosen.textContent = this.files[0].name;
+                            } else {
+                                fileChosen.textContent = "No file chosen";
+                            }
                         })
+
                     </script>
                     <label class="text-white mx-5 mt-3 mb-5 rounded text-center fs-3" id="submit">
-                        <input type="submit" />
+                        <input type="hidden" id="selected_guide_type" name="selected_guide_type" value=setSelectedGuideType()>
+                        <input type="submit"  />
                         Upload File
                     </label>
                 </div>
@@ -63,6 +101,64 @@
         display: inline-block;
         padding: 6px 12px;
         cursor: pointer;
+    }
+
+    .container {
+        display: block;
+        position: relative;
+        padding-left: 35px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-size: 22px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .container input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 10;
+        left: 180;
+        height: 25px;
+        width: 25px;
+        background-color: #eee;
+        border-radius: 50%;
+    }
+
+    .container:hover input ~ .checkmark {
+        background-color: #ccc;
+    }
+
+    .container input:checked ~ .checkmark {
+        background-color: #2196F3;
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    .container input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    .container .checkmark:after {
+        top: 9px;
+        left: 9px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: white;
     }
 
 </style>
