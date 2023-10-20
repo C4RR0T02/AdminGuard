@@ -12,6 +12,7 @@ https://cloudconvert.com/png-to-ico
 https://code-maven.com/slides/python/flask-internal-redirect-parameters
 https://www.geeksforgeeks.org/redirecting-to-url-in-flask/
 https://www.codingninjas.com/studio/library/file-uploading-in-flask
+https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
 
 ## REGEX
 https://docs.python.org/3/library/re.html
@@ -49,6 +50,7 @@ https://getbootstrap.com/docs/5.3/utilities/position/
 ## Script-generate Page
 https://www.geeksforgeeks.org/how-to-upload-file-in-python-flask/
 https://www.encodedna.com/javascript/disable-submit-button-after-first-click-using-javascript.htm
+https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
 
 ## Script-fields Page
 https://www.w3schools.com/howto/howto_css_switch.asp
