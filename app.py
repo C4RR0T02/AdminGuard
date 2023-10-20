@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 from flaskext.markdown import Markdown
 from wtforms import BooleanField, StringField, validators
 from wtforms.form import BaseForm
-from script.Linux_AdminGuard import *
+from script.AdminGuard import Guide, parseGuide
+from script.Linux_AdminGuard import linuxCreateScript
+from script.Windows_AdminGuard import windowsCreateScript
 
 import os
 
@@ -46,7 +48,7 @@ def scriptGenerate():
             guide = parseGuide(upload_file_path)
             guide_dictionary[uploaded_file.filename.split('.')[0]] = guide
             guide_dictionary["guide_type"] = selected_guide_type
-            return redirect(url_for('scriptFields', guide_name=uploaded_file.filename.split('.')[0]))
+            return redirect(url_for('scriptFieldsGet', guide_name=uploaded_file.filename.split('.')[0]))
 
     return render_template('script-generate.html')
 
@@ -124,16 +126,16 @@ def scriptFieldsPost(guide_name):
                 fix_dict[cmd_index] = dict()
             fix_dict[cmd_index][replacement] = value
 
-    createScript(guide, user_input)
+    if guide_dictionary["guide_type"] == "Windows":
+        windowsCreateScript(guide, user_input)
+    elif guide_dictionary["guide_type"] == "Linux":
+        linuxCreateScript(guide, user_input)
 
     return redirect(url_for('scriptDownload', guide_name=guide_name))
 
 @app.route('/script-generate/<guide_name>/download', methods=['GET'])
 def scriptDownload(guide_name):
-    guide = guide_dictionary.get(guide_name)
-    user_input = form_data_rule_dictionary
     if request.method == 'GET':
-        createScript(guide, user_input)
         downloadCheckScript = url_for('downloadScript', guide_name=guide_name, file='checkscript')
         downloadFixScript = url_for('downloadScript', guide_name=guide_name, file='fixscript')
         return render_template('script-download.html', guide_name=guide_name, downloadFixScript = downloadFixScript, downloadCheckScript = downloadCheckScript)
