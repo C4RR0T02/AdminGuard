@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 from flaskext.markdown import Markdown
 from wtforms import BooleanField, StringField, validators
 from wtforms.form import BaseForm
-from script.Linux_AdminGuard import *
+from script.AdminGuard import *
 
 import os
 
@@ -43,11 +43,12 @@ def scriptGenerate():
                 return "Invalid file type - XML files only", 400
             upload_file_path = os.path.join(app.config['upload_folder'], uploaded_file.filename)
             uploaded_file.save(upload_file_path)
-            guide = parseGuide(upload_file_path)
-            guide_dictionary[uploaded_file.filename.split('.')[0]] = guide
-            guide_dictionary["guide_type"] = selected_guide_type
-            return redirect(url_for('scriptFields', guide_name=uploaded_file.filename.split('.')[0]))
-
+            guide = parseGuide(upload_file_path, selected_guide_type)
+            guide_name = uploaded_file.filename.split('.')[0]
+            guide_dictionary[guide_name] = dict()
+            guide_dictionary[guide_name]["guide_content"] = guide
+            guide_dictionary[guide_name]["guide_type"] = selected_guide_type
+            return redirect(url_for('scriptFieldsGet', guide_name=uploaded_file.filename.split('.')[0]))
     return render_template('script-generate.html')
 
 def enableCheck(enable_id):
@@ -79,19 +80,19 @@ def createGuideForm(guide: Guide, formdata = None):
 
 @app.route('/script-generate/<guide_name>', methods=['GET'])
 def scriptFieldsGet(guide_name):
-    guide = guide_dictionary.get(guide_name)
+    guide_details = guide_dictionary.get(guide_name)
+    guide= guide_details.get("guide_content")
     if guide is None:
         return "Guide not found", 404
-    
     form = createGuideForm(guide)
     return render_template('script-fields.html', enumerate=enumerate, guide=guide, form=form)
 
 @app.route('/script-generate/<guide_name>', methods=['POST'])
 def scriptFieldsPost(guide_name):
-    guide = guide_dictionary.get(guide_name)
+    guide_details = guide_dictionary.get(guide_name)
+    guide= guide_details.get("guide_content")
     if guide is None:
         return "Guide not found", 404
-
     form = createGuideForm(guide, request.form)
     if not form.validate():
         return render_template('script-fields.html', enumerate=enumerate, guide=guide, form=form)
@@ -123,17 +124,17 @@ def scriptFieldsPost(guide_name):
             if cmd_index not in fix_dict:
                 fix_dict[cmd_index] = dict()
             fix_dict[cmd_index][replacement] = value
-
-    createScript(guide, user_input)
+    print(guide_details.get("guide_type"))
+    if guide_details.get("guide_type") == "Windows":
+        windowsCreateScript(guide, user_input)
+    elif guide_details.get("guide_type") == "Linux":
+        linuxCreateScript(guide, user_input)
 
     return redirect(url_for('scriptDownload', guide_name=guide_name))
 
 @app.route('/script-generate/<guide_name>/download', methods=['GET'])
 def scriptDownload(guide_name):
-    guide = guide_dictionary.get(guide_name)
-    user_input = form_data_rule_dictionary
     if request.method == 'GET':
-        createScript(guide, user_input)
         downloadCheckScript = url_for('downloadScript', guide_name=guide_name, file='checkscript')
         downloadFixScript = url_for('downloadScript', guide_name=guide_name, file='fixscript')
         return render_template('script-download.html', guide_name=guide_name, downloadFixScript = downloadFixScript, downloadCheckScript = downloadCheckScript)
@@ -141,13 +142,23 @@ def scriptDownload(guide_name):
 
 @app.route('/script-generate/<guide_name>/download/<file>', methods=['GET'])
 def downloadScript(guide_name, file):
+    guide_details = guide_dictionary.get(guide_name)
+    guide_type = guide_details["guide_type"]
+
+    if guide_type == "Linux":
+        file_extension = ".sh"
+    elif guide_type == "Windows":
+        file_extension = ".ps1"
+    else:
+        file_extension = ""
+
     if file == 'checkscript':
-        checkscript = os.path.join(download_folder, guide_name + '-CheckScript.sh')
+        checkscript = os.path.join(download_folder, guide_name + '-CheckScript' + file_extension)
         if not os.path.isfile(checkscript):
             return "Check Script not found", 404
         return send_file(checkscript, as_attachment=True)
     if file == 'fixscript':
-        fixscript = os.path.join(download_folder, guide_name + '-FixScript.sh')
+        fixscript = os.path.join(download_folder, guide_name + '-FixScript' + file_extension)
         if not os.path.isfile(fixscript):
             return "Fix Script not found", 404
         return send_file(fixscript, as_attachment=True)
