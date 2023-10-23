@@ -55,6 +55,7 @@ https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
 ## Script-fields Page
 https://www.w3schools.com/howto/howto_css_switch.asp
 https://getbootstrap.com/docs/5.3/components/accordion/
+https://wtforms.readthedocs.io/en/3.1.x/validators/#built-in-validators
 
 ## Script-download Page
 https://dev.to/grahammorby/let-users-download-files-in-flask-5gjg
