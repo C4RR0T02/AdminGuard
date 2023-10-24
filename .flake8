@@ -1,0 +1,14 @@
+[flake8]
+ignore =
+    D203,
+    # Line break before / after binary operator
+    W503, W504,
+    # Long lines
+    E501
+    E251
+exclude =
+    .git,
+    setup.py
+    __pycache__
+    env
+max-complexity = 10
