@@ -1,0 +1,131 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <title>AdminGuard</title>
+        <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    </head>
+    <body class="bg-dark text-white">
+        <div class="mt-5">
+            <h1 class="text-center mb-5">Customize STIG Rules</h1>
+            <form id="stigEnableForm" method="POST" action="" enctype="multipart/form-data" onsubmit="onSubmit()">
+              {% for rule in guide.stig_rule_dict.values() %}
+                <div class="mt-2 mx-5">
+                  <div class="accordion">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ rule.vuln_id }}" aria-expanded="true" aria-controls="collapse-{{ rule.vuln_id }}">
+                          <div class="d-flex justify-content-between w-100">
+                            <div class="d-flex">
+                              <p class="m-3">
+                                <strong>
+                                  Vulnerability ID:
+                                </strong> 
+                                {{ rule.vuln_id }} &emsp; 
+                                <strong>
+                                  Rule ID:
+                                </strong> 
+                                {{ rule.rule_id }} &emsp; 
+                                <strong>
+                                  Severity:
+                                </strong> 
+                                {{ rule.category_score }} &emsp; 
+                              </p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 px-2">
+                              <strong>
+                                Enable:
+                              </strong> 
+                              <div class="form-check form-switch">
+                                {{ form[rule.vuln_id ~ ".enable"](class_="form-check-input") }}
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      </h2>
+                      <div id="collapse-{{ rule.vuln_id }}" class="accordion-collapse collapse show" data-bs-parent="#{{ rule.vuln_id }}accordion">
+                        <div class="accordion-body">
+                          <strong>Title: </strong>
+                          {{ rule.rule_title }}
+                          <br>
+                          <strong>Vulnerability Description: </strong>
+                          <br>
+                          {{ rule.rule_description }}
+                          <strong>Vulnerability Fix: </strong>
+                          <br>
+                          {{ rule.rule_fix_text|safe }}
+                          
+                          {% for index, fix_commands in enumerate(rule.fix_commands) %}
+                            {% if fix_commands.replacements|length >= 1 %}
+                              <hr>
+                              <strong>Fields to replace: </strong>
+                              <br>
+                              <span>
+                                Command:  
+                                <code>
+                                  {{ fix_commands.command|safe }}
+                                </code>
+                              </span>
+                              {% for field in fix_commands.replacements %}
+                              {% set field_id = rule.vuln_id ~ ".fix." ~ index ~ "." ~ field %}
+                                <div class="d-flex">
+                                  {{ form[field_id].label(class_="col-1 col-form-label") }}
+                                  <div class="flex-fill">
+                                    {{ form[field_id](class_="form-control" ~ (" is-invalid" if form[field_id].errors else "")) }}
+                                    {% if form[field_id].errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form[field_id].errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                                <hr>
+                              {% endfor %}
+                            {% endif %}
+                          {% endfor %}
+                          <strong>Vulnerability Check: </strong>
+                          <br>
+                          {{ rule.check_content|safe }}
+                          
+                          {% for index, check_commands in enumerate(rule.check_commands) %}
+                            {% if check_commands.replacements|length >= 1 %}
+                              <hr>
+                              <strong>Fields to replace: </strong>
+                              <br>
+                              <span>
+                                Command:  
+                                <code>
+                                  {{ check_commands.command|safe }}
+                                </code>
+                              </span>
+                              {% for field in check_commands.replacements %}
+                              {% set field_id = rule.vuln_id ~ ".check." ~ index ~ "." ~ field %}
+                                <div class="d-flex">
+                                  {{ form[field_id].label(class_="col-1 col-form-label") }}
+                                  <div class="flex-fill">
+                                    {{ form[field_id](class_="form-control" ~ (" is-invalid" if form[field_id].errors else "")) }}
+                                    {% if form[field_id].errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form[field_id].errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                  </div>
+                                </div>
+                                <hr>
+                              {% endfor %}
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <div class="d-flex justify-content-center my-5">
+                <button type="submit" class="btn btn-primary" id="get-form-data">Generate Script</button>
+              </div>
+            </form>
+        </div>
+    </body>
+</html>

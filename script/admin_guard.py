@@ -9,7 +9,8 @@ import re
 square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
 # Find any text between slashes matching /path/to/file
 path_to_file_regex = re.compile(r"\/path\/to\/file", re.IGNORECASE)
-path_to_file_bracket_regex = re.compile(r"/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/", re.IGNORECASE)
+path_to_file_bracket_regex = re.compile(
+    r"/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/", re.IGNORECASE)
 # Find any text between angle brackets
 angle_bracket_regex = re.compile(r"<[^>]+>", re.IGNORECASE)
 # Find any text which contain a slash
@@ -20,7 +21,9 @@ underscore_regex = re.compile(r"_", re.IGNORECASE)
 caret_regex = re.compile(r"\^", re.IGNORECASE)
 not_regex_regex = re.compile(r"[a-zA-Z]{1}", re.IGNORECASE)
 
+
 class Guide:
+
     def __init__(self, guide_name, file_content, stig_rule_dict, guide_type):
         self.guide_name = guide_name
         self.file_content = file_content
@@ -30,8 +33,12 @@ class Guide:
     def __str__(self) -> str:
         return f"{str(self.guide_name)} - {str(self.file_content)} - {str(self.stig_rule_dict)}"
 
+
 class StigRule:
-    def __init__(self, rule_name, rule_title, vuln_id, rule_id, rule_weight, rule_severity, stig_id, rule_fix_text, rule_description, check_content):
+
+    def __init__(self, rule_name, rule_title, vuln_id, rule_id, rule_weight,
+                 rule_severity, stig_id, rule_fix_text, rule_description,
+                 check_content):
         self.rule_name = rule_name
         self.rule_title = rule_title
         self.vuln_id = vuln_id
@@ -52,7 +59,7 @@ class StigRule:
             field_split = field.split("\n")
             for field_line in field_split:
                 field_text_to_fill = []
-        
+
                 field_line = field_line.strip()
 
                 if not field_line.startswith("$ "):
@@ -61,7 +68,8 @@ class StigRule:
                 field_command = field_line.replace("$ ", "")
 
                 if path_to_file_bracket_regex.findall(field_command):
-                    for command in path_to_file_bracket_regex.findall(field_command):
+                    for command in path_to_file_bracket_regex.findall(
+                            field_command):
                         field_text_to_fill.append(command)
                 else:
                     for command in square_bracket_regex.findall(field_command):
@@ -70,37 +78,38 @@ class StigRule:
 
                 for command in path_to_file_regex.findall(field_command):
                     field_text_to_fill.append(command)
-                    
+
                 for command in angle_bracket_regex.findall(field_command):
                     field_text_to_fill.append(command)
 
                 new_command = Command(field_command, field_text_to_fill)
                 command_list.append(new_command)
             return command_list
-        
+
         if type == "Windows":
             command_list = []
             powershell_command_list = getPowerShellCommands()
-            
+
             field_split = field.split("\n")
             for field_line in field_split:
                 field_command = ""
                 field_text_to_fill = []
 
-                if not field_line.startswith('Enter "') or field_line.startswith("Enter '"):
+                if not field_line.startswith(
+                        'Enter "') or field_line.startswith("Enter '"):
                     continue
 
-                if field_line.startswith('Enter "') or field_line.startswith("Enter '"):
+                if field_line.startswith('Enter "') or field_line.startswith(
+                        "Enter '"):
                     if not 'Enter "q" at the' in field_line:
-                        field_command = field_line.replace('Enter "', "").replace("Enter '", "").strip()
+                        field_command = field_line.replace(
+                            'Enter "', "").replace("Enter '", "").strip()
                         line_end_index = field_command.rfind('"')
                         if line_end_index != -1:
                             field_command = field_command[:line_end_index]
-                            print(field_command)
                         line_end_index = field_command.rfind("'")
                         if line_end_index != -1:
                             field_command = field_command[:line_end_index]
-                            print(field_command)
 
                 for powershell_command in powershell_command_list:
                     if powershell_command.startswith("# "):
@@ -110,10 +119,10 @@ class StigRule:
                     field_command = field_line.strip()
                     if field_command.endswith('.'):
                         field_command = field_command[:-1]
-                
+
                 for command in square_bracket_regex.findall(field_command):
                     field_text_to_fill.append(command)
-                
+
                 new_command = Command(field_command, field_text_to_fill)
                 command_list.append(new_command)
             return command_list
@@ -138,16 +147,20 @@ class StigRule:
         }
 
         try:
-            category_score = float(math.ceil(float(severity_Dictionary[self.rule_severity]) * (float(self.rule_weight)/2)))
+            category_score = float(
+                math.ceil(
+                    float(severity_Dictionary[self.rule_severity]) *
+                    (float(self.rule_weight) / 2)))
 
-            for category_name, category_score_limit in severity_categories_dictionary.items():
+            for category_name, category_score_limit in severity_categories_dictionary.items(
+            ):
                 if category_score <= category_score_limit:
                     severity_category = category_name
                     break
             self.category_score = severity_category
         except:
             self.category_score = "undefined"
-    
+
         return self.category_score
 
     def __str__(self) -> str:
@@ -155,6 +168,7 @@ class StigRule:
 
 
 class Command:
+
     def __init__(self, command, replacements):
         self.command = command
         self.replacements = replacements
@@ -164,16 +178,17 @@ class Command:
         for replacement_key in self.replacements:
             if replacement_key in target_replacements:
                 replacement_value = target_replacements[replacement_key]
-                new_command = new_command.replace(replacement_key, replacement_value)
+                new_command = new_command.replace(replacement_key,
+                                                  replacement_value)
             else:
                 # print(f"Replacement Key: {replacement_key} not found in target_replacements")
                 pass
-        
+
         return new_command
-    
+
     def __repr__(self) -> str:
         return f"Command({str(self.command)} - {str(self.replacements)})"
-    
+
 
 class RuleInput:
 
@@ -184,13 +199,16 @@ class RuleInput:
 
     def __str__(self) -> str:
         return f"{str(self.vuln_id)} - {str(self.check_replacement)} - {str(self.fix_replacement)}"
-    
+
+
 def getPowerShellCommands():
     current_directory = os.getcwd()
-    filepath = os.path.join(current_directory, 'script\powershell_commands.txt')
+    filepath = os.path.join(current_directory, 'script',
+                            'powershell_commands.txt')
     with open(filepath, 'r', encoding='utf-8') as powershell_command_file:
         powershell_commands = powershell_command_file.read().splitlines()
     return powershell_commands
+
 
 def parseGuide(filename, guide_type):
     # Defining Variables
@@ -212,7 +230,7 @@ def parseGuide(filename, guide_type):
 
         # Extract Group Information
         group_info = content.find('Group', id=group_id)
-        
+
         # Extract Information under the parent Group tag
         rule_name = group_info.find('title').text
         vuln_id = group_id
@@ -230,23 +248,29 @@ def parseGuide(filename, guide_type):
         # URL Decode Rule Description
         group_description_info_decoded = unquote(group_description_info)
         # Transform back into XML
-        group_description_info_xml = BeautifulSoup(group_description_info_decoded, 'xml')
-        rule_description = group_description_info_xml.find('VulnDiscussion').text
+        group_description_info_xml = BeautifulSoup(
+            group_description_info_decoded, 'xml')
+        rule_description = group_description_info_xml.find(
+            'VulnDiscussion').text
 
         # Extract Check Information from Rule Information
         check_rule_info = group_rule_info.find('check')
         check_content = check_rule_info.find('check-content').text
 
         # Create Object
-        rule = StigRule(rule_name, rule_title, vuln_id, rule_id, rule_weight, rule_severity, stig_id, rule_fix_text, rule_description, check_content)
-        rule.check_commands = rule._getRequiredFields(guide_type, check_content)
+        rule = StigRule(rule_name, rule_title, vuln_id, rule_id, rule_weight,
+                        rule_severity, stig_id, rule_fix_text,
+                        rule_description, check_content)
+        rule.check_commands = rule._getRequiredFields(guide_type,
+                                                      check_content)
         rule.fix_commands = rule._getRequiredFields(guide_type, rule_fix_text)
         rule_dictionary[vuln_id] = rule
-        
+
     # Create Guide Object
     guide = Guide(filename, group_id_tags, rule_dictionary, guide_type)
 
     return guide
+
 
 def linuxCreateScript(guide, user_input):
     check_script = """#!/bin/bash
@@ -283,37 +307,45 @@ run_command() {
 }
 """
 
-    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split("\\")[-1]
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
 
-    output_folder = os.path.join(os.getcwd(),"out-files")
+    output_folder = os.path.join(os.getcwd(), "out-files")
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
 
     if len(user_input) == 0:
-        with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.sh", "wb") as linux_check_script:
+        with open(
+                output_folder + "/" + guide_file_name + "-" + "CheckScript.sh",
+                "wb") as linux_check_script:
             linux_check_script.write(check_script.encode())
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh", "wb") as linux_fix_script:
+        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh",
+                  "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
 
     for vuln_id in user_input:
         target_rule = guide.stig_rule_dict[vuln_id]
 
         user_check_input = user_input[vuln_id]["check"]
-        for check_cmd_index, check_cmd in enumerate(target_rule.check_commands):
+        for check_cmd_index, check_cmd in enumerate(
+                target_rule.check_commands):
             replacement_dict = user_check_input.get(check_cmd_index, None)
             if not replacement_dict:
                 if check_cmd.replacements:
-                    raise Exception(f"Missing check replacement values for {check_cmd.command}")
+                    raise Exception(
+                        f"Missing check replacement values for {check_cmd.command}"
+                    )
                 parsed_command = check_cmd.command
             else:
                 parsed_command = check_cmd.replaceCommand(replacement_dict)
-            
+
             check_script = check_script + "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
             check_script = check_script + "run_command '" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
-        
-        with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.sh", "wb") as linux_check_script:
-            linux_check_script.write(check_script.encode())
 
+        with open(
+                output_folder + "/" + guide_file_name + "-" + "CheckScript.sh",
+                "wb") as linux_check_script:
+            linux_check_script.write(check_script.encode())
 
     for vuln_id in user_input:
         target_rule = guide.stig_rule_dict[vuln_id]
@@ -323,14 +355,17 @@ run_command() {
             replacement_dict = user_fix_input.get(fix_cmd_index, None)
             if not replacement_dict:
                 if fix_cmd.replacements:
-                    raise Exception(f"Missing check replacement values for {fix_cmd.command}")
+                    raise Exception(
+                        f"Missing check replacement values for {fix_cmd.command}"
+                    )
                 parsed_command = fix_cmd.command
             else:
                 parsed_command = fix_cmd.replaceCommand(replacement_dict)
 
             fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
-            fix_script +="run_command '" +  parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh", "wb") as linux_fix_script:
+            fix_script += "run_command '" + parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh",
+                  "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
 
 
@@ -372,37 +407,46 @@ function run_command {
 }
 """
 
-    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split("\\")[-1]
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
 
-    output_folder = os.path.join(os.getcwd(),"out-files")
+    output_folder = os.path.join(os.getcwd(), "out-files")
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
 
     if len(user_input) == 0:
-        with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.ps1", "wb") as windows_check_script:
+        with open(
+                output_folder + "/" + guide_file_name + "-" +
+                "CheckScript.ps1", "wb") as windows_check_script:
             windows_check_script.write(check_script.encode())
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.ps1", "wb") as windows_fix_script:
+        with open(
+                output_folder + "/" + guide_file_name + "-" + "FixScript.ps1",
+                "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
 
     for vuln_id in user_input:
-            target_rule = guide.stig_rule_dict[vuln_id]
+        target_rule = guide.stig_rule_dict[vuln_id]
 
-            user_check_input = user_input[vuln_id]["check"]
-            for check_cmd_index, check_cmd in enumerate(target_rule.check_commands):
-                replacement_dict = user_check_input.get(check_cmd_index, None)
-                if not replacement_dict:
-                    if check_cmd.replacements:
-                        raise Exception(f"Missing check replacement values for {check_cmd.command}")
-                    parsed_command = check_cmd.command
-                else:
-                    parsed_command = check_cmd.replaceCommand(replacement_dict)
-                
-                check_script += "Write-Output '" + parsed_command + "' >> check_script_logs.txt" + "\n"
-                check_script += "run_command " + "'" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
-            
-            with open(output_folder + "/" + guide_file_name + "-" + "CheckScript.ps1", "wb") as windows_check_script:
-                windows_check_script.write(check_script.encode())
+        user_check_input = user_input[vuln_id]["check"]
+        for check_cmd_index, check_cmd in enumerate(
+                target_rule.check_commands):
+            replacement_dict = user_check_input.get(check_cmd_index, None)
+            if not replacement_dict:
+                if check_cmd.replacements:
+                    raise Exception(
+                        f"Missing check replacement values for {check_cmd.command}"
+                    )
+                parsed_command = check_cmd.command
+            else:
+                parsed_command = check_cmd.replaceCommand(replacement_dict)
 
+            check_script += "Write-Output '" + parsed_command + "' >> check_script_logs.txt" + "\n"
+            check_script += "run_command " + "'" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+
+        with open(
+                output_folder + "/" + guide_file_name + "-" +
+                "CheckScript.ps1", "wb") as windows_check_script:
+            windows_check_script.write(check_script.encode())
 
     for vuln_id in user_input:
         target_rule = guide.stig_rule_dict[vuln_id]
@@ -412,7 +456,9 @@ function run_command {
             replacement_dict = user_fix_input.get(fix_cmd_index, None)
             if not replacement_dict:
                 if fix_cmd.replacements:
-                    raise Exception(f"Missing check replacement values for {fix_cmd.command}")
+                    raise Exception(
+                        f"Missing check replacement values for {fix_cmd.command}"
+                    )
                 parsed_command = fix_cmd.command
             else:
                 parsed_command = fix_cmd.replaceCommand(replacement_dict)
@@ -420,7 +466,9 @@ function run_command {
             fix_script += "Write-Output '" + parsed_command + "' >> fix_script_logs.txt" + "\n"
             fix_script += "run_command " + "'" + parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
 
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.ps1", "wb") as windows_fix_script:
+        with open(
+                output_folder + "/" + guide_file_name + "-" + "FixScript.ps1",
+                "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
 
 
@@ -435,17 +483,17 @@ function run_command {
 #         "fix": {
 #             1: {'[PART]': 'yum', '[Test]': 'install'},
 #             2: {'<file>': 'woo'},
-#         },    
+#         },
 #     },
 #     "V-230327": {
 #         "check": {},
 #         "fix": {
 #             0: {'<group>': 'yum', '<file>': 'install'}
-#         }, 
+#         },
 #     },
 #     "V-230222": {
 #         "check": {},
-#         "fix": {},    
+#         "fix": {},
 #     },
 # }
 
@@ -456,18 +504,17 @@ function run_command {
 #         "check": {
 #             1: {'[account name]': 'TESTTTTTTTTT'},
 #         },
-#         "fix": {},    
+#         "fix": {},
 #     },
 #     "V-254243": {
 #         "check": {
 #             0: {'[application account name]': '1111111111111111111111'},
 #             1: {'[application account name]': '2222222222222222222222'},
 #           },
-#         "fix": {}, 
+#         "fix": {},
 #     },
 #     "V-254244": {
 #         "check": {},
-#         "fix": {},    
+#         "fix": {},
 #     },
 # }
-
