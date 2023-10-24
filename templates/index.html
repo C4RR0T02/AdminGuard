@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <title>AdminGuard</title>
+        <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    </head>
+    <body class="bg-dark text-white position-absolute top-50 start-50 translate-middle">
+        <div class="d-flex flex-column align-items-center">
+            <div>
+                <img src="/static/img/AdminGuardLogo.webp" alt="AdminGuard Logo" width="150" height="150">
+            </div>
+            <h1 class="m-5 text-center">AdminGuard:</h1>
+            <h1 class="text-center">Strengthening OS Security from Within</h1>
+            <div class="d-flex flex-column flex-md-row mt-5">
+                <button type="button" class="btn btn-primary btn-lg me-5">
+                    <a class="text-white text-decoration-none flex-fill" href="script-generate">Hardening <br> Script Creation</a>
+                </button>
+                <button type="button" class="btn btn-primary btn-lg">
+                    <a class="text-white text-decoration-none flex-fill" href="template-generate">Vulnerability Scanner <br> Template Converter</a>
+                </button>
+            </div>
+        </div>
+    </body>
+</html>
+
+<style>
+    button {
+        background-color: 3563f2;
+        border: none;
+        padding: 10px 25px;
+        font-size: 1.2em;
+        width: 300px;
+        margin: 15px;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    button:hover {
+        background-color: 5c8ff3; 
+    }
+    
+    @media screen and (max-width: 600px) {
+        h1 {
+            font-size: 1.8em;
+        }
+        button {
+            width: 100%;
+            max-width: none;
+        }
+    }
+</style>
