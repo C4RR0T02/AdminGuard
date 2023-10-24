@@ -187,7 +187,7 @@ class RuleInput:
     
 def getPowerShellCommands():
     current_directory = os.getcwd()
-    filepath = os.path.join(current_directory, 'script\powershell_commands.txt')
+    filepath = os.path.join(current_directory, 'app', 'script', 'powershell_commands.txt')
     with open(filepath, 'r', encoding='utf-8') as powershell_command_file:
         powershell_commands = powershell_command_file.read().splitlines()
     return powershell_commands

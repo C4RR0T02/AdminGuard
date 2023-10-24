@@ -14,11 +14,11 @@ guide_dictionary = {}
 form_data_rule_dictionary = {}
 
 path = os.getcwd()
-upload_folder = os.path.join(path, 'uploads')
+upload_folder = os.path.join(path, 'app', 'uploads')
 if not os.path.isdir(upload_folder):
     os.mkdir(upload_folder)
     print("created upload folder")
-download_folder = os.path.join(path, 'out-files')
+download_folder = os.path.join(path, 'app', 'out-files')
 if not os.path.isdir(download_folder):
     os.mkdir(download_folder)
     print("created download folder")
