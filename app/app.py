@@ -146,7 +146,6 @@ def scriptFieldsPost(guide_name):
             if cmd_index not in fix_dict:
                 fix_dict[cmd_index] = dict()
             fix_dict[cmd_index][replacement] = value
-    print(guide_details.get("guide_type"))
     if guide_details.get("guide_type") == "Windows":
         windowsCreateScript(guide, user_input)
     elif guide_details.get("guide_type") == "Linux":

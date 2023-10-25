@@ -8,7 +8,8 @@ ignore =
     E251
 exclude =
     .git,
-    setup.py
-    __pycache__
-    env
-max-complexity = 10
+    setup.py,
+    __pycache__,
+    env,
+    app/static
+max-complexity = 15

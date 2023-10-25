@@ -160,5 +160,7 @@ cython_debug/
 #.idea/
 
 # Folders
-uploads/*
-out-files/*
+app/uploads/*
+app/out-files/*
+/uploads
+/out-files
