@@ -1,8 +1,9 @@
+import os
 from app import *
 from app.script.admin_guard import *
 
 
-def test_get_required_field_linux_check():
+def test_get_required_field_linux_check_1():
     stig_rule = StigRule(
         "SRG-OS-000480-GPOS-00227",
         "Local RHEL 8 initialization files must not execute world-writable programs.",
@@ -38,7 +39,31 @@ def test_get_required_field_linux_check():
     ) == '''[Command(sudo chmod test - []), Command(sudo find [PART] -xdev -type f -perm -0002 -print [Test] - ['[PART]', '[Test]']), Command(sudo grep <file> /home/*/.* - ['<file>']), Command(sudo ssh-keygen -y -f /path/to/file - ['/path/to/file']), Command(sudo rm /[path]/[to]/[file]/.shosts - ['/[path]/[to]/[file]/'])]'''
 
 
-def test_get_required_field_linux_fix():
+def test_get_required_field_linux_check_2():
+    stig_rule = StigRule(
+        "SRG-OS-000480-GPOS-00227",
+        "Local RHEL 8 initialization files must not execute world-writable programs.",
+        "V-230309", "SV-230309r627750_rule", 10.0, 'medium', 'RHEL-08-010660',
+        'Set the mode on files being executed by the local initialization files with the following command:',
+        '''If user start-up files execute world-writable programs, especially in unprotected directories, they could be maliciously modified to destroy user files or otherwise compromise the system at the user level. If the system is compromised at the user level, it is easier to elevate privileges to eventually compromise the system at the root and network level.''',
+        '''Verify that local initialization files do not execute world-writable programs.
+
+        Check the system for world-writable files.
+
+        The following command will discover and print world-writable files. Run it once for each local partition [PART]: 
+        
+        For all files listed, check for their presence in the local initialization files with the following commands:
+
+        Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
+
+        If any local initialization files are found to reference world-writable files, this is a finding.'''
+    )
+
+    assert str(stig_rule._getRequiredFields("Linux",
+                                            stig_rule.check_content)) == '[]'
+
+
+def test_get_required_field_linux_fix_1():
     stig_rule = StigRule(
         "SRG-OS-000480-GPOS-00227",
         "Local RHEL 8 initialization files must not execute world-writable programs.",
@@ -74,74 +99,101 @@ def test_get_required_field_linux_fix():
     ) == '''[Command(sudo chmod test - []), Command(sudo find [PART] -xdev -type f -perm -0002 -print [Test] - ['[PART]', '[Test]']), Command(sudo chmod 0755 <file> - ['<file>']), Command(sudo ssh-keygen -y -f /path/to/file - ['/path/to/file']), Command(sudo rm /[path]/[to]/[file]/.shosts - ['/[path]/[to]/[file]/'])]'''
 
 
-def test_get_required_field_windows_fix_1():
+def test_get_required_field_linux_fix_2():
     stig_rule = StigRule(
-        "SRG-OS-000076-GPOS-00044",
-        "Windows Server 2022 passwords for the built-in Administrator account must be changed at least every 60 days.",
-        "V-254239", "SV-254239r915618_rule", 10.0, "medium", "WN22-00-000020",
-        '''Change the built-in Administrator account password at least every "60" days.
+        "SRG-OS-000480-GPOS-00227",
+        "Local RHEL 8 initialization files must not execute world-writable programs.",
+        "V-230309", "SV-230309r627750_rule", 10.0, 'medium', 'RHEL-08-010660',
+        '''Set the mode on files being executed by the local initialization files with the following command:''',
+        '''If user start-up files execute world-writable programs, especially in unprotected directories, they could be maliciously modified to destroy user files or otherwise compromise the system at the user level. If the system is compromised at the user level, it is easier to elevate privileges to eventually compromise the system at the root and network level.''',
+        '''Verify that local initialization files do not execute world-writable programs.
 
-        Windows LAPS must be used to change the built-in Administrator account password. Domain-joined systems can configure this to occur more frequently. LAPS will change the password every 30 days by default.
-        https://techcommunity.microsoft.com/t5/windows-it-pro-blog/by-popular-demand-windows-laps-available-now/ba-p/3788747  
-        https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#windows-laps-supported-platforms-and-azure-ad-laps-preview-status''',
-        '''The longer a password is in use, the greater the opportunity for someone to gain unauthorized knowledge of the password. The built-in Administrator account is not generally used and its password may not be changed as frequently as necessary. Changing the password for the built-in Administrator account on a regular basis will limit its exposure.
+        Check the system for world-writable files.
 
-        Windows LAPS must be used  to change the built-in Administrator account password.''',
-        '''Review the password last set date for the built-in Administrator account.
+        The following command will discover and print world-writable files. Run it once for each local partition [PART]: 
 
-        Domain controllers:
+        For all files listed, check for their presence in the local initialization files with the following commands:
 
-        Open "PowerShell".
+        Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
 
-        Enter "Get-ADUser -Filter * -Properties SID, PasswordLastSet | Where SID -Like "*-500" | Ft Name, SID, PasswordLastSet".
-
-        If the "PasswordLastSet" date is greater than "60" days old, this is a finding.
-
-        Member servers and standalone or nondomain-joined systems:
-
-        Open "Command Prompt".
-
-        Enter "Net User [account name] | Find /i "Password Last Set"", where [account name] is the name of the built-in administrator account.
-
-        (The name of the built-in Administrator account must be changed to something other than "Administrator" per STIG requirements.)
-
-        If the "PasswordLastSet" date is greater than "60" days old, this is a finding.'''
+        If any local initialization files are found to reference world-writable files, this is a finding.'''
     )
 
+    assert str(stig_rule._getRequiredFields("Linux",
+                                            stig_rule.rule_fix_text)) == '[]'
 
-def test_get_required_field_windows_check_1():
-    stig_rule = StigRule(
-        "SRG-OS-000076-GPOS-00044",
-        "Windows Server 2022 passwords for the built-in Administrator account must be changed at least every 60 days.",
-        "V-254239", "SV-254239r915618_rule", 10.0, "medium", "WN22-00-000020",
-        '''Change the built-in Administrator account password at least every "60" days.
 
-        Windows LAPS must be used to change the built-in Administrator account password. Domain-joined systems can configure this to occur more frequently. LAPS will change the password every 30 days by default.
-        https://techcommunity.microsoft.com/t5/windows-it-pro-blog/by-popular-demand-windows-laps-available-now/ba-p/3788747  
-        https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#windows-laps-supported-platforms-and-azure-ad-laps-preview-status''',
-        '''The longer a password is in use, the greater the opportunity for someone to gain unauthorized knowledge of the password. The built-in Administrator account is not generally used and its password may not be changed as frequently as necessary. Changing the password for the built-in Administrator account on a regular basis will limit its exposure.
+# def test_get_required_field_windows_fix_1():
+#     stig_rule = StigRule(
+#         "SRG-OS-000076-GPOS-00044",
+#         "Windows Server 2022 passwords for the built-in Administrator account must be changed at least every 60 days.",
+#         "V-254239", "SV-254239r915618_rule", 10.0, "medium", "WN22-00-000020",
+#         '''Change the built-in Administrator account password at least every "60" days.
 
-        Windows LAPS must be used  to change the built-in Administrator account password.''',
-        '''Review the password last set date for the built-in Administrator account.
+#         Windows LAPS must be used to change the built-in Administrator account password. Domain-joined systems can configure this to occur more frequently. LAPS will change the password every 30 days by default.
+#         https://techcommunity.microsoft.com/t5/windows-it-pro-blog/by-popular-demand-windows-laps-available-now/ba-p/3788747
+#         https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#windows-laps-supported-platforms-and-azure-ad-laps-preview-status''',
+#         '''The longer a password is in use, the greater the opportunity for someone to gain unauthorized knowledge of the password. The built-in Administrator account is not generally used and its password may not be changed as frequently as necessary. Changing the password for the built-in Administrator account on a regular basis will limit its exposure.
 
-        Domain controllers:
+#         Windows LAPS must be used  to change the built-in Administrator account password.''',
+#         '''Review the password last set date for the built-in Administrator account.
 
-        Open "PowerShell".
+#         Domain controllers:
 
-        Enter "Get-ADUser -Filter * -Properties SID, PasswordLastSet | Where SID -Like "*-500" | Ft Name, SID, PasswordLastSet".
+#         Open "PowerShell".
 
-        If the "PasswordLastSet" date is greater than "60" days old, this is a finding.
+#         Enter "Get-ADUser -Filter * -Properties SID, PasswordLastSet | Where SID -Like "*-500" | Ft Name, SID, PasswordLastSet".
 
-        Member servers and standalone or nondomain-joined systems:
+#         If the "PasswordLastSet" date is greater than "60" days old, this is a finding.
 
-        Open "Command Prompt".
+#         Member servers and standalone or nondomain-joined systems:
 
-        Enter "Net User [account name] | Find /i "Password Last Set"", where [account name] is the name of the built-in administrator account.
+#         Open "Command Prompt".
 
-        (The name of the built-in Administrator account must be changed to something other than "Administrator" per STIG requirements.)
+#         Enter "Net User [account name] | Find /i "Password Last Set"", where [account name] is the name of the built-in administrator account.
 
-        If the "PasswordLastSet" date is greater than "60" days old, this is a finding.'''
-    )
+#         (The name of the built-in Administrator account must be changed to something other than "Administrator" per STIG requirements.)
+
+#         If the "PasswordLastSet" date is greater than "60" days old, this is a finding.'''
+#     )
+
+#     assert str(stig_rule._getRequiredFields("Windows", stig_rule.check_content)) == '[]'
+
+# def test_get_required_field_windows_check_1():
+#     stig_rule = StigRule(
+#         "SRG-OS-000076-GPOS-00044",
+#         "Windows Server 2022 passwords for the built-in Administrator account must be changed at least every 60 days.",
+#         "V-254239", "SV-254239r915618_rule", 10.0, "medium", "WN22-00-000020",
+#         '''Change the built-in Administrator account password at least every "60" days.
+
+#         Windows LAPS must be used to change the built-in Administrator account password. Domain-joined systems can configure this to occur more frequently. LAPS will change the password every 30 days by default.
+#         https://techcommunity.microsoft.com/t5/windows-it-pro-blog/by-popular-demand-windows-laps-available-now/ba-p/3788747
+#         https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#windows-laps-supported-platforms-and-azure-ad-laps-preview-status''',
+#         '''The longer a password is in use, the greater the opportunity for someone to gain unauthorized knowledge of the password. The built-in Administrator account is not generally used and its password may not be changed as frequently as necessary. Changing the password for the built-in Administrator account on a regular basis will limit its exposure.
+
+#         Windows LAPS must be used  to change the built-in Administrator account password.''',
+#         '''Review the password last set date for the built-in Administrator account.
+
+#         Domain controllers:
+
+#         Open "PowerShell".
+
+#         Enter "Get-ADUser -Filter * -Properties SID, PasswordLastSet | Where SID -Like "*-500" | Ft Name, SID, PasswordLastSet".
+
+#         If the "PasswordLastSet" date is greater than "60" days old, this is a finding.
+
+#         Member servers and standalone or nondomain-joined systems:
+
+#         Open "Command Prompt".
+
+#         Enter "Net User [account name] | Find /i "Password Last Set"", where [account name] is the name of the built-in administrator account.
+
+#         (The name of the built-in Administrator account must be changed to something other than "Administrator" per STIG requirements.)
+
+#         If the "PasswordLastSet" date is greater than "60" days old, this is a finding.'''
+#     )
+
+#     assert str(stig_rule._getRequiredFields("Windows", stig_rule.check_content)) == '''[Command(Get-ADUser krbtgt -Property PasswordLastSet - [])]'''
 
 
 def test_calculate_score_linux():
@@ -226,7 +278,7 @@ def test_calculate_score_Windows():
     assert stig_rule._calculateScore() == "High"
 
 
-def test_calculate_score_invalid_1():
+def test_calculate_score_invalid():
     stig_rule = StigRule(
         "SRG-OS-000076-GPOS-00044",
         "Windows Server 2022 passwords for the built-in Administrator account must be changed at least every 60 days.",
@@ -300,14 +352,117 @@ def test_calculate_score_invalid_2():
     assert stig_rule._calculateScore() == "undefined"
 
 
-# def test_parse_guide():
-#     print("parse_guide")
+def test_parse_guide():
+
+    rule_fix_text = '''Configure the operating system to prevent informative messages from being presented at logon attempts.
+
+    Add/Modify the "/etc/security/faillock.conf" file to match the following line:
+
+    silent'''
+
+    rule_description = '''By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.
+
+    In RHEL 8.2 the "/etc/security/faillock.conf" file was incorporated to centralize the configuration of the pam_faillock.so module.  Also introduced is a "local_users_only" option that will only track failed user authentication attempts for local users in /etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users to allow the centralized platform to solely manage user lockout.
+
+    From "faillock.conf" man pages: Note that the default directory that "pam_faillock" uses is usually cleared on system boot so the access will be reenabled after system reboot. If that is undesirable a different tally directory must be set with the "dir" option.
+
+    Satisfies: SRG-OS-000021-GPOS-00005, SRG-OS-000329-GPOS-00128'''
+
+    stig_rule = parseGuide("app/tests/test_linux.xml", "Linux")
+
+    rule = stig_rule.stig_rule_dict['V-230341']
+
+    assert str(rule.rule_name) == "SRG-OS-000021-GPOS-00005"
+    assert str(
+        rule.rule_title
+    ) == "RHEL 8 must prevent system messages from being presented when three unsuccessful logon attempts occur."
+    assert str(rule.vuln_id) == "V-230341"
+    assert str(rule.rule_id) == "SV-230341r743978_rule"
+    assert str(rule.rule_weight) == "10.0"
+    assert str(rule.rule_severity) == "medium"
+    assert str(rule.stig_id) == "RHEL-08-020019"
+    assert str(rule.rule_fix_text) == str(rule_fix_text)
+    assert str(rule.rule_description) == str(rule_description)
+    assert str(rule.category_score) == "High"
+
 
 # def test_create_script():
 #     print("create_script")
 
 # def test_linux_script():
-#     print("test_linux_script")
+#     guide = parseGuide("app/tests/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml", "Linux")
+#     user_input = {
+#         "V-230309": {
+#             "check": {
+#                 1: {'[PART]': 'yum', '[Test]': 'install'},
+#                 2: {'<file>': 'woo'},
+#             },
+#             "fix": {
+#                 1: {'[PART]': 'yum', '[Test]': 'install'},
+#                 2: {'<file>': 'woo'},
+#             },
+#         },
+#         "V-230327": {
+#             "check": {},
+#             "fix": {
+#                 0: {'<group>': 'yum', '<file>': 'install'}
+#             },
+#         },
+#         "V-230222": {
+#             "check": {},
+#             "fix": {},
+#         },
+#     }
+#     linuxCreateScript(guide, user_input)
 
 # def test_windows_script():
-#     print("test_windows_script")
+#     guide = parseGuide("app/tests/testXmlFiles/U_MS_Windows_Server_2022_STIG_V1R3_Manual-xccdf.xml", "Windows")
+#     user_input = {
+#         "V-254239": {
+#             "check": {
+#                 1: {'[account name]': 'TESTTTTTTTTT'},
+#             },
+#             "fix": {},
+#         },
+#         "V-254243": {
+#             "check": {
+#                 0: {'[application account name]': '1111111111111111111111'},
+#                 1: {'[application account name]': '2222222222222222222222'},
+#             },
+#             "fix": {},
+#         },
+#         "V-254244": {
+#             "check": {},
+#             "fix": {},
+#         },
+#     }
+#     windowsCreateScript(guide, user_input)
+
+# def test_linux_script_empty():
+#     guide = parseGuide("app/tests/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml", "Linux")
+#     user_input = {}
+#     linuxCreateScript(guide, user_input)
+#     try:
+#         folder_path = os.path.join(os.getcwd(), "app", "out-files")
+#         if os.path.exists(folder_path) and os.path.isdir(folder_path):
+#             # List all items (files and directories) in the folder
+#             items = os.listdir(folder_path)
+
+#             # Filter items to get only files
+#             files = [item for item in items if os.path.isfile(os.path.join(folder_path, item))]
+
+#             if len(files) > 0:
+#                 print("Files in the folder:")
+#                 for file in files:
+#                     print(file)
+#             else:
+#                 print("No files found in the folder.")
+#         else:
+#             print(f"The folder '{folder_path}' either doesn't exist or is not a directory.")
+#     except:
+#         assert False
+
+# def test_windows_script_empty():
+#     guide = parseGuide("app/tests/testXmlFiles/U_MS_Windows_Server_2022_STIG_V1R3_Manual-xccdf.xml", "Windows")
+#     user_input = {}
+#     windowsCreateScript(guide, user_input)

@@ -6,10 +6,13 @@ ignore =
     # Long lines
     E501
     E251
+    F403
+    F405
 exclude =
     .git,
     setup.py,
     __pycache__,
+    __init__,
     env,
     app/static
 max-complexity = 15

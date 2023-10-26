@@ -101,15 +101,16 @@ class StigRule:
 
                 if field_line.startswith('Enter "') or field_line.startswith(
                         "Enter '"):
-                    if not 'Enter "q" at the' in field_line:
-                        field_command = field_line.replace(
-                            'Enter "', "").replace("Enter '", "").strip()
-                        line_end_index = field_command.rfind('"')
-                        if line_end_index != -1:
-                            field_command = field_command[:line_end_index]
-                        line_end_index = field_command.rfind("'")
-                        if line_end_index != -1:
-                            field_command = field_command[:line_end_index]
+                    if 'Enter "q" at the' in field_line:
+                        continue
+                    field_command = field_line.replace('Enter "', "").replace(
+                        "Enter '", "").strip()
+                    line_end_index = field_command.rfind('"')
+                    if line_end_index != -1:
+                        field_command = field_command[:line_end_index]
+                    line_end_index = field_command.rfind("'")
+                    if line_end_index != -1:
+                        field_command = field_command[:line_end_index]
 
                 for powershell_command in powershell_command_list:
                     if powershell_command.startswith("# "):
@@ -124,10 +125,7 @@ class StigRule:
                     field_text_to_fill.append(command)
 
                 new_command = Command(field_command, field_text_to_fill)
-                if new_command.command == "":
-                    pass
                 command_list.append(new_command)
-                print(command_list)
             return command_list
 
     def _calculateScore(self):
@@ -521,39 +519,7 @@ function run_command {
 #     },
 # }
 
-stig_rule = StigRule(
-    "SRG-OS-000076-GPOS-00044",
-    "Windows Server 2022 passwords for the built-in Administrator account must be changed at least every 60 days.",
-    "V-254239", "SV-254239r915618_rule", 10.0, "medium", "WN22-00-000020",
-    '''Change the built-in Administrator account password at least every "60" days.
+# guide = parseGuide(
+#     "app/script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml", "Linux")
 
-    Enter "Get-ADUser -Filter * -Properties SID, PasswordLastSet | Where SID -Like "*-500" | Ft Name, SID, PasswordLastSet".
-
-    Windows LAPS must be used to change the built-in Administrator account password. Domain-joined systems can configure this to occur more frequently. LAPS will change the password every 30 days by default. 
-    https://techcommunity.microsoft.com/t5/windows-it-pro-blog/by-popular-demand-windows-laps-available-now/ba-p/3788747  
-    https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#windows-laps-supported-platforms-and-azure-ad-laps-preview-status''',
-    '''The longer a password is in use, the greater the opportunity for someone to gain unauthorized knowledge of the password. The built-in Administrator account is not generally used and its password may not be changed as frequently as necessary. Changing the password for the built-in Administrator account on a regular basis will limit its exposure.
-
-    Windows LAPS must be used  to change the built-in Administrator account password.''',
-    '''Review the password last set date for the built-in Administrator account.
-
-    Domain controllers:
-
-    Open "PowerShell".
-
-    Enter "Get-ADUser -Filter * -Properties SID, PasswordLastSet | Where SID -Like "*-500" | Ft Name, SID, PasswordLastSet".
-
-    If the "PasswordLastSet" date is greater than "60" days old, this is a finding.
-
-    Member servers and standalone or nondomain-joined systems:
-
-    Open "Command Prompt".
-
-    Enter "Net User [account name] | Find /i "Password Last Set"", where [account name] is the name of the built-in administrator account.
-
-    (The name of the built-in Administrator account must be changed to something other than "Administrator" per STIG requirements.)
-
-    If the "PasswordLastSet" date is greater than "60" days old, this is a finding.'''
-)
-
-stig_rule._getRequiredFields("Windows", stig_rule.check_content)
+# print(guide.stig_rule_dict["V-230341"])
