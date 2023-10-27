@@ -519,7 +519,3 @@ function run_command {
 #     },
 # }
 
-# guide = parseGuide(
-#     "app/script/testXmlFiles/U_RHEL_8_STIG_V1R11_Manual-xccdf.xml", "Linux")
-
-# print(guide.stig_rule_dict["V-230341"])
