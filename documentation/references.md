@@ -73,6 +73,17 @@ https://www.geeksforgeeks.org/uploading-and-downloading-files-in-flask/
 ## Template-generate
 
 
+## CI
+https://semaphoreci.com/continuous-integration
+https://gitlab.com/C4RR0T02/csit-cicd-mini-challenge/-/blob/main/test_main.py
+https://docs.pytest.org/en/latest/
+https://flake8.pycqa.org/en/latest/user/configuration.html
+https://pypi.org/project/yapf/
+https://realpython.com/python-testing/#unit-tests-vs-integration-tests
+https://stackoverflow.com/questions/1896918/running-unittest-with-typical-test-directory-structure
+https://stackoverflow.com/questions/448271/what-is-init-py-for
+https://flask.palletsprojects.com/en/1.1.x/testing/
+
 ## Code Documentation
 https://google.github.io/styleguide/docguide/READMEs.html
 https://google.github.io/styleguide/docguide/best_practices.html
