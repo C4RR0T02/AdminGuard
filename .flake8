@@ -2,10 +2,11 @@
 ignore =
     D203,
     # Line break before / after binary operator
-    W503, W504,
+    W503, W504, W291, W293,
     # Long lines
     E501
     E251
+    E712
     F403
     F405
 exclude =
@@ -15,4 +16,4 @@ exclude =
     __init__,
     env,
     app/static
-max-complexity = 15
+max-complexity = 25

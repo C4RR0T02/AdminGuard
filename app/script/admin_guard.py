@@ -158,7 +158,7 @@ class StigRule:
                 if category_score >= category_score_limit:
                     severity_category = category_name
             self.category_score = severity_category
-        except:
+        except Exception:
             self.category_score = "undefined"
 
         return self.category_score
@@ -518,4 +518,3 @@ function run_command {
 #         "fix": {},
 #     },
 # }
-

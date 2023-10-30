@@ -1,16 +1,16 @@
 import os
 import pytest
-import requests
 import shutil
 from io import BytesIO
-from flask import url_for
 from ..app import app
+
 
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
     client = app.test_client()
     yield client
+
 
 def test_get_home_page(client):
     response = client.get('/')
@@ -25,10 +25,16 @@ def test_get_script_generate_page(client):
 
 
 def test_post_script_generate_page_linux(client):
-    shutil.copyfile('app/tests/testFiles/test_linux_1.xml', os.path.join(app.config['upload_folder'], 'test_linux_1.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_1.xml',
+        os.path.join(app.config['upload_folder'], 'test_linux_1.xml'))
     with open('app/tests/testFiles/test_linux_1.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_1.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
@@ -37,10 +43,16 @@ def test_post_script_generate_page_linux(client):
 
 
 def test_post_script_generate_page_windows(client):
-    shutil.copyfile('app/tests/testFiles/test_windows_1.xml', os.path.join(app.config['upload_folder'], 'test_windows_1.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_1.xml',
+        os.path.join(app.config['upload_folder'], 'test_windows_1.xml'))
     with open('app/tests/testFiles/test_windows_1.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_1.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
@@ -49,18 +61,29 @@ def test_post_script_generate_page_windows(client):
 
 
 def test_post_script_generate_page_invalid(client):
-    shutil.copyfile('app/tests/testFiles/test.yaml', os.path.join(app.config['upload_folder'], 'test.yaml'))
+    shutil.copyfile('app/tests/testFiles/test.yaml',
+                    os.path.join(app.config['upload_folder'], 'test.yaml'))
     with open('app/tests/testFiles/test.yaml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test.yaml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     assert response.status_code == 400
 
 
 def test_script_fields_get_linux(client):
-    shutil.copyfile('app/tests/testFiles/test_linux_2.xml', os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
@@ -68,10 +91,16 @@ def test_script_fields_get_linux(client):
 
 
 def test_script_fields_get_windows(client):
-    shutil.copyfile('app/tests/testFiles/test_windows_2.xml', os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Windows', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
@@ -79,10 +108,16 @@ def test_script_fields_get_windows(client):
 
 
 def test_script_fields_get_invalid(client):
-    shutil.copyfile('app/tests/testFiles/test_windows_2.xml', os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
@@ -90,10 +125,16 @@ def test_script_fields_get_invalid(client):
 
 
 def test_script_fields_post_linux(client):
-    shutil.copyfile('app/tests/testFiles/test_linux_2.xml', os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.post(new_url)
@@ -104,10 +145,16 @@ def test_script_fields_post_linux(client):
 
 
 def test_script_fields_post_windows(client):
-    shutil.copyfile('app/tests/testFiles/test_windows_2.xml', os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Windows', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.post(new_url)
@@ -118,10 +165,16 @@ def test_script_fields_post_windows(client):
 
 
 def test_script_download_get_page_linux(client):
-    shutil.copyfile('app/tests/testFiles/test_linux_2.xml', os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.post(new_url)
@@ -133,10 +186,16 @@ def test_script_download_get_page_linux(client):
 
 
 def test_script_download_get_page_windows(client):
-    shutil.copyfile('app/tests/testFiles/test_windows_2.xml', os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Windows', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.post(new_url)
@@ -148,10 +207,16 @@ def test_script_download_get_page_windows(client):
 
 
 def test_download_file_linux(client):
-    shutil.copyfile('app/tests/testFiles/test_linux_2.xml', os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.post(new_url)
@@ -168,10 +233,16 @@ def test_download_file_linux(client):
 
 
 def test_download_file_windows(client):
-    shutil.copyfile('app/tests/testFiles/test_windows_2.xml', os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_2.xml',
+        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Windows', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.post(new_url)
@@ -188,10 +259,16 @@ def test_download_file_windows(client):
 
 
 def test_download_invalid_file(client):
-    shutil.copyfile('app/tests/testFiles/test_linux_4.xml', os.path.join(app.config['upload_folder'], 'test_linux_4.xml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_4.xml',
+        os.path.join(app.config['upload_folder'], 'test_linux_4.xml'))
     with open('app/tests/testFiles/test_linux_4.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_4.xml')
-    response = client.post('/script-generate', data={'guide_type': 'Linux', 'file': uploaded_file})
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.post(new_url)
@@ -199,8 +276,12 @@ def test_download_invalid_file(client):
             new_url = response.headers['Location']
             response = client.get(new_url)
             if response.status_code == 200:
-                os.remove(os.path.join(app.config['download_folder'], 'test_linux_4-CheckScript.sh'))
-                os.remove(os.path.join(app.config['download_folder'], 'test_linux_4-FixScript.sh'))
+                os.remove(
+                    os.path.join(app.config['download_folder'],
+                                 'test_linux_4-CheckScript.sh'))
+                os.remove(
+                    os.path.join(app.config['download_folder'],
+                                 'test_linux_4-FixScript.sh'))
                 check_script_url = '/script-generate/test_linux_4/download/checkscript'
                 response = client.get(check_script_url)
                 assert response.status_code == 404
@@ -208,13 +289,13 @@ def test_download_invalid_file(client):
                 response = client.get(fix_script_url)
                 assert response.status_code == 404
 
+
 def test_remove_files():
     os.remove(os.path.join(app.config['upload_folder'], 'test_linux_1.xml'))
     os.remove(os.path.join(app.config['upload_folder'], 'test_windows_1.xml'))
     os.remove(os.path.join(app.config['upload_folder'], 'test.yaml'))
     os.remove(os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
     os.remove(os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
-    status = False
     folder_path = os.path.join(os.getcwd(), "out-files")
     if os.path.exists(folder_path) and os.path.isdir(folder_path):
         items = os.listdir(folder_path)
@@ -226,12 +307,13 @@ def test_remove_files():
             for file in files:
                 os.remove(os.path.join(folder_path, file))
         os.rmdir(folder_path)
-        status = True
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            status = False
             raise AssertionError(
                 "Assertion failed: The folder wasn't deleted.")
-        assert status == True
+        else:
+            assert os.path.exists(folder_path) and os.path.isdir(
+                folder_path) == False
+
 
 def test_get_template_generate_page(client):
     response = client.get('/template-generate')

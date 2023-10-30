@@ -1,6 +1,7 @@
 import os
 from ..app import *
 
+
 def test_get_required_field_linux_check_1():
     stig_rule = StigRule(
         "", "", "", "", None, '', '',
@@ -107,7 +108,8 @@ def test_get_required_field_linux_fix_2():
         If any local initialization files are found to reference world-writable files, this is a finding.'''
     )
 
-    assert str(stig_rule._getRequiredFields("Linux", stig_rule.rule_fix_text)) == '[]'
+    assert str(stig_rule._getRequiredFields("Linux",
+                                            stig_rule.rule_fix_text)) == '[]'
 
 
 # def test_get_required_field_windows_fix_1():
@@ -285,18 +287,31 @@ def test_linux_script():
     user_input = {
         "V-230309": {
             "check": {
-                1: {'[PART]': 'yum', '[Test]': 'install'},
-                2: {'<file>': 'woo'},
+                1: {
+                    '[PART]': 'yum',
+                    '[Test]': 'install'
+                },
+                2: {
+                    '<file>': 'woo'
+                },
             },
             "fix": {
-                1: {'[PART]': 'yum', '[Test]': 'install'},
-                2: {'<file>': 'woo'},
+                1: {
+                    '[PART]': 'yum',
+                    '[Test]': 'install'
+                },
+                2: {
+                    '<file>': 'woo'
+                },
             },
         },
         "V-230327": {
             "check": {},
             "fix": {
-                0: {'<group>': 'yum', '<file>': 'install'}
+                0: {
+                    '<group>': 'yum',
+                    '<file>': 'install'
+                }
             },
         },
         "V-230222": {
@@ -375,7 +390,8 @@ run_command 'sudo chgrp yum install >> fix_script_logs.txt' 'Fix Script for V-23
                                           "r") as f:
                                     assert f.read() == expected_check_script
                             elif file == "test_linux_2-FixScript.sh":
-                                with open("test_linux_2-FixScript.sh", "r") as f:
+                                with open("test_linux_2-FixScript.sh",
+                                          "r") as f:
                                     assert f.read() == expected_fix_script
             else:
                 raise AssertionError(
@@ -384,7 +400,7 @@ run_command 'sudo chgrp yum install >> fix_script_logs.txt' 'Fix Script for V-23
             raise AssertionError(
                 f"The folder '{folder_path}' either doesn't exist or is not a directory."
             )
-    except:
+    except Exception:
         raise AssertionError(
             "Something went wrong while testing the script creation.")
 
@@ -394,17 +410,25 @@ def test_windows_script():
     user_input = {
         "V-254239": {
             "check": {
-                1: {'[account name]': 'TESTTTTTTTTT'},
+                1: {
+                    '[account name]': 'TESTTTTTTTTT'
+                },
             },
             "fix": {},
         },
         "V-254243": {
             "check": {
-                0: {'[application account name]': '1111111111111111111111'},
-                1: {'[application account name]': '2222222222222222222222'},
+                0: {
+                    '[application account name]': '1111111111111111111111'
+                },
+                1: {
+                    '[application account name]': '2222222222222222222222'
+                },
             },
             "fix": {
-                0: {'[application account name]': '1111111111111111111111'},
+                0: {
+                    '[application account name]': '1111111111111111111111'
+                },
             },
         },
         "V-254244": {
@@ -471,14 +495,11 @@ run_command 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLas
                     if file.endswith(".ps1"):
                         if file.startswith(guide_name):
                             if file == "test_windows_2-CheckScript.ps1":
-                                with open(
-                                        "test_windows_2.ps1",
-                                        "r") as f:
+                                with open("test_windows_2.ps1", "r") as f:
                                     assert f.read() == expected_check_script
                             elif file == "test_windows_2-FixScript.ps1":
-                                with open(
-                                        "test_windows_2-FixScript.ps1",
-                                        "r") as f:
+                                with open("test_windows_2-FixScript.ps1",
+                                          "r") as f:
                                     assert f.read() == expected_fix_script
             else:
                 raise AssertionError(
@@ -487,7 +508,7 @@ run_command 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLas
             raise AssertionError(
                 f"The folder '{folder_path}' either doesn't exist or is not a directory."
             )
-    except:
+    except Exception:
         raise AssertionError(
             "Something went wrong while testing the script creation.")
 
@@ -548,7 +569,8 @@ run_command() {
                                           "r") as f:
                                     assert f.read() == expected_check_script
                             elif file == "test_linux_2-FixScript.sh":
-                                with open("test_linux_2-FixScript.sh", "r") as f:
+                                with open("test_linux_2-FixScript.sh",
+                                          "r") as f:
                                     assert f.read() == expected_fix_script
             else:
                 raise AssertionError(
@@ -557,15 +579,13 @@ run_command() {
             raise AssertionError(
                 f"The folder '{folder_path}' either doesn't exist or is not a directory."
             )
-    except:
+    except Exception:
         raise AssertionError(
             "Something went wrong while testing the script creation.")
 
 
 def test_windows_script_empty():
-    guide = parseGuide(
-        "app/tests/testFiles/test_windows_3.xml",
-        "Windows")
+    guide = parseGuide("app/tests/testFiles/test_windows_3.xml", "Windows")
     user_input = {}
     windowsCreateScript(guide, user_input)
     guide_name = guide.guide_name.split(".")[0]
@@ -618,14 +638,12 @@ function run_command {
                     if file.endswith(".ps1"):
                         if file.startswith(guide_name):
                             if file == "test_windows_2-CheckScript.ps1":
-                                with open(
-                                        "test_windows_2-CheckScript.ps1",
-                                        "r") as f:
+                                with open("test_windows_2-CheckScript.ps1",
+                                          "r") as f:
                                     assert f.read() == expected_check_script
                             elif file == "test_windows_2-FixScript.ps1":
-                                with open(
-                                        "test_windows_2-FixScript.ps1",
-                                        "r") as f:
+                                with open("test_windows_2-FixScript.ps1",
+                                          "r") as f:
                                     assert f.read() == expected_fix_script
             else:
                 raise AssertionError(
@@ -634,20 +652,19 @@ function run_command {
             raise AssertionError(
                 f"The folder '{folder_path}' either doesn't exist or is not a directory."
             )
-    except:
+    except Exception:
         raise AssertionError(
             "Something went wrong while testing the script creation.")
 
 
 def test_clear_created_files():
-    status = False
     folder_path = os.path.join(os.getcwd(), "app", "out-files")
     if os.path.exists(folder_path) and os.path.isdir(folder_path):
         items = os.listdir(folder_path)
 
         files = [
-            item for item in items
-            if item.startswith("test") and os.path.isfile(os.path.join(folder_path, item))
+            item for item in items if item.startswith("test")
+            and os.path.isfile(os.path.join(folder_path, item))
         ]
 
         if len(files) > 0:
@@ -655,11 +672,10 @@ def test_clear_created_files():
                 os.remove(os.path.join(folder_path, file))
 
         os.rmdir(folder_path)
-        status = True
 
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            status = False
             raise AssertionError(
                 "Assertion failed: The folder wasn't deleted.")
-
-        assert status == True
+        else:
+            assert os.path.exists(folder_path) and os.path.isdir(
+                folder_path) == False
