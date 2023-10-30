@@ -310,7 +310,7 @@ run_command() {
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
 
-    output_folder = os.path.join(os.getcwd(), "out-files")
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
 
@@ -410,7 +410,7 @@ function run_command {
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
 
-    output_folder = os.path.join(os.getcwd(), "out-files")
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
 

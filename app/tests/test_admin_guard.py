@@ -1,5 +1,5 @@
 import os
-from app.script.admin_guard import *
+from ..app import *
 
 def test_get_required_field_linux_check_1():
     stig_rule = StigRule(
@@ -229,7 +229,7 @@ silent
 
 If the "silent" option is not set, is missing or commented out, this is a finding.'''
 
-    stig_rule = parseGuide("app/tests/testXmlFiles/test_linux_1.xml", "Linux")
+    stig_rule = parseGuide("app/tests/testFiles/test_linux_1.xml", "Linux")
 
     rule = stig_rule.stig_rule_dict['V-230341']
 
@@ -261,7 +261,7 @@ Shared accounts, such as required by an application, may be approved by the orga
 
 If unapproved shared accounts exist, this is a finding.'''
 
-    stig_rule = parseGuide("app/tests/testXmlFiles/test_windows_1.xml", "Windows")
+    stig_rule = parseGuide("app/tests/testFiles/test_windows_1.xml", "Windows")
 
     rule = stig_rule.stig_rule_dict['V-254244']
 
@@ -281,7 +281,7 @@ If unapproved shared accounts exist, this is a finding.'''
 
 
 def test_linux_script():
-    guide = parseGuide("app/tests/testXmlFiles/test_linux_2.xml", "Linux")
+    guide = parseGuide("app/tests/testFiles/test_linux_2.xml", "Linux")
     user_input = {
         "V-230309": {
             "check": {
@@ -357,7 +357,7 @@ echo sudo chgrp yum install >> fix_script_logs.txt
 run_command 'sudo chgrp yum install >> fix_script_logs.txt' 'Fix Script for V-230327'
 """
     try:
-        folder_path = os.path.join(os.getcwd(), "out-files")
+        folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
             items = os.listdir(folder_path)
 
@@ -390,7 +390,7 @@ run_command 'sudo chgrp yum install >> fix_script_logs.txt' 'Fix Script for V-23
 
 
 def test_windows_script():
-    guide = parseGuide("app/tests/testXmlFiles/test_windows_2.xml", "Windows")
+    guide = parseGuide("app/tests/testFiles/test_windows_2.xml", "Windows")
     user_input = {
         "V-254239": {
             "check": {
@@ -457,7 +457,7 @@ Write-Output 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLa
 run_command 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLastSet | FT Name, PasswordLastSet >> fix_script_logs.txt' 'fix Script for V-254243'
 """
     try:
-        folder_path = os.path.join(os.getcwd(), "out-files")
+        folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
             items = os.listdir(folder_path)
 
@@ -493,7 +493,7 @@ run_command 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLas
 
 
 def test_linux_script_empty():
-    guide = parseGuide("app/tests/testXmlFiles/test_linux_3.xml", "Linux")
+    guide = parseGuide("app/tests/testFiles/test_linux_3.xml", "Linux")
     user_input = {}
     linuxCreateScript(guide, user_input)
     guide_name = guide.guide_name.split(".")[0]
@@ -530,7 +530,7 @@ run_command() {
 }
 """
     try:
-        folder_path = os.path.join(os.getcwd(), "out-files")
+        folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
             items = os.listdir(folder_path)
 
@@ -564,7 +564,7 @@ run_command() {
 
 def test_windows_script_empty():
     guide = parseGuide(
-        "app/tests/testXmlFiles/test_windows_3.xml",
+        "app/tests/testFiles/test_windows_3.xml",
         "Windows")
     user_input = {}
     windowsCreateScript(guide, user_input)
@@ -604,7 +604,7 @@ function run_command {
 }
 """
     try:
-        folder_path = os.path.join(os.getcwd(), "out-files")
+        folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
             items = os.listdir(folder_path)
 
@@ -641,13 +641,13 @@ function run_command {
 
 def test_clear_created_files():
     status = False
-    folder_path = os.path.join(os.getcwd(), "out-files")
+    folder_path = os.path.join(os.getcwd(), "app", "out-files")
     if os.path.exists(folder_path) and os.path.isdir(folder_path):
         items = os.listdir(folder_path)
 
         files = [
             item for item in items
-            if os.path.isfile(os.path.join(folder_path, item))
+            if item.startswith("test") and os.path.isfile(os.path.join(folder_path, item))
         ]
 
         if len(files) > 0:
