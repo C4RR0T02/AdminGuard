@@ -83,6 +83,8 @@ https://realpython.com/python-testing/#unit-tests-vs-integration-tests
 https://stackoverflow.com/questions/1896918/running-unittest-with-typical-test-directory-structure
 https://stackoverflow.com/questions/448271/what-is-init-py-for
 https://flask.palletsprojects.com/en/1.1.x/testing/
+https://docs.python.org/3/library/shutil.html
+https://www.w3schools.com/python/python_file_remove.asp
 
 ## Code Documentation
 https://google.github.io/styleguide/docguide/READMEs.html
