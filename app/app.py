@@ -2,7 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, send_file
 from flaskext.markdown import Markdown
 from wtforms import BooleanField, StringField, validators
 from wtforms.form import BaseForm
-from script.admin_guard import *
+
+if __name__ == '__main__':
+    from script.admin_guard import *      # Importation for running app
+else:
+    from .script.admin_guard import *       # Importation for running test case
 
 import os
 
@@ -48,6 +52,7 @@ def scriptGenerate():
             uploaded_file.save(upload_file_path)
             guide = parseGuide(upload_file_path, selected_guide_type)
             guide_name = uploaded_file.filename.split('.')[0]
+
             guide_dictionary[guide_name] = dict()
             guide_dictionary[guide_name]["guide_content"] = guide
             guide_dictionary[guide_name]["guide_type"] = selected_guide_type
@@ -193,7 +198,7 @@ def downloadScript(guide_name, file):
                                  guide_name + '-FixScript' + file_extension)
         if not os.path.isfile(fixscript):
             return "Fix Script not found", 404
-        return send_file(fixscript, as_attachment=True)
+        return send_file(fixscript, as_attachment=True), 200
 
 
 @app.route('/template-generate', methods=['GET'])
