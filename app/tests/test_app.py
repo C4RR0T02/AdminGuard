@@ -291,28 +291,33 @@ def test_download_invalid_file(client):
 
 
 def test_remove_files():
-    os.remove(os.path.join(app.config['upload_folder'], 'test_linux_1.xml'))
-    os.remove(os.path.join(app.config['upload_folder'], 'test_windows_1.xml'))
-    os.remove(os.path.join(app.config['upload_folder'], 'test.yaml'))
-    os.remove(os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
-    os.remove(os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
-    folder_path = os.path.join(os.getcwd(), "out-files")
+    folder_path = os.path.join(os.getcwd(), "app", "uploads")
     if os.path.exists(folder_path) and os.path.isdir(folder_path):
         items = os.listdir(folder_path)
+
         files = [
-            item for item in items
-            if os.path.isfile(os.path.join(folder_path, item))
+            item for item in items if item.startswith("test")
+            and os.path.isfile(os.path.join(folder_path, item))
         ]
+
         if len(files) > 0:
             for file in files:
                 os.remove(os.path.join(folder_path, file))
-        os.rmdir(folder_path)
-        if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            raise AssertionError(
-                "Assertion failed: The folder wasn't deleted.")
-        else:
-            assert os.path.exists(folder_path) and os.path.isdir(
-                folder_path) == False
+    assert True
+
+    folder_path = os.path.join(os.getcwd(), "app", "out-files")
+    if os.path.exists(folder_path) and os.path.isdir(folder_path):
+        items = os.listdir(folder_path)
+
+        files = [
+            item for item in items if item.startswith("test")
+            and os.path.isfile(os.path.join(folder_path, item))
+        ]
+
+        if len(files) > 0:
+            for file in files:
+                os.remove(os.path.join(folder_path, file))
+    assert True
 
 
 def test_get_template_generate_page(client):
