@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, abort
 from flaskext.markdown import Markdown
 from wtforms import BooleanField, StringField, validators
 from wtforms.form import BaseForm
@@ -46,7 +46,7 @@ def scriptGenerate():
         if uploaded_file.filename != '':
             file_ext = os.path.splitext(uploaded_file.filename)[1]
             if file_ext not in app.config['UPLOAD_EXTENSIONS']:
-                return "Invalid file type - XML files only", 400
+                abort(400)
             upload_file_path = os.path.join(app.config['upload_folder'],
                                             uploaded_file.filename)
             uploaded_file.save(upload_file_path)
@@ -187,17 +187,20 @@ def downloadScript(guide_name, file):
     else:
         file_extension = ""
 
+    if file != 'checkscript' and file != 'fixscript':
+        return "File not found", 404
+
     if file == 'checkscript':
         checkscript = os.path.join(
             download_folder, guide_name + '-CheckScript' + file_extension)
         if not os.path.isfile(checkscript):
-            return "Check Script not found", 404
+            abort(404)
         return send_file(checkscript, as_attachment=True)
     if file == 'fixscript':
         fixscript = os.path.join(download_folder,
                                  guide_name + '-FixScript' + file_extension)
         if not os.path.isfile(fixscript):
-            return "Fix Script not found", 404
+            abort(404)
         return send_file(fixscript, as_attachment=True), 200
 
 
@@ -205,14 +208,17 @@ def downloadScript(guide_name, file):
 def templateGenerate():
     return render_template('template-generate.html')
 
+@app.errorhandler(400)
+def bad_request(e):
+    return render_template('400.html'), 400  # Bad Request
 
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     return render_template('404.html'), 404,  # Page Not Found
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404,  # Page Not Found
 
-# @app.errorhandler(500)
-# def internal_server_error(e):
-#     return render_template('500.html'), 500  # Internal Server Error
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500  # Internal Server Error
 
 # main driver function
 if __name__ == '__main__':
