@@ -73,6 +73,13 @@ https://www.geeksforgeeks.org/uploading-and-downloading-files-in-flask/
 ## Template-generate
 
 
+## Error Pages
+https://www.w3schools.com/cssref/css_websafe_fonts.php
+https://colorlib.com/wp/template/colorlib-error-404-17/
+https://freefrontend.com/500-error-page-html-templates/#google_vignette
+https://codepen.io/gaiaian/pen/QVVxaR
+
+
 ## CI
 https://semaphoreci.com/continuous-integration
 https://gitlab.com/C4RR0T02/csit-cicd-mini-challenge/-/blob/main/test_main.py
