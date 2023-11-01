@@ -168,10 +168,18 @@ def scriptDownload(guide_name):
         downloadFixScript = url_for('downloadScript',
                                     guide_name=guide_name,
                                     file='fixscript')
+        downloadManualCheck = url_for('downloadScript',
+                                      guide_name=guide_name,
+                                      file='manualcheck')
+        downloadManualFix = url_for('downloadScript',
+                                    guide_name=guide_name,
+                                    file='manualfix')
         return render_template('script-download.html',
                                guide_name=guide_name,
                                downloadFixScript=downloadFixScript,
-                               downloadCheckScript=downloadCheckScript)
+                               downloadCheckScript=downloadCheckScript,
+                               downloadManualCheck=downloadManualCheck,
+                               downloadManualFix=downloadManualFix)
     return render_template('script-download.html')
 
 
@@ -202,6 +210,18 @@ def downloadScript(guide_name, file):
         if not os.path.isfile(fixscript):
             abort(404)
         return send_file(fixscript, as_attachment=True), 200
+    if file == 'manualcheck':
+        manualcheck = os.path.join(download_folder,
+                                   guide_name + '-ManualCheck.txt')
+        if not os.path.isfile(manualcheck):
+            abort(404)
+        return send_file(manualcheck, as_attachment=True)
+    if file == 'manualfix':
+        manualfix = os.path.join(download_folder,
+                                 guide_name + '-ManualFix.txt')
+        if not os.path.isfile(manualfix):
+            abort(404)
+        return send_file(manualfix, as_attachment=True)
 
 
 @app.route('/template-generate', methods=['GET'])

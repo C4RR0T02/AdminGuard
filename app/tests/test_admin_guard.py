@@ -371,6 +371,20 @@ run_command 'sudo chmod 0755 woo >> fix_script_logs.txt' 'Fix Script for V-23030
 echo sudo chgrp yum install >> fix_script_logs.txt
 run_command 'sudo chgrp yum install >> fix_script_logs.txt' 'Fix Script for V-230327'
 """
+
+    expected_manual_check = """CHECK CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+
+"""
+
+    expected_manual_fix = """FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+V-230222
+Install the operating system patches or updated packages available from Red Hat within 30 days or sooner as local policy dictates.
+--------------------------------------------------------------
+
+"""
+
     try:
         folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
@@ -393,6 +407,14 @@ run_command 'sudo chgrp yum install >> fix_script_logs.txt' 'Fix Script for V-23
                                 with open("test_linux_2-FixScript.sh",
                                           "r") as f:
                                     assert f.read() == expected_fix_script
+                            elif file == "test_linux_2-ManualCheck.txt":
+                                with open("test_linux_2-ManualCheck.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_check
+                            elif file == "test_linux_2-ManualFix.txt":
+                                with open("test_linux_2-ManualFix.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_fix
             else:
                 raise AssertionError(
                     "Assertion failed: No files found in the folder.")
@@ -480,6 +502,36 @@ function run_command {
 Write-Output 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLastSet | FT Name, PasswordLastSet' >> fix_script_logs.txt
 run_command 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLastSet | FT Name, PasswordLastSet >> fix_script_logs.txt' 'fix Script for V-254243'
 """
+
+    expected_manual_check = """CHECK CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+V-254244
+Determine whether any shared accounts exist. If no shared accounts exist, this is NA.
+
+Shared accounts, such as required by an application, may be approved by the organization. This must be documented with the Information System Security Officer (ISSO). Documentation must include the reason for the account, who has access to the account, and how the risk of using the shared account is mitigated to include monitoring account activity.
+
+If unapproved shared accounts exist, this is a finding.
+--------------------------------------------------------------
+
+"""
+
+    expected_manual_fix = """FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+V-254239
+Change the built-in Administrator account password at least every "60" days.
+
+Windows LAPS must be used to change the built-in Administrator account password. Domain-joined systems can configure this to occur more frequently. LAPS will change the password every 30 days by default. 
+https://techcommunity.microsoft.com/t5/windows-it-pro-blog/by-popular-demand-windows-laps-available-now/ba-p/3788747  
+https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#windows-laps-supported-platforms-and-azure-ad-laps-preview-status
+--------------------------------------------------------------
+V-254244
+Remove unapproved shared accounts from the system.
+
+Document required shared accounts with the ISSO. Documentation must include the reason for the account, who has access to the account, and how the risk of using the shared account is mitigated to include monitoring account activity.
+--------------------------------------------------------------
+
+"""
+
     try:
         folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
@@ -501,6 +553,14 @@ run_command 'Get-AdUser -Identity 1111111111111111111111 -Properties PasswordLas
                                 with open("test_windows_2-FixScript.ps1",
                                           "r") as f:
                                     assert f.read() == expected_fix_script
+                            elif file == "test_windows_2-ManualCheck.txt":
+                                with open("test_windows_2-ManualCheck.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_check
+                            elif file == "test_windows_2-ManualFix.txt":
+                                with open("test_windows_2-ManualFix.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_fix
             else:
                 raise AssertionError(
                     "Assertion failed: No files found in the folder.")
@@ -550,6 +610,17 @@ run_command() {
     fi
 }
 """
+
+    expected_manual_check = """CHECK CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+
+"""
+
+    expected_manual_fix = """FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+
+"""
+
     try:
         folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
@@ -564,14 +635,22 @@ run_command() {
                 for file in files:
                     if file.endswith(".sh"):
                         if file.startswith(guide_name):
-                            if file == "test_linux_2-CheckScript.sh":
-                                with open("test_linux_2-CheckScript.sh",
+                            if file == "test_linux_3-CheckScript.sh":
+                                with open("test_linux_3-CheckScript.sh",
                                           "r") as f:
                                     assert f.read() == expected_check_script
-                            elif file == "test_linux_2-FixScript.sh":
-                                with open("test_linux_2-FixScript.sh",
+                            elif file == "test_linux_3-FixScript.sh":
+                                with open("test_linux_3-FixScript.sh",
                                           "r") as f:
                                     assert f.read() == expected_fix_script
+                            elif file == "test_linux_3-ManualCheck.txt":
+                                with open("test_linux_3-ManualCheck.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_check
+                            elif file == "test_linux_3-ManualFix.txt":
+                                with open("test_linux_3-ManualFix.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_fix
             else:
                 raise AssertionError(
                     "Assertion failed: No files found in the folder.")
@@ -623,6 +702,17 @@ function run_command {
     }
 }
 """
+
+    expected_manual_check = """CHECK CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+
+"""
+
+    expected_manual_fix = """FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+
+"""
+
     try:
         folder_path = os.path.join(os.getcwd(), "app", "out-files")
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
@@ -635,16 +725,24 @@ function run_command {
 
             if len(files) > 0:
                 for file in files:
-                    if file.endswith(".ps1"):
+                    if file.endswith(".ps1") or file.endswith(".txt"):
                         if file.startswith(guide_name):
-                            if file == "test_windows_2-CheckScript.ps1":
-                                with open("test_windows_2-CheckScript.ps1",
+                            if file == "test_windows_3-CheckScript.ps1":
+                                with open("test_windows_3-CheckScript.ps1",
                                           "r") as f:
                                     assert f.read() == expected_check_script
-                            elif file == "test_windows_2-FixScript.ps1":
-                                with open("test_windows_2-FixScript.ps1",
+                            elif file == "test_windows_3-FixScript.ps1":
+                                with open("test_windows_3-FixScript.ps1",
                                           "r") as f:
                                     assert f.read() == expected_fix_script
+                            elif file == "test_windows_3-ManualCheck.txt":
+                                with open("test_windows_3-ManualCheck.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_check
+                            elif file == "test_windows_3-ManualFix.txt":
+                                with open("test_windows_3-ManualFix.txt",
+                                          "r") as f:
+                                    assert f.read() == expected_manual_fix
             else:
                 raise AssertionError(
                     "Assertion failed: No files found in the folder.")

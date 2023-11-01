@@ -273,10 +273,19 @@ def parseGuide(filename, guide_type):
 
 
 def linuxCreateScript(guide, user_input):
+
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
+
     check_script = """#!/bin/bash
 mkdir AdminGuard
 cd AdminGuard
 touch check_script_logs.txt
+touch manual_check.txt
 
 run_command() {
     local cmd="$1"
@@ -294,6 +303,7 @@ run_command() {
 mkdir AdminGuard
 cd AdminGuard
 touch fix_script_logs.txt
+touch manual_fix.txt
 
 run_command() {
     local cmd="$1"
@@ -307,12 +317,21 @@ run_command() {
 }
 """
 
-    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
-        "\\")[-1]
+    manual_check = '''CHECK CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+'''
 
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
-    if not os.path.isdir(output_folder):
-        os.mkdir(output_folder)
+    manual_fix = '''FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+'''
+
+    with open(output_folder + "/" + guide_file_name + "-" + "ManualCheck.txt",
+              "ab") as linux_manual_check:
+        linux_manual_check.write(manual_check.encode())
+
+    with open(output_folder + "/" + guide_file_name + "-" + "ManualFix.txt",
+              "ab") as linux_manual_fix:
+        linux_manual_fix.write(manual_fix.encode())
 
     if len(user_input) == 0:
         with open(
@@ -327,6 +346,14 @@ run_command() {
         target_rule = guide.stig_rule_dict[vuln_id]
 
         user_check_input = user_input[vuln_id]["check"]
+        if len(target_rule.check_commands) == 0:
+            check_script += "echo 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
+            manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
+            with open(
+                    output_folder + "/" + guide_file_name + "-" +
+                    "ManualCheck.txt", "ab") as linux_manual_check:
+                linux_manual_check.write(manual_check.encode())
+
         for check_cmd_index, check_cmd in enumerate(
                 target_rule.check_commands):
             replacement_dict = user_check_input.get(check_cmd_index, None)
@@ -351,6 +378,13 @@ run_command() {
         target_rule = guide.stig_rule_dict[vuln_id]
 
         user_fix_input = user_input[vuln_id]["fix"]
+        if len(target_rule.fix_commands) == 0:
+            fix_script += "echo 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
+            manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
+            with open(
+                    output_folder + "/" + guide_file_name + "-" +
+                    "ManualFix.txt", "ab") as linux_manual_fix:
+                linux_manual_fix.write(manual_fix.encode())
         for fix_cmd_index, fix_cmd in enumerate(target_rule.fix_commands):
             replacement_dict = user_fix_input.get(fix_cmd_index, None)
             if not replacement_dict:
@@ -371,9 +405,17 @@ run_command() {
 
 def windowsCreateScript(guide, user_input):
 
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
+
     check_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'check_script_logs.txt' -ItemType 'file' | out-null
+New-Item -Name 'manual_check.txt' -ItemType 'file' | out-null
 
 function run_command {
     param (
@@ -392,6 +434,7 @@ function run_command {
     fix_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'fix_script_logs.txt' -ItemType 'file' | out-null
+New-Item -Name 'manual_fix.txt' -ItemType 'file' | out-null
 
 function run_command {
     param (
@@ -407,12 +450,21 @@ function run_command {
 }
 """
 
-    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
-        "\\")[-1]
+    manual_check = '''CHECK CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+'''
 
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
-    if not os.path.isdir(output_folder):
-        os.mkdir(output_folder)
+    manual_fix = '''FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+'''
+
+    with open(output_folder + "/" + guide_file_name + "-" + "ManualCheck.txt",
+              "ab") as windows_manual_check:
+        windows_manual_check.write(manual_check.encode())
+
+    with open(output_folder + "/" + guide_file_name + "-" + "ManualFix.txt",
+              "ab") as windows_manual_fix:
+        windows_manual_fix.write(manual_fix.encode())
 
     if len(user_input) == 0:
         with open(
@@ -428,6 +480,13 @@ function run_command {
         target_rule = guide.stig_rule_dict[vuln_id]
 
         user_check_input = user_input[vuln_id]["check"]
+        if len(target_rule.check_commands) == 0:
+            check_script += "Write-Output 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
+            manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
+            with open(
+                    output_folder + "/" + guide_file_name + "-" +
+                    "ManualCheck.txt", "ab") as windows_manual_check:
+                windows_manual_check.write(manual_check.encode())
         for check_cmd_index, check_cmd in enumerate(
                 target_rule.check_commands):
             replacement_dict = user_check_input.get(check_cmd_index, None)
@@ -452,6 +511,13 @@ function run_command {
         target_rule = guide.stig_rule_dict[vuln_id]
 
         user_fix_input = user_input[vuln_id]["fix"]
+        if len(target_rule.fix_commands) == 0:
+            fix_script += "Write-Output 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
+            manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
+            with open(
+                    output_folder + "/" + guide_file_name + "-" +
+                    "ManualFix.txt", "ab") as windows_manual_fix:
+                windows_manual_fix.write(manual_fix.encode())
         for fix_cmd_index, fix_cmd in enumerate(target_rule.fix_commands):
             replacement_dict = user_fix_input.get(fix_cmd_index, None)
             if not replacement_dict:
@@ -470,51 +536,3 @@ function run_command {
                 output_folder + "/" + guide_file_name + "-" + "FixScript.ps1",
                 "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
-
-
-# LINUX TESTS
-# Test replacement of commands from user input
-# user_input = {
-#     "V-230309": {
-#         "check": {
-#             1: {'[PART]': 'yum', '[Test]': 'install'},
-#             2: {'<file>': 'woo'},
-#         },
-#         "fix": {
-#             1: {'[PART]': 'yum', '[Test]': 'install'},
-#             2: {'<file>': 'woo'},
-#         },
-#     },
-#     "V-230327": {
-#         "check": {},
-#         "fix": {
-#             0: {'<group>': 'yum', '<file>': 'install'}
-#         },
-#     },
-#     "V-230222": {
-#         "check": {},
-#         "fix": {},
-#     },
-# }
-
-# WINDOWS TESTS
-# Test replacement of commands from user input
-# user_input = {
-#     "V-254239": {
-#         "check": {
-#             1: {'[account name]': 'TESTTTTTTTTT'},
-#         },
-#         "fix": {},
-#     },
-#     "V-254243": {
-#         "check": {
-#             0: {'[application account name]': '1111111111111111111111'},
-#             1: {'[application account name]': '2222222222222222222222'},
-#           },
-#         "fix": {},
-#     },
-#     "V-254244": {
-#         "check": {},
-#         "fix": {},
-#     },
-# }
