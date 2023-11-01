@@ -1,0 +1,12 @@
+.git/
+
+# Ignore common Python and development files
+**.pytest_cache
+**__pycache__
+*.pyc
+
+# Ignore system and environment files
+.git
+.gitignore
+.env
+.vscode

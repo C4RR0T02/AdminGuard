@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type='text/xsl' href='STIG_unclass.xsl'?>
+<Benchmark xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:cpe="http://cpe.mitre.org/language/2.0"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 http://nvd.nist.gov/schema/xccdf-1.1.4.xsd http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd" id="MS_Windows_Server_2022_STIG" xml:lang="en"
+    xmlns="http://checklists.nist.gov/xccdf/1.1">
+    <status date="2023-05-03">accepted</status>
+    <title>Microsoft Windows Server 2022 Security Technical Implementation Guide</title>
+    <description>This Security Technical Implementation Guide is published as a tool to improve the security of Department of Defense (DOD) information systems. The requirements are derived from the National Institute of Standards and Technology (NIST) 800-53 and related documents. Comments or proposed revisions to this document should be sent via email to the following address: disa.stig_spt@mail.mil.</description>
+    <notice id="terms-of-use" xml:lang="en"></notice>
+    <front-matter xml:lang="en"></front-matter>
+    <rear-matter xml:lang="en"></rear-matter>
+    <reference href="https://cyber.mil">
+        <dc:publisher>DISA</dc:publisher>
+        <dc:source>STIG.DOD.MIL</dc:source>
+    </reference>
+    <plain-text id="release-info">Release: 3 Benchmark Date: 07 Jun 2023</plain-text>
+    <plain-text id="generator">3.4.0.34222</plain-text>
+    <plain-text id="conventionsVersion">1.10.0</plain-text>
+    <version>1</version>
+    <Group id="V-254244">
+        <title>SRG-OS-000104-GPOS-00051</title>
+        <description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
+        <Rule id="SV-254244r848548_rule" weight="10.0" severity="medium">
+            <version>WN22-00-000070</version>
+            <title>Windows Server 2022 shared user accounts must not be permitted.</title>
+            <description>&lt;VulnDiscussion&gt;Shared accounts (accounts where two or more people log on with the same user identification) do not provide adequate identification and authentication. There is no way to provide for nonrepudiation or individual accountability for system access and resource usage.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;false&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
+            <reference>
+                <dc:title>DPMS Target Microsoft Windows Server 2022</dc:title>
+                <dc:publisher>DISA</dc:publisher>
+                <dc:type>DPMS Target</dc:type>
+                <dc:subject>Microsoft Windows Server 2022</dc:subject>
+                <dc:identifier>5485</dc:identifier>
+            </reference>
+            <ident system="http://cyber.mil/cci">CCI-000764</ident>
+            <fixtext fixref="F-57680r848547_fix">Remove unapproved shared accounts from the system.
+
+Document required shared accounts with the ISSO. Documentation must include the reason for the account, who has access to the account, and how the risk of using the shared account is mitigated to include monitoring account activity.</fixtext>
+            <fix id="F-57680r848547_fix" />
+            <check system="C-57729r848546_chk">
+                <check-content-ref href="Microsoft_Windows_Server_2022_STIG.xml" name="M" />
+                <check-content>Determine whether any shared accounts exist. If no shared accounts exist, this is NA.
+
+Shared accounts, such as required by an application, may be approved by the organization. This must be documented with the Information System Security Officer (ISSO). Documentation must include the reason for the account, who has access to the account, and how the risk of using the shared account is mitigated to include monitoring account activity.
+
+If unapproved shared accounts exist, this is a finding.</check-content>
+            </check>
+        </Rule>
+    </Group>
+</Benchmark>

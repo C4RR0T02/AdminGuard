@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>404 Page Not Found</title>
+        <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
+        <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <div id="notfound">
+            <div class="notfound">
+                <div class="notfound-404">
+                    <h1>:(</h1>
+                </div>
+                <h2>404 - Page not found</h2>
+                <p>The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
+                <a href="/" class="notfound-link">Home Page</a>
+            </div>
+        </div>
+    </body>
+</html>
+
+<style>
+    * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    #notfound {
+        position: relative;
+        height: 100vh;
+    }
+
+    #notfound .notfound {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .notfound {
+        max-width: 710px;
+        width: 100%;
+        padding-left: 190px;
+        line-height: 1.4;
+    }
+
+    .notfound .notfound-404 {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 150px;
+        height: 150px;
+    }
+
+    .notfound .notfound-404 h1 {
+        font-family: 'Brush Script MT', cursive;
+        color: #3563f2;
+        font-size: 150px;
+        letter-spacing: 15.5px;
+        margin: 0px;
+        font-weight: 900;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .notfound h2 {
+        font-family: Tahoma, sans-serif;
+        font-size: 40px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        margin-top: 0;
+    }
+
+    .notfound p {
+        font-family: Tahoma, sans-serif;
+        font-size: 20px;
+        font-weight: 400;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+
+    .notfound a.notfound-link {
+        font-family: Tahoma, sans-serif;
+        font-size: 20px;
+        text-decoration: none;
+        text-transform: uppercase;
+        color: white;
+        background: #3563f2;
+        display: inline-block;
+        padding: 15px 30px;
+        border-radius: 40px;
+        font-weight: 700;
+        -webkit-box-shadow: 0px 4px 15px -5px rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 4px 15px -5px rgba(0, 0, 0, 0.3);
+        -webkit-transition: 0.2s all;
+        transition: 0.2s all;
+    }
+
+    .notfound a.notfound-link:hover {
+        color: #fff;
+        background-color: #5c8ff3;
+    }
+
+    .notfound a.notfound-link:visited {
+        color: #fff;
+    }
+
+    @media only screen and (max-width: 480px) {
+        .notfound {
+            text-align: center;
+        }
+
+        .notfound .notfound-404 {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .notfound {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+</style>

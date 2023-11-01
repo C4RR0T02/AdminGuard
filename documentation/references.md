@@ -73,6 +73,26 @@ https://www.geeksforgeeks.org/uploading-and-downloading-files-in-flask/
 ## Template-generate
 
 
+## Error Pages
+https://www.w3schools.com/cssref/css_websafe_fonts.php
+https://colorlib.com/wp/template/colorlib-error-404-17/
+https://freefrontend.com/500-error-page-html-templates/#google_vignette
+https://codepen.io/gaiaian/pen/QVVxaR
+
+
+## CI
+https://semaphoreci.com/continuous-integration
+https://gitlab.com/C4RR0T02/csit-cicd-mini-challenge/-/blob/main/test_main.py
+https://docs.pytest.org/en/latest/
+https://flake8.pycqa.org/en/latest/user/configuration.html
+https://pypi.org/project/yapf/
+https://realpython.com/python-testing/#unit-tests-vs-integration-tests
+https://stackoverflow.com/questions/1896918/running-unittest-with-typical-test-directory-structure
+https://stackoverflow.com/questions/448271/what-is-init-py-for
+https://flask.palletsprojects.com/en/1.1.x/testing/
+https://docs.python.org/3/library/shutil.html
+https://www.w3schools.com/python/python_file_remove.asp
+
 ## Code Documentation
 https://google.github.io/styleguide/docguide/READMEs.html
 https://google.github.io/styleguide/docguide/best_practices.html
