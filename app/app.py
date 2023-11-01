@@ -208,17 +208,21 @@ def downloadScript(guide_name, file):
 def templateGenerate():
     return render_template('template-generate.html')
 
+
 @app.errorhandler(400)
 def bad_request(e):
     return render_template('400.html'), 400  # Bad Request
+
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404,  # Page Not Found
 
+
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500  # Internal Server Error
+
 
 # main driver function
 if __name__ == '__main__':
