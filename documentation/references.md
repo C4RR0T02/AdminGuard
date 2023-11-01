@@ -10,6 +10,11 @@ https://pypi.org/project/beautifulsoup4/
 https://pypi.org/project/urllib3/
 https://pypi.org/project/Flask-Markdown/
 https://pypi.org/project/WTForms/
+https://pypi.org/project/Flask/
+https://pypi.org/project/lxml/
+https://pypi.org/project/pytest/
+https://pypi.org/project/flake8/
+https://pypi.org/project/yapf/
 
 ## Icons
 https://cloudconvert.com/png-to-ico
