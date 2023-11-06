@@ -58,7 +58,6 @@ class StigRule:
             command_list = []
             field_split = field.split("\n")
             for field_line in field_split:
-                field_text_to_fill = []
 
                 field_line = field_line.strip()
 
@@ -67,23 +66,7 @@ class StigRule:
 
                 field_command = field_line.replace("$ ", "")
 
-                if path_to_file_bracket_regex.findall(field_command):
-                    for command in path_to_file_bracket_regex.findall(
-                            field_command):
-                        field_text_to_fill.append(command)
-                else:
-                    for command in square_bracket_regex.findall(field_command):
-                        if not_regex_regex.findall(command):
-                            field_text_to_fill.append(command)
-
-                for command in path_to_file_regex.findall(field_command):
-                    field_text_to_fill.append(command)
-
-                for command in angle_bracket_regex.findall(field_command):
-                    field_text_to_fill.append(command)
-
-                new_command = Command(field_command, field_text_to_fill)
-                command_list.append(new_command)
+                command_list.append(field_command)
             return command_list
 
         if type == "Windows":
@@ -93,7 +76,6 @@ class StigRule:
             field_split = field.split("\n")
             for field_line in field_split:
                 field_command = ""
-                field_text_to_fill = []
 
                 if not field_line.startswith(
                         'Enter "') or field_line.startswith("Enter '"):
@@ -121,11 +103,7 @@ class StigRule:
                     if field_command.endswith('.'):
                         field_command = field_command[:-1]
 
-                for command in square_bracket_regex.findall(field_command):
-                    field_text_to_fill.append(command)
-
-                new_command = Command(field_command, field_text_to_fill)
-                command_list.append(new_command)
+                command_list.append(field_command)
             return command_list
 
     def _calculateScore(self):
@@ -152,7 +130,7 @@ class StigRule:
                 math.ceil(
                     float(severity_Dictionary[self.rule_severity]) *
                     (float(self.rule_weight) / 2)))
-
+                    
             for category_name, category_score_limit in severity_categories_dictionary.items(
             ):
                 if category_score >= category_score_limit:
@@ -163,32 +141,15 @@ class StigRule:
 
         return self.category_score
 
+    def replaceFields(self, field, replacement):
+        field_data = self.field
+        if field_data is None:
+            self.field = field_data
+        else:
+            self.field = replacement
+
     def __str__(self) -> str:
         return f"{str(self.rule_name)} - {str(self.rule_title)} - {str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_weight)} - {str(self.rule_severity)} - {str(self.stig_id)} - {str(self.rule_fix_text)} - {str(self.rule_description)} - {str(self.check_content)} - {str(self.category_score)}"
-
-
-class Command:
-
-    def __init__(self, command, replacements):
-        self.command = command
-        self.replacements = replacements
-
-    def replaceCommand(self, target_replacements):
-        new_command = self.command
-        for replacement_key in self.replacements:
-            if replacement_key in target_replacements:
-                replacement_value = target_replacements[replacement_key]
-                new_command = new_command.replace(replacement_key,
-                                                  replacement_value)
-            else:
-                # print(f"Replacement Key: {replacement_key} not found in target_replacements")
-                pass
-
-        return new_command
-
-    def __repr__(self) -> str:
-        return f"Command({str(self.command)} - {str(self.replacements)})"
-
 
 class RuleInput:
 
