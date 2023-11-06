@@ -88,6 +88,7 @@ https://codepen.io/gaiaian/pen/QVVxaR
 ## CI
 https://semaphoreci.com/continuous-integration
 https://gitlab.com/C4RR0T02/csit-cicd-mini-challenge/-/blob/main/test_main.py
+https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml
 https://docs.pytest.org/en/latest/
 https://flake8.pycqa.org/en/latest/user/configuration.html
 https://pypi.org/project/yapf/
@@ -97,6 +98,8 @@ https://stackoverflow.com/questions/448271/what-is-init-py-for
 https://flask.palletsprojects.com/en/1.1.x/testing/
 https://docs.python.org/3/library/shutil.html
 https://www.w3schools.com/python/python_file_remove.asp
+https://docs.github.com/en/actions/quickstart
+
 
 ## Code Documentation
 https://google.github.io/styleguide/docguide/READMEs.html
