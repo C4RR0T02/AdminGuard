@@ -46,76 +46,57 @@
                       </h2>
                       <div id="collapse-{{ rule.vuln_id }}" class="accordion-collapse collapse show" data-bs-parent="#{{ rule.vuln_id }}accordion">
                         <div class="accordion-body">
-                          <strong>Title: </strong>
-                          {{ rule.rule_title }}
-                          <br>
-                          <strong>Vulnerability Description: </strong>
-                          <br>
-                          {{ rule.rule_description|markdown }}
-                          <strong>Vulnerability Fix: </strong>
-                          <br>
-                          {{ rule.rule_fix_text|markdown }}
-                          
-                          {% for index, fix_commands in enumerate(rule.fix_commands) %}
-                            {% if fix_commands.replacements|length >= 1 %}
-                              <hr>
-                              <strong>Fields to replace: </strong>
-                              <br>
-                              <span>
-                                Command:  
-                                <code>
-                                  {{ fix_commands.command|markdown }}
-                                </code>
-                              </span>
-                              {% for field in fix_commands.replacements %}
-                              {% set field_id = rule.vuln_id ~ ".fix." ~ index ~ "." ~ field %}
-                                <div class="d-flex">
-                                  {{ form[field_id].label(class_="col-1 col-form-label") }}
-                                  <div class="flex-fill">
-                                    {{ form[field_id](class_="form-control" ~ (" is-invalid" if form[field_id].errors else "")) }}
-                                    {% if form[field_id].errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form[field_id].errors %}{{ error }}{% endfor %}
-                                        </div>
-                                    {% endif %}
+                          {% set field_id = rule.vuln_id ~ "." ~ rule.rule_title %}
+                          <div class="d-flex">
+                            <div class="flex-fill">
+                              <label for="{{ field_id }}" class="col-form-label"><strong>Title: </strong></label>
+                              {{ form[field_id](value=rule.rule_title, class_="form-control" ~ (" is-invalid" if form[field_id].errors else "")) }}
+                              {% if form[field_id].errors %}
+                                  <div class="invalid-feedback">
+                                      {% for error in form[field_id].errors %}{{ error }}{% endfor %}
                                   </div>
-                                </div>
-                                <hr>
-                              {% endfor %}
-                            {% endif %}
-                          {% endfor %}
-                          <strong>Vulnerability Check: </strong>
-                          <br>
-                          {{ rule.check_content|markdown }}
-                          
-                          {% for index, check_commands in enumerate(rule.check_commands) %}
-                            {% if check_commands.replacements|length >= 1 %}
-                              <hr>
-                              <strong>Fields to replace: </strong>
+                              {% endif %}
+                            </div>
+                          </div>
+                          {% set field_id = rule.vuln_id ~ "." ~ rule.rule_description %}
+                          <div class="d-flex">
+                            <div class="flex-fill">
+                              <label for="{{ field_id }}" class="col-form-label"><strong>Vulnerability Description: </strong></label>
                               <br>
-                              <span>
-                                Command:  
-                                <code>
-                                  {{ check_commands.command|markdown }}
-                                </code>
-                              </span>
-                              {% for field in check_commands.replacements %}
-                              {% set field_id = rule.vuln_id ~ ".check." ~ index ~ "." ~ field %}
-                                <div class="d-flex">
-                                  {{ form[field_id].label(class_="col-1 col-form-label") }}
-                                  <div class="flex-fill">
-                                    {{ form[field_id](class_="form-control" ~ (" is-invalid" if form[field_id].errors else "")) }}
-                                    {% if form[field_id].errors %}
-                                        <div class="invalid-feedback">
-                                            {% for error in form[field_id].errors %}{{ error }}{% endfor %}
-                                        </div>
-                                    {% endif %}
+                              <textarea class="auto-expand form-control{{ ' is-invalid' if form[field_id].errors else '' }}" id="{{ field_id }}" name="{{ field_id }}" rows="6">{{ rule.rule_description }}</textarea>
+                              {% if form[field_id].errors %}
+                                  <div class="invalid-feedback">
+                                      {% for error in form[field_id].errors %}{{ error }}{% endfor %}
                                   </div>
-                                </div>
-                                <hr>
-                              {% endfor %}
-                            {% endif %}
-                          {% endfor %}
+                              {% endif %}
+                            </div>
+                          </div>
+                          {% set field_id = rule.vuln_id ~ "." ~ rule.rule_fix_text %}
+                          <div class="d-flex">
+                            <div class="flex-fill">
+                              <label for="{{ field_id }}" class="col-form-label"><strong>Vulnerability Fix: </strong></label>
+                              <br>
+                              <textarea class="auto-expand form-control{{ ' is-invalid' if form[field_id].errors else '' }}" id="{{ field_id }}" name="{{ field_id }}" rows="6">{{ rule.rule_fix_text }}</textarea>
+                              {% if form[field_id].errors %}
+                                  <div class="invalid-feedback">
+                                      {% for error in form[field_id].errors %}{{ error }}{% endfor %}
+                                  </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                          {% set field_id = rule.vuln_id ~ "." ~ rule.check_content %}
+                          <div class="d-flex">
+                              <div class="flex-fill">
+                                  <label for="{{ field_id }}" class="col-form-label"><strong>Vulnerability Check: </strong></label>
+                                  <br>
+                                  <textarea class="auto-expand form-control{{ ' is-invalid' if form[field_id].errors else '' }}" id="{{ field_id }}" name="{{ field_id }}" rows="6">{{ rule.check_content }}</textarea>
+                                  {% if form[field_id].errors %}
+                                      <div class="invalid-feedback">
+                                          {% for error in form[field_id].errors %}{{ error }}{% endfor %}
+                                      </div>
+                                  {% endif %}
+                              </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -129,3 +110,10 @@
         </div>
     </body>
 </html>
+
+<style>
+  .auto-expand {
+    resize: vertical;
+    overflow: auto;
+  }
+</style>

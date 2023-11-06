@@ -75,23 +75,13 @@ def enableCheck(enable_id):
 def createGuideForm(guide: Guide, formdata=None):
     form_fields = dict()
     for rule in guide.stig_rule_dict.values():
-        form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable",
-                                                             default=False)
-        for cmd_index, cmd in enumerate(rule.check_commands):
-            if not cmd.replacements:
-                continue
-            for replacement in cmd.replacements:
-                form_fields[
-                    f"{rule.vuln_id}.check.{cmd_index}.{replacement}"] = StringField(
-                        replacement, [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable", default=False)
+        
+        form_fields[f"{rule.vuln_id}.{rule.rule_title}"] = StringField("rule_title", [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.{rule.rule_fix_text}"] = StringField("rule_fix_text", [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.{rule.rule_description}"] = StringField("rule_description", [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.{rule.check_content}"] = StringField("check_content", [enableCheck(f"{rule.vuln_id}.enable")])
 
-        for cmd_index, cmd in enumerate(rule.fix_commands):
-            if not cmd.replacements:
-                continue
-            for replacement in cmd.replacements:
-                form_fields[
-                    f"{rule.vuln_id}.fix.{cmd_index}.{replacement}"] = StringField(
-                        replacement, [enableCheck(f"{rule.vuln_id}.enable")])
 
     form = BaseForm(form_fields)
     form.process(formdata)
@@ -111,50 +101,13 @@ def scriptFieldsGet(guide_name):
                            form=form)
 
 
-@app.route('/script-generate/<guide_name>', methods=['POST'])
-def scriptFieldsPost(guide_name):
+@app.route('/script-generate/<guide_name>/<vuln_id>', methods=['POST'])
+def scriptFieldsPost(guide_name, vuln_id):
     guide_details = guide_dictionary.get(guide_name)
     guide = guide_details.get("guide_content")
     if guide is None:
         return "Guide not found", 404
-    form = createGuideForm(guide, request.form)
-    if not form.validate():
-        return render_template('script-fields.html',
-                               enumerate=enumerate,
-                               guide=guide,
-                               form=form)
-
-    user_input = dict()
-    for key, value in form.data.items():
-        key_split = key.split('.')
-        vuln_id = key_split[0]
-        data_type = key_split[1]
-
-        if not form.data[f"{vuln_id}.enable"]:
-            continue
-
-        if vuln_id not in user_input:
-            user_input[vuln_id] = {"check": dict(), "fix": dict()}
-
-        if data_type == "check":
-            check_dict = user_input[vuln_id]["check"]
-            cmd_index = int(key_split[2])
-            replacement = key_split[3]
-            if cmd_index not in check_dict:
-                check_dict[cmd_index] = dict()
-            check_dict[cmd_index][replacement] = value
-
-        if data_type == "fix":
-            fix_dict = user_input[vuln_id]["fix"]
-            cmd_index = int(key_split[2])
-            replacement = key_split[3]
-            if cmd_index not in fix_dict:
-                fix_dict[cmd_index] = dict()
-            fix_dict[cmd_index][replacement] = value
-    if guide_details.get("guide_type") == "Windows":
-        windowsCreateScript(guide, user_input)
-    elif guide_details.get("guide_type") == "Linux":
-        linuxCreateScript(guide, user_input)
+    guide.stig_rule_dict[vuln_id] = request.form
 
     return redirect(url_for('scriptDownload', guide_name=guide_name))
 
