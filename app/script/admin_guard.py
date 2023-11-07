@@ -233,14 +233,21 @@ def parseGuide(filename, guide_type):
     return guide
 
 
-def linuxCreateScript(guide, user_input):
-
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
-    if not os.path.isdir(output_folder):
-        os.mkdir(output_folder)
+def linuxCreateScript(guide, enable_list):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
+
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        subdirectory = os.path.join(output_folder, guide_file_name)
+        for file in os.listdir(subdirectory):
+            os.remove(os.path.join(subdirectory, file))
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        os.chdir(output_folder)
+        os.mkdir(guide_file_name)
 
     check_script = """#!/bin/bash
 mkdir AdminGuard
@@ -286,93 +293,76 @@ run_command() {
 --------------------------------------------------------------
 '''
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualCheck.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualCheck.txt",
               "ab") as linux_manual_check:
         linux_manual_check.write(manual_check.encode())
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualFix.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualFix.txt",
               "ab") as linux_manual_fix:
         linux_manual_fix.write(manual_fix.encode())
 
-    if len(user_input) == 0:
+    if len(enable_list) == 0:
         with open(
-                output_folder + "/" + guide_file_name + "-" + "CheckScript.sh",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "CheckScript.sh",
                 "wb") as linux_check_script:
             linux_check_script.write(check_script.encode())
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh",
+        with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
                   "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
-
-        user_check_input = user_input[vuln_id]["check"]
         if len(target_rule.check_commands) == 0:
             check_script += "echo 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
             manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualCheck.txt", "ab") as linux_manual_check:
                 linux_manual_check.write(manual_check.encode())
 
-        for check_cmd_index, check_cmd in enumerate(
-                target_rule.check_commands):
-            replacement_dict = user_check_input.get(check_cmd_index, None)
-            if not replacement_dict:
-                if check_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {check_cmd.command}"
-                    )
-                parsed_command = check_cmd.command
-            else:
-                parsed_command = check_cmd.replaceCommand(replacement_dict)
-
-            check_script = check_script + "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
-            check_script = check_script + "run_command '" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+        for check_cmd in target_rule.check_commands:
+            check_script = check_script + "echo " + check_cmd + " >> check_script_logs.txt" + "\n"
+            check_script = check_script + "run_command '" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
         with open(
-                output_folder + "/" + guide_file_name + "-" + "CheckScript.sh",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "CheckScript.sh",
                 "wb") as linux_check_script:
             linux_check_script.write(check_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
-        user_fix_input = user_input[vuln_id]["fix"]
         if len(target_rule.fix_commands) == 0:
             fix_script += "echo 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
             manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualFix.txt", "ab") as linux_manual_fix:
                 linux_manual_fix.write(manual_fix.encode())
-        for fix_cmd_index, fix_cmd in enumerate(target_rule.fix_commands):
-            replacement_dict = user_fix_input.get(fix_cmd_index, None)
-            if not replacement_dict:
-                if fix_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {fix_cmd.command}"
-                    )
-                parsed_command = fix_cmd.command
-            else:
-                parsed_command = fix_cmd.replaceCommand(replacement_dict)
-
-            fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
-            fix_script += "run_command '" + parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh",
+        for fix_cmd in target_rule.fix_commands:
+            fix_script += "echo " + fix_cmd + " >> fix_script_logs.txt" + "\n"
+            fix_script += "run_command '" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+        with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
                   "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
 
 
-def windowsCreateScript(guide, user_input):
-
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
-    if not os.path.isdir(output_folder):
-        os.mkdir(output_folder)
+def windowsCreateScript(guide, enable_list):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
 
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        subdirectory = os.path.join(output_folder, guide_file_name)
+        for file in os.listdir(subdirectory):
+            os.remove(os.path.join(subdirectory, file))
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        os.chdir(output_folder)
+        os.mkdir(guide_file_name)
+    
     check_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'check_script_logs.txt' -ItemType 'file' | out-null
@@ -419,59 +409,46 @@ function run_command {
 --------------------------------------------------------------
 '''
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualCheck.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualCheck.txt",
               "ab") as windows_manual_check:
         windows_manual_check.write(manual_check.encode())
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualFix.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualFix.txt",
               "ab") as windows_manual_fix:
         windows_manual_fix.write(manual_fix.encode())
 
-    if len(user_input) == 0:
+    if len(enable_list) == 0:
         with open(
-                output_folder + "/" + guide_file_name + "-" +
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                 "CheckScript.ps1", "wb") as windows_check_script:
             windows_check_script.write(check_script.encode())
         with open(
-                output_folder + "/" + guide_file_name + "-" + "FixScript.ps1",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.ps1",
                 "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
-        user_check_input = user_input[vuln_id]["check"]
         if len(target_rule.check_commands) == 0:
             check_script += "Write-Output 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
             manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualCheck.txt", "ab") as windows_manual_check:
                 windows_manual_check.write(manual_check.encode())
-        for check_cmd_index, check_cmd in enumerate(
-                target_rule.check_commands):
-            replacement_dict = user_check_input.get(check_cmd_index, None)
-            if not replacement_dict:
-                if check_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {check_cmd.command}"
-                    )
-                parsed_command = check_cmd.command
-            else:
-                parsed_command = check_cmd.replaceCommand(replacement_dict)
-
-            check_script += "Write-Output '" + parsed_command + "' >> check_script_logs.txt" + "\n"
-            check_script += "run_command " + "'" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+        for check_cmd in target_rule.check_commands:
+            check_script += "Write-Output '" + check_cmd + "' >> check_script_logs.txt" + "\n"
+            check_script += "run_command " + "'" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
         with open(
-                output_folder + "/" + guide_file_name + "-" +
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                 "CheckScript.ps1", "wb") as windows_check_script:
             windows_check_script.write(check_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
-        user_fix_input = user_input[vuln_id]["fix"]
         if len(target_rule.fix_commands) == 0:
             fix_script += "Write-Output 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
             manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
@@ -479,21 +456,11 @@ function run_command {
                     output_folder + "/" + guide_file_name + "-" +
                     "ManualFix.txt", "ab") as windows_manual_fix:
                 windows_manual_fix.write(manual_fix.encode())
-        for fix_cmd_index, fix_cmd in enumerate(target_rule.fix_commands):
-            replacement_dict = user_fix_input.get(fix_cmd_index, None)
-            if not replacement_dict:
-                if fix_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {fix_cmd.command}"
-                    )
-                parsed_command = fix_cmd.command
-            else:
-                parsed_command = fix_cmd.replaceCommand(replacement_dict)
-
-            fix_script += "Write-Output '" + parsed_command + "' >> fix_script_logs.txt" + "\n"
-            fix_script += "run_command " + "'" + parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+        for fix_cmd in target_rule.fix_commands:
+            fix_script += "Write-Output '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
+            fix_script += "run_command " + "'" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
 
         with open(
-                output_folder + "/" + guide_file_name + "-" + "FixScript.ps1",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.ps1",
                 "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())

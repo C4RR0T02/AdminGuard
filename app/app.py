@@ -75,12 +75,12 @@ def enableCheck(enable_id):
 def createGuideForm(guide: Guide, formdata=None):
     form_fields = dict()
     for rule in guide.stig_rule_dict.values():
-        form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable", default=False)
+        form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable", default=True)
         
-        form_fields[f"{rule.vuln_id}.{rule.rule_title}"] = StringField("rule_title", [enableCheck(f"{rule.vuln_id}.enable")])
-        form_fields[f"{rule.vuln_id}.{rule.rule_fix_text}"] = StringField("rule_fix_text", [enableCheck(f"{rule.vuln_id}.enable")])
-        form_fields[f"{rule.vuln_id}.{rule.rule_description}"] = StringField("rule_description", [enableCheck(f"{rule.vuln_id}.enable")])
-        form_fields[f"{rule.vuln_id}.{rule.check_content}"] = StringField("check_content", [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.rule_title"] = StringField("rule_title", [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.rule_fix_text"] = StringField("rule_fix_text", [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.rule_description"] = StringField("rule_description", [enableCheck(f"{rule.vuln_id}.enable")])
+        form_fields[f"{rule.vuln_id}.check_content"] = StringField("check_content", [enableCheck(f"{rule.vuln_id}.enable")])
 
 
     form = BaseForm(form_fields)
@@ -100,17 +100,36 @@ def scriptFieldsGet(guide_name):
                            guide=guide,
                            form=form)
 
-
-@app.route('/script-generate/<guide_name>/<vuln_id>', methods=['POST'])
-def scriptFieldsPost(guide_name, vuln_id):
+@app.route('/script-generate/<guide_name>', methods=['POST'])
+def scriptFieldsPost(guide_name):
     guide_details = guide_dictionary.get(guide_name)
+    guide_type = guide_details.get("guide_type")
     guide = guide_details.get("guide_content")
-    if guide is None:
+    enable_list = []
+
+    if guide is None or guide_type is None:
         return "Guide not found", 404
-    guide.stig_rule_dict[vuln_id] = request.form
+    
+    fragments = request.form.getlist("items")
+
+    for vuln_id, data in fragments:
+        if vuln_id in guide.stig_rule_dict:
+            rule = guide.stig_rule_dict[vuln_id]
+            rule.rule_title = data["rule_title"]
+            rule.rule_fix_text = data["rule_fix_text"]
+            rule.rule_description = data["rule_description"]
+            rule.check_content = data["check_content"]
+            if data["enable"]:
+                enable_list.append(rule.vuln_id)
+                rule.check_commands = rule._getRequiredFields(guide_type, rule.check_content)
+                rule.fix_commands = rule._getRequiredFields(guide_type, rule.fix_commands)
+
+    if guide_details.get("guide_type") == "Windows":
+        windowsCreateScript(guide, enable_list)
+    elif guide_details.get("guide_type") == "Linux":
+        linuxCreateScript(guide, enable_list)
 
     return redirect(url_for('scriptDownload', guide_name=guide_name))
-
 
 @app.route('/script-generate/<guide_name>/download', methods=['GET'])
 def scriptDownload(guide_name):
@@ -148,30 +167,26 @@ def downloadScript(guide_name, file):
     else:
         file_extension = ""
 
-    if file != 'checkscript' and file != 'fixscript':
+    if file != 'checkscript' and file != 'fixscript' and file != 'manualcheck' and file != 'manualfix':
         return "File not found", 404
 
     if file == 'checkscript':
-        checkscript = os.path.join(
-            download_folder, guide_name + '-CheckScript' + file_extension)
+        checkscript = os.path.join(download_folder, guide_name, guide_name + '-CheckScript' + file_extension)
         if not os.path.isfile(checkscript):
             abort(404)
         return send_file(checkscript, as_attachment=True)
     if file == 'fixscript':
-        fixscript = os.path.join(download_folder,
-                                 guide_name + '-FixScript' + file_extension)
+        fixscript = os.path.join(download_folder, guide_name, guide_name + '-FixScript' + file_extension)
         if not os.path.isfile(fixscript):
             abort(404)
         return send_file(fixscript, as_attachment=True), 200
     if file == 'manualcheck':
-        manualcheck = os.path.join(download_folder,
-                                   guide_name + '-ManualCheck.txt')
+        manualcheck = os.path.join(download_folder, guide_name, guide_name + '-ManualCheck.txt')
         if not os.path.isfile(manualcheck):
             abort(404)
         return send_file(manualcheck, as_attachment=True)
     if file == 'manualfix':
-        manualfix = os.path.join(download_folder,
-                                 guide_name + '-ManualFix.txt')
+        manualfix = os.path.join(download_folder, guide_name, guide_name + '-ManualFix.txt')
         if not os.path.isfile(manualfix):
             abort(404)
         return send_file(manualfix, as_attachment=True)

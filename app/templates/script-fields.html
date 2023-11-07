@@ -5,11 +5,52 @@
         <title>AdminGuard</title>
         <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script>
+          function submitForm() {
+            const formData = new FormData();
+            const fragments = {};
+            let vuln_id = '';
+            let enableField = null;
+            let title = '';
+            let fixText = '';
+            let description = '';
+            let checkContent = '';
+    
+            {% for rule in guide.stig_rule_dict.values() %}
+                vulnId = '{{ rule.vuln_id }}';
+                enableField = document.querySelector('input[name="{{ rule.vuln_id }}.enable"]');
+                if (enableField && enableField.checked) {
+                    title = document.querySelector('input[name="{{ rule.vuln_id }}.rule_title"]').value;
+                    fixText = document.querySelector('textarea[name="{{ rule.vuln_id }}.rule_fix_text"]').value;
+                    description = document.querySelector('textarea[name="{{ rule.vuln_id }}.rule_description"]').value;
+                    checkContent = document.querySelector('textarea[name="{{ rule.vuln_id }}.check_content"]').value;
+    
+                    fragments[vulnId] = { title, fixText, description, checkContent };
+                }
+            {% endfor %}
+    
+            fetch('/script-generate/{{ guide_name }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(fragments)
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    window.location.href = '/scriptDownload/{{ guide_name }}';
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting data fragments: ', error);
+            });
+          }
+        </script>
     </head>
     <body class="bg-dark text-white">
         <div class="mt-5">
             <h1 class="text-center mb-5">Customize STIG Rules</h1>
-            <form id="stigEnableForm" method="POST" action="" enctype="multipart/form-data" onsubmit="onSubmit()">
+            <form id="stigEnableForm" method="POST" action="">
               {% for rule in guide.stig_rule_dict.values() %}
                 <div class="mt-2 mx-5">
                   <div class="accordion">
@@ -46,7 +87,7 @@
                       </h2>
                       <div id="collapse-{{ rule.vuln_id }}" class="accordion-collapse collapse show" data-bs-parent="#{{ rule.vuln_id }}accordion">
                         <div class="accordion-body">
-                          {% set field_id = rule.vuln_id ~ "." ~ rule.rule_title %}
+                          {% set field_id = rule.vuln_id ~ ".rule_title" %}
                           <div class="d-flex">
                             <div class="flex-fill">
                               <label for="{{ field_id }}" class="col-form-label"><strong>Title: </strong></label>
@@ -58,7 +99,7 @@
                               {% endif %}
                             </div>
                           </div>
-                          {% set field_id = rule.vuln_id ~ "." ~ rule.rule_description %}
+                          {% set field_id = rule.vuln_id ~ ".rule_description" %}
                           <div class="d-flex">
                             <div class="flex-fill">
                               <label for="{{ field_id }}" class="col-form-label"><strong>Vulnerability Description: </strong></label>
@@ -71,7 +112,7 @@
                               {% endif %}
                             </div>
                           </div>
-                          {% set field_id = rule.vuln_id ~ "." ~ rule.rule_fix_text %}
+                          {% set field_id = rule.vuln_id ~ ".rule_fix_text" %}
                           <div class="d-flex">
                             <div class="flex-fill">
                               <label for="{{ field_id }}" class="col-form-label"><strong>Vulnerability Fix: </strong></label>
@@ -84,7 +125,7 @@
                               {% endif %}
                             </div>
                           </div>
-                          {% set field_id = rule.vuln_id ~ "." ~ rule.check_content %}
+                          {% set field_id = rule.vuln_id ~ ".check_content" %}
                           <div class="d-flex">
                               <div class="flex-fill">
                                   <label for="{{ field_id }}" class="col-form-label"><strong>Vulnerability Check: </strong></label>
@@ -104,7 +145,7 @@
                 </div>
               {% endfor %}
               <div class="d-flex justify-content-center my-5">
-                <button type="submit" class="btn btn-primary" id="get-form-data">Generate Script</button>
+                <button class="btn btn-primary" id="get-form-data" onclick="submitForm()">Generate Script</button>
               </div>
             </form>
         </div>
