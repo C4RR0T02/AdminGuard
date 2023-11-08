@@ -313,14 +313,15 @@ run_command() {
     for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
         if len(target_rule.check_commands) == 0:
-            check_script += "echo 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
-            manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
+            check_script += "echo 'Manual check required for " + vuln_id + "' >> check_script_logs.txt" + "\n"
+            manual_check = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
                     output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualCheck.txt", "ab") as linux_manual_check:
                 linux_manual_check.write(manual_check.encode())
 
         for check_cmd in target_rule.check_commands:
+            print("Check Command: " + check_cmd)
             check_script = check_script + "echo " + check_cmd + " >> check_script_logs.txt" + "\n"
             check_script = check_script + "run_command '" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
@@ -333,13 +334,14 @@ run_command() {
         target_rule = guide.stig_rule_dict[vuln_id]
 
         if len(target_rule.fix_commands) == 0:
-            fix_script += "echo 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
-            manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
+            fix_script += "echo 'Manual fix required for " + vuln_id + "' >> fix_script_logs.txt" + "\n"
+            manual_fix = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
                     output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualFix.txt", "ab") as linux_manual_fix:
                 linux_manual_fix.write(manual_fix.encode())
         for fix_cmd in target_rule.fix_commands:
+            print("Fix Command: " + fix_cmd)
             fix_script += "echo " + fix_cmd + " >> fix_script_logs.txt" + "\n"
             fix_script += "run_command '" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
         with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
@@ -431,13 +433,14 @@ function run_command {
         target_rule = guide.stig_rule_dict[vuln_id]
 
         if len(target_rule.check_commands) == 0:
-            check_script += "Write-Output 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
-            manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
+            check_script += "Write-Output 'Manual check required for " + vuln_id + "' >> check_script_logs.txt" + "\n"
+            manual_check = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
                     output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualCheck.txt", "ab") as windows_manual_check:
                 windows_manual_check.write(manual_check.encode())
         for check_cmd in target_rule.check_commands:
+            print("Check Command: " + check_cmd)
             check_script += "Write-Output '" + check_cmd + "' >> check_script_logs.txt" + "\n"
             check_script += "run_command " + "'" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
@@ -450,13 +453,14 @@ function run_command {
         target_rule = guide.stig_rule_dict[vuln_id]
 
         if len(target_rule.fix_commands) == 0:
-            fix_script += "Write-Output 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
-            manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
+            fix_script += "Write-Output 'Manual fix required for " + vuln_id + "' >> fix_script_logs.txt" + "\n"
+            manual_fix = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
                     output_folder + "/" + guide_file_name + "-" +
                     "ManualFix.txt", "ab") as windows_manual_fix:
                 windows_manual_fix.write(manual_fix.encode())
         for fix_cmd in target_rule.fix_commands:
+            print("Fix Command: " + fix_cmd)
             fix_script += "Write-Output '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
             fix_script += "run_command " + "'" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
 

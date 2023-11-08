@@ -110,19 +110,30 @@ def scriptFieldsPost(guide_name):
     if guide is None or guide_type is None:
         return "Guide not found", 404
     
-    fragments = request.form.getlist("items")
+    fragments = dict(request.form)
 
-    for vuln_id, data in fragments:
-        if vuln_id in guide.stig_rule_dict:
+    for data in fragments.items():
+        if data[0].endswith(".enable") and data[1] == 'y':
+            vuln_id = data[0].split(".")[0]
+            enable_list.append(vuln_id)
+        if data[0].endswith(".rule_title"):
+            vuln_id = data[0].split(".")[0]
             rule = guide.stig_rule_dict[vuln_id]
-            rule.rule_title = data["rule_title"]
-            rule.rule_fix_text = data["rule_fix_text"]
-            rule.rule_description = data["rule_description"]
-            rule.check_content = data["check_content"]
-            if data["enable"]:
-                enable_list.append(rule.vuln_id)
-                rule.check_commands = rule._getRequiredFields(guide_type, rule.check_content)
-                rule.fix_commands = rule._getRequiredFields(guide_type, rule.fix_commands)
+            rule.rule_title = data[1]
+        if data[0].endswith(".rule_description"):
+            vuln_id = data[0].split(".")[0]
+            rule = guide.stig_rule_dict[vuln_id]
+            rule.rule_description = data[1]
+        if data[0].endswith(".rule_fix_text"):
+            vuln_id = data[0].split(".")[0]
+            rule = guide.stig_rule_dict[vuln_id]
+            rule.rule_fix_text = data[1]
+            rule.fix_commands = rule._getRequiredFields(guide_type, rule.rule_fix_text)
+        if data[0].endswith(".check_content"):
+            vuln_id = data[0].split(".")[0]
+            rule = guide.stig_rule_dict[vuln_id]
+            rule.check_content = data[1]
+            rule.check_commands = rule._getRequiredFields(guide_type, rule.check_content)
 
     if guide_details.get("guide_type") == "Windows":
         windowsCreateScript(guide, enable_list)
@@ -166,9 +177,6 @@ def downloadScript(guide_name, file):
         file_extension = ".ps1"
     else:
         file_extension = ""
-
-    if file != 'checkscript' and file != 'fixscript' and file != 'manualcheck' and file != 'manualfix':
-        return "File not found", 404
 
     if file == 'checkscript':
         checkscript = os.path.join(download_folder, guide_name, guide_name + '-CheckScript' + file_extension)
