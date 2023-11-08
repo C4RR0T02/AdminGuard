@@ -38,7 +38,7 @@ class StigRule:
 
     def __init__(self, rule_name, rule_title, vuln_id, rule_id, rule_weight,
                  rule_severity, stig_id, rule_fix_text, rule_description,
-                 check_content):
+                 check_content, check_system, dc_title, dc_publisher, dc_type, dc_subject, dc_identifier, ident_system, ident_content, fix_ref, fix_id, check_content_ref_href, check_content_ref_name, false_positives, false_negatives, documentable, mitigations, severity_override_guidance, potential_impacts, third_party_tools, mitigation_control, responsibility, iacontrols):
         self.rule_name = rule_name
         self.rule_title = rule_title
         self.vuln_id = vuln_id
@@ -49,6 +49,29 @@ class StigRule:
         self.rule_fix_text = rule_fix_text
         self.rule_description = rule_description
         self.check_content = check_content
+        self.check_system = check_system
+        self.dc_title = dc_title
+        self.dc_publisher = dc_publisher
+        self.dc_type = dc_type
+        self.dc_subject = dc_subject
+        self.dc_identifier = dc_identifier
+        self.ident_system = ident_system
+        self.ident_content = ident_content
+        self.fix_ref = fix_ref
+        self.fix_id = fix_id
+        self.check_content_ref_href = check_content_ref_href
+        self.check_content_ref_name = check_content_ref_name
+        self.false_positives = false_positives
+        self.false_negatives = false_negatives
+        self.documentable = documentable
+        self.mitigations = mitigations
+        self.severity_override_guidance = severity_override_guidance
+        self.potential_impacts = potential_impacts
+        self.third_party_tools = third_party_tools
+        self.mitigation_control = mitigation_control
+        self.responsibility = responsibility
+        self.iacontrols = iacontrols
+
         self.category_score = self._calculateScore()
         self.check_commands = ''
         self.fix_commands = ''
@@ -203,7 +226,22 @@ def parseGuide(filename, guide_type):
         rule_severity = group_rule_info['severity']
         rule_title = group_rule_info.find('title').text
         stig_id = group_rule_info.find('version').text
+
+        # Extract Reference Information from Rule Information
+        reference_info = group_rule_info.find('reference')
+        dc_title = reference_info.find('dc:title').text
+        dc_publisher = reference_info.find('dc:publisher').text
+        dc_type = reference_info.find('dc:type').text
+        dc_subject = reference_info.find('dc:subject').text
+        dc_identifier = reference_info.find('dc:identifier').text
+        ident_system = reference_info.find('ident')['system']
+        ident_content = reference_info.find('ident').text
+
+        # Extract Fix Information from Rule Information
+        fix_ref = group_rule_info.find('fixtext')['fixref']
         rule_fix_text = group_rule_info.find('fixtext').text
+        fix_id = group_rule_info.find('fix')['id']
+
         # Extract Rule Description
         group_description_info = group_rule_info.find('description').text
         # URL Decode Rule Description
@@ -213,15 +251,28 @@ def parseGuide(filename, guide_type):
             group_description_info_decoded, 'xml')
         rule_description = group_description_info_xml.find(
             'VulnDiscussion').text
+        false_positives = group_description_info_xml.find('FalsePositives').text
+        false_negatives = group_description_info_xml.find('FalseNegatives').text
+        documentable = group_description_info_xml.find('Documentable').text
+        mitigations = group_description_info_xml.find('Mitigations').text
+        severity_override_guidance = group_description_info_xml.find('SeverityOverrideGuidance').text
+        potential_impacts = group_description_info_xml.find('PotentialImpacts').text
+        third_party_tools = group_description_info_xml.find('ThirdPartyTools').text
+        mitigation_control = group_description_info_xml.find('MitigationControl').text
+        responsibility = group_description_info_xml.find('Responsibility').text
+        iacontrols = group_description_info_xml.find('IAControls').text
 
         # Extract Check Information from Rule Information
         check_rule_info = group_rule_info.find('check')
+        check_system = check_rule_info['system']
+        check_content_ref_href = check_rule_info.find('check-content-ref')['href']
+        check_content_ref_name = check_rule_info.find('check-content-ref')['name']
         check_content = check_rule_info.find('check-content').text
 
         # Create Object
         rule = StigRule(rule_name, rule_title, vuln_id, rule_id, rule_weight,
                         rule_severity, stig_id, rule_fix_text,
-                        rule_description, check_content)
+                        rule_description, check_content, check_system, dc_title, dc_publisher, dc_type, dc_subject, dc_identifier, ident_system, ident_content, fix_ref, fix_id, check_content_ref_href, check_content_ref_name, false_positives, false_negatives, documentable, mitigations, severity_override_guidance, potential_impacts, third_party_tools, mitigation_control, responsibility, iacontrols)
         rule.check_commands = rule._getRequiredFields(guide_type,
                                                       check_content)
         rule.fix_commands = rule._getRequiredFields(guide_type, rule_fix_text)
@@ -347,6 +398,8 @@ run_command() {
         with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
                   "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
+    
+    generateXml(guide)
 
 
 def windowsCreateScript(guide, enable_list):
@@ -468,3 +521,40 @@ function run_command {
                 output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.ps1",
                 "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
+
+    generateXml(guide)
+
+
+def generateXml(guide):
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
+    file = os.path.join(os.getcwd(), "app", "uploads", guide_file_name + ".xml")
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    file_content = ''
+    line_number = 0
+
+    with open(file, 'r', encoding='utf-8') as guide_file:
+        guide_data = guide_file.readlines()
+        while line_number < 21:
+            file_content += guide_data[line_number]
+            line_number += 1
+    
+    for rule in guide.stig_rule_dict.values():
+        file_content += '<Group id="' + rule.vuln_id + '"' + "\n"
+        file_content += '<title>' + rule.rule_title + '</title>' + "\n"
+        file_content += '<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>' + "\n"
+        file_content += '<Rule id="' + rule.rule_id + '" weight="' + rule.rule_weight + '" severity="' + rule.rule_severity + '">' "\n"
+        file_content += '<version>' + rule.stig_id + '</version>' + "\n"
+        
+
+
+        print(guide.file_content)
+        
+
+    # with open(output_folder + "/" + guide_file_name + "/" + "updated-" + guide_file_name + ".xml", "wb") as windows_fix_script:
+    #     windows_fix_script.write(file_content.encode())
+
+
+guide = parseGuide("app/uploads/test_linux_2.xml", "Linux")
+
+generateXml(guide)
