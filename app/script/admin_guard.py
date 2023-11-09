@@ -1,6 +1,5 @@
 # Imports
 from bs4 import BeautifulSoup
-from dicttoxml import dicttoxml
 from urllib.parse import unquote
 import math
 import os
@@ -175,6 +174,7 @@ class StigRule:
 
     def __str__(self) -> str:
         return f"{str(self.rule_name)} - {str(self.rule_title)} - {str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_weight)} - {str(self.rule_severity)} - {str(self.stig_id)} - {str(self.rule_fix_text)} - {str(self.rule_description)} - {str(self.check_content)} - {str(self.category_score)}"
+
 
 class RuleInput:
 
@@ -622,4 +622,3 @@ def generateZip(guide):
     for file in os.listdir():
         with zipfile.ZipFile(zipped_file, "a", compression=zipfile.ZIP_DEFLATED, compresslevel=5) as zipf:
             zipf.write(file)
-

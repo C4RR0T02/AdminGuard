@@ -82,7 +82,6 @@ def createGuideForm(guide: Guide, formdata=None):
         form_fields[f"{rule.vuln_id}.rule_description"] = StringField("rule_description", [enableCheck(f"{rule.vuln_id}.enable")])
         form_fields[f"{rule.vuln_id}.check_content"] = StringField("check_content", [enableCheck(f"{rule.vuln_id}.enable")])
 
-
     form = BaseForm(form_fields)
     form.process(formdata)
     return form
@@ -99,6 +98,7 @@ def scriptFieldsGet(guide_name):
                            enumerate=enumerate,
                            guide=guide,
                            form=form)
+
 
 @app.route('/script-generate/<guide_name>', methods=['POST'])
 def scriptFieldsPost(guide_name):
@@ -145,27 +145,16 @@ def scriptFieldsPost(guide_name):
 
     return redirect(url_for('scriptDownload', guide_name=guide_name))
 
+
 @app.route('/script-generate/<guide_name>/download', methods=['GET'])
 def scriptDownload(guide_name):
     if request.method == 'GET':
-        downloadCheckScript = url_for('downloadScript',
-                                      guide_name=guide_name,
-                                      file='checkscript')
-        downloadFixScript = url_for('downloadScript',
-                                    guide_name=guide_name,
-                                    file='fixscript')
-        downloadManualCheck = url_for('downloadScript',
-                                      guide_name=guide_name,
-                                      file='manualcheck')
-        downloadManualFix = url_for('downloadScript',
-                                    guide_name=guide_name,
-                                    file='manualfix')
-        downloadNewGuide = url_for('downloadScript',
-                                    guide_name=guide_name,
-                                    file='newguide')
-        downloadZipped = url_for('downloadScript',
-                                    guide_name=guide_name,
-                                    file='zipped')
+        downloadCheckScript = url_for('downloadScript', guide_name=guide_name, file='checkscript')
+        downloadFixScript = url_for('downloadScript', guide_name=guide_name, file='fixscript')
+        downloadManualCheck = url_for('downloadScript', guide_name=guide_name, file='manualcheck')
+        downloadManualFix = url_for('downloadScript', guide_name=guide_name, file='manualfix')
+        downloadNewGuide = url_for('downloadScript', guide_name=guide_name, file='newguide')
+        downloadZipped = url_for('downloadScript', guide_name=guide_name, file='zipped')
         return render_template('script-download.html',
                                guide_name=guide_name,
                                downloadFixScript=downloadFixScript,
@@ -220,6 +209,7 @@ def downloadScript(guide_name, file):
         if not os.path.isfile(zipped):
             abort(404)
         return send_file(zipped, as_attachment=True)
+
 
 @app.route('/template-generate', methods=['GET'])
 def templateGenerate():
