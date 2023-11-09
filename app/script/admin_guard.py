@@ -1,9 +1,11 @@
 # Imports
 from bs4 import BeautifulSoup
+from dicttoxml import dicttoxml
 from urllib.parse import unquote
 import math
 import os
 import re
+import zipfile
 
 # Find any text between square brackets
 square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
@@ -234,8 +236,10 @@ def parseGuide(filename, guide_type):
         dc_type = reference_info.find('dc:type').text
         dc_subject = reference_info.find('dc:subject').text
         dc_identifier = reference_info.find('dc:identifier').text
-        ident_system = reference_info.find('ident')['system']
-        ident_content = reference_info.find('ident').text
+        
+        # Extract Ident Information from Rule Information
+        ident_system = group_rule_info.find('ident')['system']
+        ident_content = group_rule_info.find('ident').text
 
         # Extract Fix Information from Rule Information
         fix_ref = group_rule_info.find('fixtext')['fixref']
@@ -247,20 +251,48 @@ def parseGuide(filename, guide_type):
         # URL Decode Rule Description
         group_description_info_decoded = unquote(group_description_info)
         # Transform back into XML
-        group_description_info_xml = BeautifulSoup(
-            group_description_info_decoded, 'xml')
-        rule_description = group_description_info_xml.find(
-            'VulnDiscussion').text
-        false_positives = group_description_info_xml.find('FalsePositives').text
-        false_negatives = group_description_info_xml.find('FalseNegatives').text
-        documentable = group_description_info_xml.find('Documentable').text
-        mitigations = group_description_info_xml.find('Mitigations').text
-        severity_override_guidance = group_description_info_xml.find('SeverityOverrideGuidance').text
-        potential_impacts = group_description_info_xml.find('PotentialImpacts').text
-        third_party_tools = group_description_info_xml.find('ThirdPartyTools').text
-        mitigation_control = group_description_info_xml.find('MitigationControl').text
-        responsibility = group_description_info_xml.find('Responsibility').text
-        iacontrols = group_description_info_xml.find('IAControls').text
+        group_description_info_xml = BeautifulSoup(group_description_info_decoded, 'xml')
+        rule_description = group_description_info_xml.find('VulnDiscussion').text
+        if group_description_info_xml.find('FalsePositives') is None:
+            false_positives = ''
+        else:
+            false_positives = group_description_info_xml.find('FalsePositives').text
+        if group_description_info_xml.find('FalseNegatives') is None:
+            false_negatives = ''
+        else:
+            false_negatives = group_description_info_xml.find('FalseNegatives').text
+        if group_description_info_xml.find('Documentable') is None:
+            documentable = ''
+        else:
+            documentable = group_description_info_xml.find('Documentable').text
+        if group_description_info_xml.find('Mitigations') is None:
+            mitigations = ''
+        else:
+            mitigations = group_description_info_xml.find('Mitigations').text
+        if group_description_info_xml.find('SeverityOverrideGuidance') is None:
+            severity_override_guidance = ''
+        else:
+            severity_override_guidance = group_description_info_xml.find('SeverityOverrideGuidance').text
+        if group_description_info_xml.find('PotentialImpacts') is None:
+            potential_impacts = ''
+        else:
+            potential_impacts = group_description_info_xml.find('PotentialImpacts').text
+        if group_description_info_xml.find('ThirdPartyTools') is None:
+            third_party_tools = ''
+        else:
+            third_party_tools = group_description_info_xml.find('ThirdPartyTools').text
+        if group_description_info_xml.find('MitigationControl') is None:
+            mitigation_control = ''
+        else:
+            mitigation_control = group_description_info_xml.find('MitigationControl').text
+        if group_description_info_xml.find('Responsibility') is None:
+            responsibility = ''
+        else:
+            responsibility = group_description_info_xml.find('Responsibility').text
+        if group_description_info_xml.find('IAControls') is None:
+            iacontrols = ''
+        else:
+            iacontrols = group_description_info_xml.find('IAControls').text
 
         # Extract Check Information from Rule Information
         check_rule_info = group_rule_info.find('check')
@@ -372,7 +404,6 @@ run_command() {
                 linux_manual_check.write(manual_check.encode())
 
         for check_cmd in target_rule.check_commands:
-            print("Check Command: " + check_cmd)
             check_script = check_script + "echo " + check_cmd + " >> check_script_logs.txt" + "\n"
             check_script = check_script + "run_command '" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
@@ -392,14 +423,11 @@ run_command() {
                     "ManualFix.txt", "ab") as linux_manual_fix:
                 linux_manual_fix.write(manual_fix.encode())
         for fix_cmd in target_rule.fix_commands:
-            print("Fix Command: " + fix_cmd)
             fix_script += "echo " + fix_cmd + " >> fix_script_logs.txt" + "\n"
             fix_script += "run_command '" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
         with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
                   "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
-    
-    generateXml(guide)
 
 
 def windowsCreateScript(guide, enable_list):
@@ -493,7 +521,6 @@ function run_command {
                     "ManualCheck.txt", "ab") as windows_manual_check:
                 windows_manual_check.write(manual_check.encode())
         for check_cmd in target_rule.check_commands:
-            print("Check Command: " + check_cmd)
             check_script += "Write-Output '" + check_cmd + "' >> check_script_logs.txt" + "\n"
             check_script += "run_command " + "'" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
@@ -513,7 +540,6 @@ function run_command {
                     "ManualFix.txt", "ab") as windows_manual_fix:
                 windows_manual_fix.write(manual_fix.encode())
         for fix_cmd in target_rule.fix_commands:
-            print("Fix Command: " + fix_cmd)
             fix_script += "Write-Output '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
             fix_script += "run_command " + "'" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
 
@@ -521,8 +547,6 @@ function run_command {
                 output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.ps1",
                 "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
-
-    generateXml(guide)
 
 
 def generateXml(guide):
@@ -533,6 +557,15 @@ def generateXml(guide):
     file_content = ''
     line_number = 0
 
+    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        current_directory = os.getcwd()
+        os.chdir(output_folder)
+        os.mkdir(guide_file_name)
+        os.chdir(current_directory)
+
     with open(file, 'r', encoding='utf-8') as guide_file:
         guide_data = guide_file.readlines()
         while line_number < 21:
@@ -540,21 +573,53 @@ def generateXml(guide):
             line_number += 1
     
     for rule in guide.stig_rule_dict.values():
-        file_content += '<Group id="' + rule.vuln_id + '"' + "\n"
+        encoded_check_content = rule.check_content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        encoded_fix_text = rule.rule_fix_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+        file_content += '<Group id="' + rule.vuln_id + '">' + "\n"
         file_content += '<title>' + rule.rule_title + '</title>' + "\n"
         file_content += '<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>' + "\n"
         file_content += '<Rule id="' + rule.rule_id + '" weight="' + rule.rule_weight + '" severity="' + rule.rule_severity + '">' "\n"
         file_content += '<version>' + rule.stig_id + '</version>' + "\n"
-        
+        file_content += '<title>' + rule.rule_title + '</title>' + "\n"
+        file_content += '<description>&lt;VulnDiscussion&gt;' + rule.rule_description + '&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;' + rule.false_positives + '&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;' + rule.false_negatives + '&lt;/FalseNegatives&gt;&lt;Documentable&gt;' + rule.documentable + '&lt;/Documentable&gt;&lt;Mitigations&gt;' + rule.mitigations + '&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;' + rule.severity_override_guidance + '&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;' + rule.potential_impacts + '&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;' + rule.third_party_tools + '&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;' + rule.mitigation_control + '&lt;/MitigationControl&gt;&lt;Responsibility&gt;' + rule.responsibility + '&lt;/Responsibility&gt;&lt;IAControls&gt;' + rule.iacontrols + '&lt;/IAControls&gt;</description>' + "\n"
+        file_content += '<reference>' + "\n"
+        file_content += '<dc:title>' + rule.dc_title + '</dc:title>' + "\n"
+        file_content += '<dc:publisher>' + rule.dc_publisher + '</dc:publisher>' + "\n"
+        file_content += '<dc:type>' + rule.dc_type + '</dc:type>' + "\n"
+        file_content += '<dc:subject>' + rule.dc_subject + '</dc:subject>' + "\n"
+        file_content += '<dc:identifier>' + rule.dc_identifier + '</dc:identifier>' + "\n"
+        file_content += '</reference>' + "\n"
+        file_content += '<ident system="' + rule.ident_system + '">' + rule.ident_content + '</ident>' + "\n"
+        file_content += '<fixtext fixref="' + rule.fix_ref + '">' + encoded_fix_text + '</fixtext>' + "\n"
+        file_content += '<fix id="' + rule.fix_id + '" />' + "\n"
+        file_content += '<check system="' + rule.check_system + '">' + "\n"
+        file_content += '<check-content-ref href="' + rule.check_content_ref_href + '" name="' + rule.check_content_ref_name + '" />' + "\n"
+        file_content += '<check-content>' + encoded_check_content + '</check-content>' + "\n"
+        file_content += '</check>' + "\n"
+        file_content += '</Rule>' + "\n"
+        file_content += '</Group>' + "\n"
+    file_content += '</Benchmark>' + "\n"
+    
+    with open(output_folder + "/" + guide_file_name + "/" + "updated-" + guide_file_name + ".xml", "wb") as windows_fix_script:
+        windows_fix_script.write(file_content.encode())
 
 
-        print(guide.file_content)
-        
+def generateZip(guide):
 
-    # with open(output_folder + "/" + guide_file_name + "/" + "updated-" + guide_file_name + ".xml", "wb") as windows_fix_script:
-    #     windows_fix_script.write(file_content.encode())
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
+    output_folder = os.path.join(os.getcwd(), "app", "out-files", guide_file_name)
+    zipped_file = os.path.join(output_folder, guide_file_name + ".zip")
 
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if os.path.isfile(zipped_file):
+        os.remove(zipped_file)
 
-guide = parseGuide("app/uploads/test_linux_2.xml", "Linux")
+    os.chdir(output_folder)
 
-generateXml(guide)
+    for file in os.listdir():
+        with zipfile.ZipFile(zipped_file, "a", compression=zipfile.ZIP_DEFLATED, compresslevel=5) as zipf:
+            zipf.write(file)
+

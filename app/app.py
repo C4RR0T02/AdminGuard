@@ -139,6 +139,9 @@ def scriptFieldsPost(guide_name):
         windowsCreateScript(guide, enable_list)
     elif guide_details.get("guide_type") == "Linux":
         linuxCreateScript(guide, enable_list)
+    
+    generateXml(guide)
+    generateZip(guide)
 
     return redirect(url_for('scriptDownload', guide_name=guide_name))
 
@@ -157,12 +160,21 @@ def scriptDownload(guide_name):
         downloadManualFix = url_for('downloadScript',
                                     guide_name=guide_name,
                                     file='manualfix')
+        downloadNewGuide = url_for('downloadScript',
+                                    guide_name=guide_name,
+                                    file='newguide')
+        downloadZipped = url_for('downloadScript',
+                                    guide_name=guide_name,
+                                    file='zipped')
         return render_template('script-download.html',
                                guide_name=guide_name,
                                downloadFixScript=downloadFixScript,
                                downloadCheckScript=downloadCheckScript,
                                downloadManualCheck=downloadManualCheck,
-                               downloadManualFix=downloadManualFix)
+                               downloadManualFix=downloadManualFix,
+                               downloadNewGuide=downloadNewGuide,
+                               downloadZipped=downloadZipped,
+                               )
     return render_template('script-download.html')
 
 
@@ -198,7 +210,16 @@ def downloadScript(guide_name, file):
         if not os.path.isfile(manualfix):
             abort(404)
         return send_file(manualfix, as_attachment=True)
-
+    if file == 'newguide':
+        newguide = os.path.join(download_folder, guide_name, 'updated-' + guide_name + '.xml')
+        if not os.path.isfile(newguide):
+            abort(404)
+        return send_file(newguide, as_attachment=True)
+    if file == 'zipped':
+        zipped = os.path.join(download_folder, guide_name, guide_name + '.zip')
+        if not os.path.isfile(zipped):
+            abort(404)
+        return send_file(zipped, as_attachment=True)
 
 @app.route('/template-generate', methods=['GET'])
 def templateGenerate():
