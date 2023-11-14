@@ -22,6 +22,8 @@ underscore_regex = re.compile(r"_", re.IGNORECASE)
 caret_regex = re.compile(r"\^", re.IGNORECASE)
 not_regex_regex = re.compile(r"[a-zA-Z]{1}", re.IGNORECASE)
 
+root_dir = os.getcwd()
+
 
 class Guide:
 
@@ -188,8 +190,7 @@ class RuleInput:
 
 
 def getPowerShellCommands():
-    current_directory = os.getcwd()
-    filepath = os.path.join(current_directory, 'app', 'script',
+    filepath = os.path.join(root_dir, 'app', 'script',
                             'powershell_commands.txt')
     with open(filepath, 'r', encoding='utf-8') as powershell_command_file:
         powershell_commands = powershell_command_file.read().splitlines()
@@ -321,7 +322,7 @@ def linuxCreateScript(guide, enable_list):
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
 
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    output_folder = os.path.join(root_dir, "app", "out-files")
     if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
         subdirectory = os.path.join(output_folder, guide_file_name)
         for file in os.listdir(subdirectory):
@@ -435,7 +436,7 @@ def windowsCreateScript(guide, enable_list):
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
 
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    output_folder = os.path.join(root_dir, "app", "out-files")
     if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
         subdirectory = os.path.join(output_folder, guide_file_name)
         for file in os.listdir(subdirectory):
@@ -552,19 +553,16 @@ function run_command {
 def generateXml(guide):
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
-    file = os.path.join(os.getcwd(), "app", "uploads", guide_file_name + ".xml")
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
+    file = os.path.join(root_dir, "app", "uploads", guide_file_name + ".xml")
+    output_folder = os.path.join(root_dir, "app", "out-files")
     file_content = ''
     line_number = 0
 
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
-    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
-        current_directory = os.getcwd()
         os.chdir(output_folder)
+    if not os.path.isdir(guide_file_name):
         os.mkdir(guide_file_name)
-        os.chdir(current_directory)
 
     with open(file, 'r', encoding='utf-8') as guide_file:
         guide_data = guide_file.readlines()
@@ -609,7 +607,7 @@ def generateZip(guide):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
-    output_folder = os.path.join(os.getcwd(), "app", "out-files", guide_file_name)
+    output_folder = os.path.join(root_dir, "app", "out-files", guide_file_name)
     zipped_file = os.path.join(output_folder, guide_file_name + ".zip")
 
     if not os.path.isdir(output_folder):
