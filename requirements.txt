@@ -7,4 +7,3 @@ pytest==7.4.2
 flake8==6.1.0
 yapf==0.40.2
 lxml==4.9.3
-dicttoxml==1.7.16
