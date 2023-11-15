@@ -1,0 +1,14 @@
+FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+V-254239 - Windows Server 2022 passwords for the built-in Administrator account must be changed at least every 60 days.
+Change the built-in Administrator account password at least every "60" days.
+
+Windows LAPS must be used to change the built-in Administrator account password. Domain-joined systems can configure this to occur more frequently. LAPS will change the password every 30 days by default. 
+https://techcommunity.microsoft.com/t5/windows-it-pro-blog/by-popular-demand-windows-laps-available-now/ba-p/3788747  
+https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#windows-laps-supported-platforms-and-azure-ad-laps-preview-status
+--------------------------------------------------------------
+V-254244 - Windows Server 2022 shared user accounts must not be permitted.
+Remove unapproved shared accounts from the system.
+
+Document required shared accounts with the ISSO. Documentation must include the reason for the account, who has access to the account, and how the risk of using the shared account is mitigated to include monitoring account activity.
+--------------------------------------------------------------
