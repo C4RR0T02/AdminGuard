@@ -332,6 +332,7 @@ def linuxCreateScript(guide, enable_list):
     if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
         os.chdir(output_folder)
         os.mkdir(guide_file_name)
+        os.chdir(root_dir)
 
     check_script = """#!/bin/bash
 mkdir AdminGuard
@@ -405,7 +406,7 @@ run_command() {
                 linux_manual_check.write(manual_check.encode())
 
         for check_cmd in target_rule.check_commands:
-            check_script = check_script + "echo " + check_cmd + " >> check_script_logs.txt" + "\n"
+            check_script = check_script + "echo '" + check_cmd + "' >> check_script_logs.txt" + "\n"
             check_script = check_script + "run_command '" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
         with open(
@@ -424,7 +425,7 @@ run_command() {
                     "ManualFix.txt", "ab") as linux_manual_fix:
                 linux_manual_fix.write(manual_fix.encode())
         for fix_cmd in target_rule.fix_commands:
-            fix_script += "echo " + fix_cmd + " >> fix_script_logs.txt" + "\n"
+            fix_script += "echo '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
             fix_script += "run_command '" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
         with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
                   "wb") as linux_fix_script:
@@ -446,6 +447,7 @@ def windowsCreateScript(guide, enable_list):
     if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
         os.chdir(output_folder)
         os.mkdir(guide_file_name)
+        os.chdir(root_dir)
     
     check_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
@@ -537,7 +539,7 @@ function run_command {
             fix_script += "Write-Output 'Manual fix required for " + vuln_id + "' >> fix_script_logs.txt" + "\n"
             manual_fix = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualFix.txt", "ab") as windows_manual_fix:
                 windows_manual_fix.write(manual_fix.encode())
         for fix_cmd in target_rule.fix_commands:
@@ -558,11 +560,16 @@ def generateXml(guide):
     file_content = ''
     line_number = 0
 
+    if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        subdirectory = os.path.join(output_folder, guide_file_name)
+        if file in os.listdir(subdirectory):
+            os.remove(os.path.join(subdirectory, file))
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
         os.chdir(output_folder)
-    if not os.path.isdir(guide_file_name):
         os.mkdir(guide_file_name)
+        os.chdir(root_dir)
 
     with open(file, 'r', encoding='utf-8') as guide_file:
         guide_data = guide_file.readlines()
@@ -617,6 +624,8 @@ def generateZip(guide):
 
     os.chdir(output_folder)
 
-    for file in os.listdir():
-        with zipfile.ZipFile(zipped_file, "a", compression=zipfile.ZIP_DEFLATED, compresslevel=5) as zipf:
-            zipf.write(file)
+    with zipfile.ZipFile(zipped_file, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=5) as zipf:
+        for file in os.listdir():
+            zipf.write(file)  
+
+    os.chdir(root_dir)
