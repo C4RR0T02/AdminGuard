@@ -116,6 +116,7 @@ If unapproved shared accounts exist, this is a finding.'''
 
 
 def test_linux_script():
+    shutil.copyfile("app/tests/testFiles/test_linux_2.xml", "app/uploads/test_linux_2.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_2.xml", "Linux")
     vuln_id_list = ["V-230341", "V-230222", "V-230327", "V-230309"]
     linuxCreateScript(guide, vuln_id_list)
@@ -131,6 +132,7 @@ def test_linux_script():
 
 
 def test_linux_script_empty():
+    shutil.copyfile("app/tests/testFiles/test_linux_3.xml", "app/uploads/test_linux_3.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_3.xml", "Linux")
     vuln_id_list = []
     linuxCreateScript(guide, vuln_id_list)
@@ -146,6 +148,7 @@ def test_linux_script_empty():
 
 
 def test_windows_script():
+    shutil.copyfile("app/tests/testFiles/test_windows_2.xml", "app/uploads/test_windows_2.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_2.xml", "Windows")
     vuln_id_list = ["V-254239", "V-254243", "V-254244"]
     windowsCreateScript(guide, vuln_id_list)
@@ -161,6 +164,7 @@ def test_windows_script():
 
 
 def test_windows_script_empty():
+    shutil.copyfile("app/tests/testFiles/test_windows_3.xml", "app/uploads/test_windows_3.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_3.xml", "Windows")
     vuln_id_list = []
     windowsCreateScript(guide, vuln_id_list)
@@ -176,6 +180,7 @@ def test_windows_script_empty():
 
 
 def test_linux_generate_xml():
+    shutil.copyfile("app/tests/testFiles/test_linux_2.xml", "app/uploads/test_linux_2.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_2.xml", "Linux")
     
     guide.stig_rule_dict["V-230341"].rule_title = "A"
@@ -200,6 +205,7 @@ def test_linux_generate_xml():
 
 
 def test_windows_generate_xml():
+    shutil.copyfile("app/tests/testFiles/test_windows_2.xml", "app/uploads/test_windows_2.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_2.xml", "Windows")
     
     guide.stig_rule_dict["V-254239"].rule_title = "A"
@@ -219,6 +225,7 @@ def test_windows_generate_xml():
 
 
 def test_linux_zip_file_generate():
+    shutil.copyfile("app/tests/testFiles/test_linux_4.xml", "app/uploads/test_linux_4.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_4.xml", "Linux")
     vuln_id_list = []
 
@@ -240,7 +247,8 @@ def test_linux_zip_file_generate():
     assert os.path.isfile("app/out-files/test_linux_4/test_linux_4.zip")
 
 
-def test_windows_zip_file_generate():                                      
+def test_windows_zip_file_generate():
+    shutil.copyfile("app/tests/testFiles/test_windows_4.xml", "app/uploads/test_windows_4.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_4.xml", "Windows")
     Vuln_id_list = []
 
@@ -264,6 +272,8 @@ def test_windows_zip_file_generate():
 
 def test_remove_files():
     for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
-        print(folder)
         if folder.startswith("test"):
             shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
+    for file in os.listdir(os.path.join(root_dir, "app", "uploads")):
+        if file.startswith("test"):
+            os.remove(os.path.join(root_dir, "app", "uploads", file))
