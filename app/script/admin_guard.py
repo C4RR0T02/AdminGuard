@@ -5,6 +5,8 @@ import math
 import os
 import re
 import zipfile
+from lxml.builder import ElementMaker
+from lxml import etree
 
 # Find any text between square brackets
 square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
@@ -576,34 +578,86 @@ def generateXml(guide):
         while line_number < 21:
             file_content += guide_data[line_number]
             line_number += 1
-    
-    for rule in guide.stig_rule_dict.values():
-        encoded_check_content = rule.check_content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        encoded_fix_text = rule.rule_fix_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-        file_content += '<Group id="' + rule.vuln_id + '">' + "\n"
-        file_content += '<title>' + rule.rule_title + '</title>' + "\n"
-        file_content += '<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>' + "\n"
-        file_content += '<Rule id="' + rule.rule_id + '" weight="' + rule.rule_weight + '" severity="' + rule.rule_severity + '">' "\n"
-        file_content += '<version>' + rule.stig_id + '</version>' + "\n"
-        file_content += '<title>' + rule.rule_title + '</title>' + "\n"
-        file_content += '<description>&lt;VulnDiscussion&gt;' + rule.rule_description + '&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;' + rule.false_positives + '&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;' + rule.false_negatives + '&lt;/FalseNegatives&gt;&lt;Documentable&gt;' + rule.documentable + '&lt;/Documentable&gt;&lt;Mitigations&gt;' + rule.mitigations + '&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;' + rule.severity_override_guidance + '&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;' + rule.potential_impacts + '&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;' + rule.third_party_tools + '&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;' + rule.mitigation_control + '&lt;/MitigationControl&gt;&lt;Responsibility&gt;' + rule.responsibility + '&lt;/Responsibility&gt;&lt;IAControls&gt;' + rule.iacontrols + '&lt;/IAControls&gt;</description>' + "\n"
-        file_content += '<reference>' + "\n"
-        file_content += '<dc:title>' + rule.dc_title + '</dc:title>' + "\n"
-        file_content += '<dc:publisher>' + rule.dc_publisher + '</dc:publisher>' + "\n"
-        file_content += '<dc:type>' + rule.dc_type + '</dc:type>' + "\n"
-        file_content += '<dc:subject>' + rule.dc_subject + '</dc:subject>' + "\n"
-        file_content += '<dc:identifier>' + rule.dc_identifier + '</dc:identifier>' + "\n"
-        file_content += '</reference>' + "\n"
-        file_content += '<ident system="' + rule.ident_system + '">' + rule.ident_content + '</ident>' + "\n"
-        file_content += '<fixtext fixref="' + rule.fix_ref + '">' + encoded_fix_text + '</fixtext>' + "\n"
-        file_content += '<fix id="' + rule.fix_id + '" />' + "\n"
-        file_content += '<check system="' + rule.check_system + '">' + "\n"
-        file_content += '<check-content-ref href="' + rule.check_content_ref_href + '" name="' + rule.check_content_ref_name + '" />' + "\n"
-        file_content += '<check-content>' + encoded_check_content + '</check-content>' + "\n"
-        file_content += '</check>' + "\n"
-        file_content += '</Rule>' + "\n"
-        file_content += '</Group>' + "\n"
+    E = ElementMaker()
+    EMAPPEDDC = ElementMaker(namespace='http://purl.org/dc/elements/1.1/', nsmap={'dc': 'http://purl.org/dc/elements/1.1/'})
+    GROUP = E.Group
+    TITLE = E.title
+    DESCRIPTION = E.description 
+    RULE = E.Rule 
+    VERSION = E.version
+    REFERENCE = E.reference
+    DC_TITLE = EMAPPEDDC.title
+    DC_PUBLISHER = EMAPPEDDC.publisher
+    DC_TYPE = EMAPPEDDC.type
+    DC_SUBJECT = EMAPPEDDC.subject
+    DC_IDENTIFIER = EMAPPEDDC.identifier
+    IDENT = E.ident
+    FIXTEXT = E.fixtext
+    FIX = E.fix
+    CHECK = E.check
+
+    for rule in guide.stig_rule_dict.values():
+
+        encoded_description = '&lt;VulnDiscussion&gt;' + rule.rule_description + '&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;' + rule.false_positives + '&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;' + rule.false_negatives + '&lt;/FalseNegatives&gt;&lt;Documentable&gt;' + rule.documentable + '&lt;/Documentable&gt;&lt;Mitigations&gt;' + rule.mitigations + '&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;' + rule.severity_override_guidance + '&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;' + rule.potential_impacts + '&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;' + rule.third_party_tools + '&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;' + rule.mitigation_control + '&lt;/MitigationControl&gt;&lt;Responsibility&gt;' + rule.responsibility + '&lt;/Responsibility&gt;&lt;IAControls&gt;' + rule.iacontrols + '&lt;/IAControls&gt;'
+
+        file_content += etree.tostring(GROUP(
+            TITLE(
+                rule.rule_title,
+            ), 
+            DESCRIPTION(
+                '&lt;GroupDescription&gt;&lt;/GroupDescription&gt;',
+            ),
+            RULE(
+                VERSION(
+                    rule.stig_id,
+                ),
+                TITLE(
+                    rule.rule_title,
+                ),
+                DESCRIPTION(
+                    encoded_description,
+                ),
+                REFERENCE(
+                    DC_TITLE(
+                        rule.dc_title,
+                    ),
+                    DC_PUBLISHER(
+                        rule.dc_publisher,
+                    ),
+                    DC_TYPE(
+                        rule.dc_type,
+                    ),
+                    DC_SUBJECT(
+                        rule.dc_subject,
+                    ),
+                    DC_IDENTIFIER(
+                        rule.dc_identifier,
+                    ),
+                ),
+                IDENT(
+                    rule.ident_content,
+                    system = rule.ident_system,
+                ),
+                FIXTEXT(
+                    rule.rule_fix_text,
+                    fixref = rule.fix_ref,
+                ),
+                FIX(
+                    id = rule.fix_id,
+                ),
+                CHECK(
+                    E("check-content-ref", href = rule.check_content_ref_href, name = rule.check_content_ref_name),
+                    E("check-content", rule.check_content),
+                    system = rule.check_system
+                ),
+                id = rule.rule_id,
+                weight = rule.rule_weight,
+                severity = rule.rule_severity,
+            ),
+            id = rule.vuln_id
+        ), pretty_print=True).decode()
+
     file_content += '</Benchmark>' + "\n"
     
     with open(output_folder + "/" + guide_file_name + "/" + "updated-" + guide_file_name + ".xml", "wb") as windows_fix_script:
