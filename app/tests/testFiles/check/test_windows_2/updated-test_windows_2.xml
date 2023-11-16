@@ -20,78 +20,78 @@
     <plain-text id="conventionsVersion">1.10.0</plain-text>
     <version>1</version>
 <Group id="V-254239">
-<title>A</title>
-<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
-<Rule id="SV-254239r915618_rule" weight="10.0" severity="medium">
-<version>WN22-00-000020</version>
-<title>A</title>
-<description>&lt;VulnDiscussion&gt;A&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
-<reference>
-<dc:title>DPMS Target Microsoft Windows Server 2022</dc:title>
-<dc:publisher>DISA</dc:publisher>
-<dc:type>DPMS Target</dc:type>
-<dc:subject>Microsoft Windows Server 2022</dc:subject>
-<dc:identifier>5485</dc:identifier>
-</reference>
-<ident system="http://cyber.mil/cci">CCI-000199</ident>
-<fixtext fixref="F-57675r915617_fix">A</fixtext>
-<fix id="F-57675r915617_fix" />
-<check system="C-57724r915616_chk">
-<check-content-ref href="Microsoft_Windows_Server_2022_STIG.xml" name="M" />
-<check-content>A</check-content>
-</check>
-</Rule>
+  <title>A</title>
+  <description>&amp;lt;GroupDescription&amp;gt;&amp;lt;/GroupDescription&amp;gt;</description>
+  <Rule id="SV-254239r915618_rule" weight="10.0" severity="medium">
+    <version>WN22-00-000020</version>
+    <title>A</title>
+    <description>&amp;lt;VulnDiscussion&amp;gt;A&amp;lt;/VulnDiscussion&amp;gt;&amp;lt;FalsePositives&amp;gt;&amp;lt;/FalsePositives&amp;gt;&amp;lt;FalseNegatives&amp;gt;&amp;lt;/FalseNegatives&amp;gt;&amp;lt;Documentable&amp;gt;&amp;lt;/Documentable&amp;gt;&amp;lt;Mitigations&amp;gt;&amp;lt;/Mitigations&amp;gt;&amp;lt;SeverityOverrideGuidance&amp;gt;&amp;lt;/SeverityOverrideGuidance&amp;gt;&amp;lt;PotentialImpacts&amp;gt;&amp;lt;/PotentialImpacts&amp;gt;&amp;lt;ThirdPartyTools&amp;gt;&amp;lt;/ThirdPartyTools&amp;gt;&amp;lt;MitigationControl&amp;gt;&amp;lt;/MitigationControl&amp;gt;&amp;lt;Responsibility&amp;gt;&amp;lt;/Responsibility&amp;gt;&amp;lt;IAControls&amp;gt;&amp;lt;/IAControls&amp;gt;</description>
+    <reference>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target Microsoft Windows Server 2022</dc:title>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">DISA</dc:publisher>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target</dc:type>
+      <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">Microsoft Windows Server 2022</dc:subject>
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">5485</dc:identifier>
+    </reference>
+    <ident system="http://cyber.mil/cci">CCI-000199</ident>
+    <fixtext fixref="F-57675r915617_fix">A</fixtext>
+    <fix id="F-57675r915617_fix"/>
+    <check system="C-57724r915616_chk">
+      <check-content-ref href="Microsoft_Windows_Server_2022_STIG.xml" name="M"/>
+      <check-content>A</check-content>
+    </check>
+  </Rule>
 </Group>
 <Group id="V-254243">
-<title>B</title>
-<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
-<Rule id="SV-254243r848545_rule" weight="10.0" severity="medium">
-<version>WN22-00-000060</version>
-<title>B</title>
-<description>&lt;VulnDiscussion&gt;B&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
-<reference>
-<dc:title>DPMS Target Microsoft Windows Server 2022</dc:title>
-<dc:publisher>DISA</dc:publisher>
-<dc:type>DPMS Target</dc:type>
-<dc:subject>Microsoft Windows Server 2022</dc:subject>
-<dc:identifier>5485</dc:identifier>
-</reference>
-<ident system="http://cyber.mil/cci">CCI-000366</ident>
-<fixtext fixref="F-57679r848544_fix">B</fixtext>
-<fix id="F-57679r848544_fix" />
-<check system="C-57728r848543_chk">
-<check-content-ref href="Microsoft_Windows_Server_2022_STIG.xml" name="M" />
-<check-content>B</check-content>
-</check>
-</Rule>
+  <title>B</title>
+  <description>&amp;lt;GroupDescription&amp;gt;&amp;lt;/GroupDescription&amp;gt;</description>
+  <Rule id="SV-254243r848545_rule" weight="10.0" severity="medium">
+    <version>WN22-00-000060</version>
+    <title>B</title>
+    <description>&amp;lt;VulnDiscussion&amp;gt;B&amp;lt;/VulnDiscussion&amp;gt;&amp;lt;FalsePositives&amp;gt;&amp;lt;/FalsePositives&amp;gt;&amp;lt;FalseNegatives&amp;gt;&amp;lt;/FalseNegatives&amp;gt;&amp;lt;Documentable&amp;gt;&amp;lt;/Documentable&amp;gt;&amp;lt;Mitigations&amp;gt;&amp;lt;/Mitigations&amp;gt;&amp;lt;SeverityOverrideGuidance&amp;gt;&amp;lt;/SeverityOverrideGuidance&amp;gt;&amp;lt;PotentialImpacts&amp;gt;&amp;lt;/PotentialImpacts&amp;gt;&amp;lt;ThirdPartyTools&amp;gt;&amp;lt;/ThirdPartyTools&amp;gt;&amp;lt;MitigationControl&amp;gt;&amp;lt;/MitigationControl&amp;gt;&amp;lt;Responsibility&amp;gt;&amp;lt;/Responsibility&amp;gt;&amp;lt;IAControls&amp;gt;&amp;lt;/IAControls&amp;gt;</description>
+    <reference>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target Microsoft Windows Server 2022</dc:title>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">DISA</dc:publisher>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target</dc:type>
+      <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">Microsoft Windows Server 2022</dc:subject>
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">5485</dc:identifier>
+    </reference>
+    <ident system="http://cyber.mil/cci">CCI-000366</ident>
+    <fixtext fixref="F-57679r848544_fix">B</fixtext>
+    <fix id="F-57679r848544_fix"/>
+    <check system="C-57728r848543_chk">
+      <check-content-ref href="Microsoft_Windows_Server_2022_STIG.xml" name="M"/>
+      <check-content>B</check-content>
+    </check>
+  </Rule>
 </Group>
 <Group id="V-254244">
-<title>Windows Server 2022 shared user accounts must not be permitted.</title>
-<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
-<Rule id="SV-254244r848548_rule" weight="10.0" severity="medium">
-<version>WN22-00-000070</version>
-<title>Windows Server 2022 shared user accounts must not be permitted.</title>
-<description>&lt;VulnDiscussion&gt;Shared accounts (accounts where two or more people log on with the same user identification) do not provide adequate identification and authentication. There is no way to provide for nonrepudiation or individual accountability for system access and resource usage.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
-<reference>
-<dc:title>DPMS Target Microsoft Windows Server 2022</dc:title>
-<dc:publisher>DISA</dc:publisher>
-<dc:type>DPMS Target</dc:type>
-<dc:subject>Microsoft Windows Server 2022</dc:subject>
-<dc:identifier>5485</dc:identifier>
-</reference>
-<ident system="http://cyber.mil/cci">CCI-000764</ident>
-<fixtext fixref="F-57680r848547_fix">Remove unapproved shared accounts from the system.
+  <title>Windows Server 2022 shared user accounts must not be permitted.</title>
+  <description>&amp;lt;GroupDescription&amp;gt;&amp;lt;/GroupDescription&amp;gt;</description>
+  <Rule id="SV-254244r848548_rule" weight="10.0" severity="medium">
+    <version>WN22-00-000070</version>
+    <title>Windows Server 2022 shared user accounts must not be permitted.</title>
+    <description>&amp;lt;VulnDiscussion&amp;gt;Shared accounts (accounts where two or more people log on with the same user identification) do not provide adequate identification and authentication. There is no way to provide for nonrepudiation or individual accountability for system access and resource usage.&amp;lt;/VulnDiscussion&amp;gt;&amp;lt;FalsePositives&amp;gt;&amp;lt;/FalsePositives&amp;gt;&amp;lt;FalseNegatives&amp;gt;&amp;lt;/FalseNegatives&amp;gt;&amp;lt;Documentable&amp;gt;&amp;lt;/Documentable&amp;gt;&amp;lt;Mitigations&amp;gt;&amp;lt;/Mitigations&amp;gt;&amp;lt;SeverityOverrideGuidance&amp;gt;&amp;lt;/SeverityOverrideGuidance&amp;gt;&amp;lt;PotentialImpacts&amp;gt;&amp;lt;/PotentialImpacts&amp;gt;&amp;lt;ThirdPartyTools&amp;gt;&amp;lt;/ThirdPartyTools&amp;gt;&amp;lt;MitigationControl&amp;gt;&amp;lt;/MitigationControl&amp;gt;&amp;lt;Responsibility&amp;gt;&amp;lt;/Responsibility&amp;gt;&amp;lt;IAControls&amp;gt;&amp;lt;/IAControls&amp;gt;</description>
+    <reference>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target Microsoft Windows Server 2022</dc:title>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">DISA</dc:publisher>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target</dc:type>
+      <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">Microsoft Windows Server 2022</dc:subject>
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">5485</dc:identifier>
+    </reference>
+    <ident system="http://cyber.mil/cci">CCI-000764</ident>
+    <fixtext fixref="F-57680r848547_fix">Remove unapproved shared accounts from the system.
 
 Document required shared accounts with the ISSO. Documentation must include the reason for the account, who has access to the account, and how the risk of using the shared account is mitigated to include monitoring account activity.</fixtext>
-<fix id="F-57680r848547_fix" />
-<check system="C-57729r848546_chk">
-<check-content-ref href="Microsoft_Windows_Server_2022_STIG.xml" name="M" />
-<check-content>Determine whether any shared accounts exist. If no shared accounts exist, this is NA.
+    <fix id="F-57680r848547_fix"/>
+    <check system="C-57729r848546_chk">
+      <check-content-ref href="Microsoft_Windows_Server_2022_STIG.xml" name="M"/>
+      <check-content>Determine whether any shared accounts exist. If no shared accounts exist, this is NA.
 
 Shared accounts, such as required by an application, may be approved by the organization. This must be documented with the Information System Security Officer (ISSO). Documentation must include the reason for the account, who has access to the account, and how the risk of using the shared account is mitigated to include monitoring account activity.
 
 If unapproved shared accounts exist, this is a finding.</check-content>
-</check>
-</Rule>
+    </check>
+  </Rule>
 </Group>
 </Benchmark>

@@ -20,97 +20,97 @@
     <plain-text id="conventionsVersion">1.10.0</plain-text>
     <version>1</version>
 <Group id="V-230341">
-<title>A</title>
-<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
-<Rule id="SV-230341r743978_rule" weight="10.0" severity="medium">
-<version>RHEL-08-020019</version>
-<title>A</title>
-<description>&lt;VulnDiscussion&gt;A&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
-<reference>
-<dc:title>DPMS Target Red Hat Enterprise Linux 8</dc:title>
-<dc:publisher>DISA</dc:publisher>
-<dc:type>DPMS Target</dc:type>
-<dc:subject>Red Hat Enterprise Linux 8</dc:subject>
-<dc:identifier>2921</dc:identifier>
-</reference>
-<ident system="http://cyber.mil/cci">CCI-000044</ident>
-<fixtext fixref="F-32985r743977_fix">A</fixtext>
-<fix id="F-32985r743977_fix" />
-<check system="C-33010r743976_chk">
-<check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M" />
-<check-content>A</check-content>
-</check>
-</Rule>
+  <title>A</title>
+  <description>&amp;lt;GroupDescription&amp;gt;&amp;lt;/GroupDescription&amp;gt;</description>
+  <Rule id="SV-230341r743978_rule" weight="10.0" severity="medium">
+    <version>RHEL-08-020019</version>
+    <title>A</title>
+    <description>&amp;lt;VulnDiscussion&amp;gt;A&amp;lt;/VulnDiscussion&amp;gt;&amp;lt;FalsePositives&amp;gt;&amp;lt;/FalsePositives&amp;gt;&amp;lt;FalseNegatives&amp;gt;&amp;lt;/FalseNegatives&amp;gt;&amp;lt;Documentable&amp;gt;&amp;lt;/Documentable&amp;gt;&amp;lt;Mitigations&amp;gt;&amp;lt;/Mitigations&amp;gt;&amp;lt;SeverityOverrideGuidance&amp;gt;&amp;lt;/SeverityOverrideGuidance&amp;gt;&amp;lt;PotentialImpacts&amp;gt;&amp;lt;/PotentialImpacts&amp;gt;&amp;lt;ThirdPartyTools&amp;gt;&amp;lt;/ThirdPartyTools&amp;gt;&amp;lt;MitigationControl&amp;gt;&amp;lt;/MitigationControl&amp;gt;&amp;lt;Responsibility&amp;gt;&amp;lt;/Responsibility&amp;gt;&amp;lt;IAControls&amp;gt;&amp;lt;/IAControls&amp;gt;</description>
+    <reference>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target Red Hat Enterprise Linux 8</dc:title>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">DISA</dc:publisher>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target</dc:type>
+      <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">Red Hat Enterprise Linux 8</dc:subject>
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">2921</dc:identifier>
+    </reference>
+    <ident system="http://cyber.mil/cci">CCI-000044</ident>
+    <fixtext fixref="F-32985r743977_fix">A</fixtext>
+    <fix id="F-32985r743977_fix"/>
+    <check system="C-33010r743976_chk">
+      <check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M"/>
+      <check-content>A</check-content>
+    </check>
+  </Rule>
 </Group>
 <Group id="V-230222">
-<title>B</title>
-<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
-<Rule id="SV-230222r627750_rule" weight="10.0" severity="medium">
-<version>RHEL-08-010010</version>
-<title>B</title>
-<description>&lt;VulnDiscussion&gt;B&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
-<reference>
-<dc:title>DPMS Target Red Hat Enterprise Linux 8</dc:title>
-<dc:publisher>DISA</dc:publisher>
-<dc:type>DPMS Target</dc:type>
-<dc:subject>Red Hat Enterprise Linux 8</dc:subject>
-<dc:identifier>2921</dc:identifier>
-</reference>
-<ident system="http://cyber.mil/cci">CCI-000366</ident>
-<fixtext fixref="F-32866r567413_fix">B</fixtext>
-<fix id="F-32866r567413_fix" />
-<check system="C-32891r567412_chk">
-<check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M" />
-<check-content>B</check-content>
-</check>
-</Rule>
+  <title>B</title>
+  <description>&amp;lt;GroupDescription&amp;gt;&amp;lt;/GroupDescription&amp;gt;</description>
+  <Rule id="SV-230222r627750_rule" weight="10.0" severity="medium">
+    <version>RHEL-08-010010</version>
+    <title>B</title>
+    <description>&amp;lt;VulnDiscussion&amp;gt;B&amp;lt;/VulnDiscussion&amp;gt;&amp;lt;FalsePositives&amp;gt;&amp;lt;/FalsePositives&amp;gt;&amp;lt;FalseNegatives&amp;gt;&amp;lt;/FalseNegatives&amp;gt;&amp;lt;Documentable&amp;gt;&amp;lt;/Documentable&amp;gt;&amp;lt;Mitigations&amp;gt;&amp;lt;/Mitigations&amp;gt;&amp;lt;SeverityOverrideGuidance&amp;gt;&amp;lt;/SeverityOverrideGuidance&amp;gt;&amp;lt;PotentialImpacts&amp;gt;&amp;lt;/PotentialImpacts&amp;gt;&amp;lt;ThirdPartyTools&amp;gt;&amp;lt;/ThirdPartyTools&amp;gt;&amp;lt;MitigationControl&amp;gt;&amp;lt;/MitigationControl&amp;gt;&amp;lt;Responsibility&amp;gt;&amp;lt;/Responsibility&amp;gt;&amp;lt;IAControls&amp;gt;&amp;lt;/IAControls&amp;gt;</description>
+    <reference>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target Red Hat Enterprise Linux 8</dc:title>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">DISA</dc:publisher>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target</dc:type>
+      <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">Red Hat Enterprise Linux 8</dc:subject>
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">2921</dc:identifier>
+    </reference>
+    <ident system="http://cyber.mil/cci">CCI-000366</ident>
+    <fixtext fixref="F-32866r567413_fix">B</fixtext>
+    <fix id="F-32866r567413_fix"/>
+    <check system="C-32891r567412_chk">
+      <check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M"/>
+      <check-content>B</check-content>
+    </check>
+  </Rule>
 </Group>
 <Group id="V-230327">
-<title>C</title>
-<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
-<Rule id="SV-230327r627750_rule" weight="10.0" severity="medium">
-<version>RHEL-08-010790</version>
-<title>C</title>
-<description>&lt;VulnDiscussion&gt;C&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
-<reference>
-<dc:title>DPMS Target Red Hat Enterprise Linux 8</dc:title>
-<dc:publisher>DISA</dc:publisher>
-<dc:type>DPMS Target</dc:type>
-<dc:subject>Red Hat Enterprise Linux 8</dc:subject>
-<dc:identifier>2921</dc:identifier>
-</reference>
-<ident system="http://cyber.mil/cci">CCI-000366</ident>
-<fixtext fixref="F-32971r567728_fix">C</fixtext>
-<fix id="F-32971r567728_fix" />
-<check system="C-32996r567727_chk">
-<check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M" />
-<check-content>C</check-content>
-</check>
-</Rule>
+  <title>C</title>
+  <description>&amp;lt;GroupDescription&amp;gt;&amp;lt;/GroupDescription&amp;gt;</description>
+  <Rule id="SV-230327r627750_rule" weight="10.0" severity="medium">
+    <version>RHEL-08-010790</version>
+    <title>C</title>
+    <description>&amp;lt;VulnDiscussion&amp;gt;C&amp;lt;/VulnDiscussion&amp;gt;&amp;lt;FalsePositives&amp;gt;&amp;lt;/FalsePositives&amp;gt;&amp;lt;FalseNegatives&amp;gt;&amp;lt;/FalseNegatives&amp;gt;&amp;lt;Documentable&amp;gt;&amp;lt;/Documentable&amp;gt;&amp;lt;Mitigations&amp;gt;&amp;lt;/Mitigations&amp;gt;&amp;lt;SeverityOverrideGuidance&amp;gt;&amp;lt;/SeverityOverrideGuidance&amp;gt;&amp;lt;PotentialImpacts&amp;gt;&amp;lt;/PotentialImpacts&amp;gt;&amp;lt;ThirdPartyTools&amp;gt;&amp;lt;/ThirdPartyTools&amp;gt;&amp;lt;MitigationControl&amp;gt;&amp;lt;/MitigationControl&amp;gt;&amp;lt;Responsibility&amp;gt;&amp;lt;/Responsibility&amp;gt;&amp;lt;IAControls&amp;gt;&amp;lt;/IAControls&amp;gt;</description>
+    <reference>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target Red Hat Enterprise Linux 8</dc:title>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">DISA</dc:publisher>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target</dc:type>
+      <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">Red Hat Enterprise Linux 8</dc:subject>
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">2921</dc:identifier>
+    </reference>
+    <ident system="http://cyber.mil/cci">CCI-000366</ident>
+    <fixtext fixref="F-32971r567728_fix">C</fixtext>
+    <fix id="F-32971r567728_fix"/>
+    <check system="C-32996r567727_chk">
+      <check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M"/>
+      <check-content>C</check-content>
+    </check>
+  </Rule>
 </Group>
 <Group id="V-230309">
-<title>Local RHEL 8 initialization files must not execute world-writable programs.</title>
-<description>&lt;GroupDescription&gt;&lt;/GroupDescription&gt;</description>
-<Rule id="SV-230309r627750_rule" weight="10.0" severity="medium">
-<version>RHEL-08-010660</version>
-<title>Local RHEL 8 initialization files must not execute world-writable programs.</title>
-<description>&lt;VulnDiscussion&gt;If user start-up files execute world-writable programs, especially in unprotected directories, they could be maliciously modified to destroy user files or otherwise compromise the system at the user level. If the system is compromised at the user level, it is easier to elevate privileges to eventually compromise the system at the root and network level.&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;&lt;/FalseNegatives&gt;&lt;Documentable&gt;&lt;/Documentable&gt;&lt;Mitigations&gt;&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;&lt;/MitigationControl&gt;&lt;Responsibility&gt;&lt;/Responsibility&gt;&lt;IAControls&gt;&lt;/IAControls&gt;</description>
-<reference>
-<dc:title>DPMS Target Red Hat Enterprise Linux 8</dc:title>
-<dc:publisher>DISA</dc:publisher>
-<dc:type>DPMS Target</dc:type>
-<dc:subject>Red Hat Enterprise Linux 8</dc:subject>
-<dc:identifier>2921</dc:identifier>
-</reference>
-<ident system="http://cyber.mil/cci">CCI-000366</ident>
-<fixtext fixref="F-32953r567674_fix">Set the mode on files being executed by the local initialization files with the following command:
+  <title>Local RHEL 8 initialization files must not execute world-writable programs.</title>
+  <description>&amp;lt;GroupDescription&amp;gt;&amp;lt;/GroupDescription&amp;gt;</description>
+  <Rule id="SV-230309r627750_rule" weight="10.0" severity="medium">
+    <version>RHEL-08-010660</version>
+    <title>Local RHEL 8 initialization files must not execute world-writable programs.</title>
+    <description>&amp;lt;VulnDiscussion&amp;gt;If user start-up files execute world-writable programs, especially in unprotected directories, they could be maliciously modified to destroy user files or otherwise compromise the system at the user level. If the system is compromised at the user level, it is easier to elevate privileges to eventually compromise the system at the root and network level.&amp;lt;/VulnDiscussion&amp;gt;&amp;lt;FalsePositives&amp;gt;&amp;lt;/FalsePositives&amp;gt;&amp;lt;FalseNegatives&amp;gt;&amp;lt;/FalseNegatives&amp;gt;&amp;lt;Documentable&amp;gt;&amp;lt;/Documentable&amp;gt;&amp;lt;Mitigations&amp;gt;&amp;lt;/Mitigations&amp;gt;&amp;lt;SeverityOverrideGuidance&amp;gt;&amp;lt;/SeverityOverrideGuidance&amp;gt;&amp;lt;PotentialImpacts&amp;gt;&amp;lt;/PotentialImpacts&amp;gt;&amp;lt;ThirdPartyTools&amp;gt;&amp;lt;/ThirdPartyTools&amp;gt;&amp;lt;MitigationControl&amp;gt;&amp;lt;/MitigationControl&amp;gt;&amp;lt;Responsibility&amp;gt;&amp;lt;/Responsibility&amp;gt;&amp;lt;IAControls&amp;gt;&amp;lt;/IAControls&amp;gt;</description>
+    <reference>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target Red Hat Enterprise Linux 8</dc:title>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">DISA</dc:publisher>
+      <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">DPMS Target</dc:type>
+      <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">Red Hat Enterprise Linux 8</dc:subject>
+      <dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/">2921</dc:identifier>
+    </reference>
+    <ident system="http://cyber.mil/cci">CCI-000366</ident>
+    <fixtext fixref="F-32953r567674_fix">Set the mode on files being executed by the local initialization files with the following command:
               $ sudo chmod test
               $ sudo find [PART] -xdev -type f -perm -0002 -print [Test]
 $ sudo chmod 0755 &lt;file&gt;</fixtext>
-<fix id="F-32953r567674_fix" />
-<check system="C-32978r567673_chk">
-<check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M" />
-<check-content>Verify that local initialization files do not execute world-writable programs.
+    <fix id="F-32953r567674_fix"/>
+    <check system="C-32978r567673_chk">
+      <check-content-ref href="Red_Hat_Enterprise_Linux_8_STIG.xml" name="M"/>
+      <check-content>Verify that local initialization files do not execute world-writable programs.
 
 Check the system for world-writable files.
 
@@ -125,7 +125,7 @@ Note: The example will be for a system that is configured to create user home di
 $ sudo grep &lt;file&gt; /home/*/.*
 
 If any local initialization files are found to reference world-writable files, this is a finding.</check-content>
-</check>
-</Rule>
+    </check>
+  </Rule>
 </Group>
 </Benchmark>
