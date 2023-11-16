@@ -15,5 +15,7 @@ exclude =
     __pycache__,
     __init__,
     env,
-    app/static
+    app/static,
+    old_codes,
+    
 max-complexity = 25
