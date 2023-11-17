@@ -672,7 +672,7 @@ def generateXml(guide):
                 severity=rule.rule_severity,
             ),
             id=rule.vuln_id),
-            pretty_print=True).decode()
+                                       pretty_print=True).decode()
 
     file_content += '</Benchmark>' + "\n"
 
