@@ -2,7 +2,6 @@ import os
 import shutil
 from ..app import *
 
-
 root_dir = os.getcwd()
 
 
@@ -15,25 +14,33 @@ def compare_files(file1, file2):
 
 
 def test_calculate_score_linux():
-    stig_rule = StigRule("", "", "", "", 10.0, 'high', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '')
+    stig_rule = StigRule("", "", "", "", 10.0, 'high', '', '', '', '', '', '',
+                         '', '', '', '', '', '', '', '', '', '', '', '', '',
+                         '', '', '', '', '', '', '')
 
     assert stig_rule._calculateScore() == "Very High"
 
 
 def test_calculate_score_Windows():
-    stig_rule = StigRule("", "", "", "", 10.0, "medium", "", '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '')
+    stig_rule = StigRule("", "", "", "", 10.0, "medium", "", '', '', '', '',
+                         '', '', '', '', '', '', '', '', '', '', '', '', '',
+                         '', '', '', '', '', '', '', '')
 
     assert stig_rule._calculateScore() == "High"
 
 
 def test_calculate_score_invalid():
-    stig_rule = StigRule("", "", "", "", 10.0, "", "", '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '')
+    stig_rule = StigRule("", "", "", "", 10.0, "", "", '', '', '', '', '', '',
+                         '', '', '', '', '', '', '', '', '', '', '', '', '',
+                         '', '', '', '', '', '')
 
     assert stig_rule._calculateScore() == "undefined"
 
 
 def test_calculate_score_invalid_2():
-    stig_rule = StigRule("", "", "", "", None, "medium", "", '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '')
+    stig_rule = StigRule("", "", "", "", None, "medium", "", '', '', '', '',
+                         '', '', '', '', '', '', '', '', '', '', '', '', '',
+                         '', '', '', '', '', '', '', '')
 
     assert stig_rule._calculateScore() == "undefined"
 
@@ -116,78 +123,139 @@ If unapproved shared accounts exist, this is a finding.'''
 
 
 def test_linux_script():
-    shutil.copyfile("app/tests/testFiles/test_linux_2.xml", "app/uploads/test_linux_2.xml")
+    shutil.copyfile("app/tests/testFiles/test_linux_2.xml",
+                    "app/uploads/test_linux_2.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_2.xml", "Linux")
     vuln_id_list = ["V-230341", "V-230222", "V-230327", "V-230309"]
     linuxCreateScript(guide, vuln_id_list)
 
-    assert os.path.isfile("app/out-files/test_linux_2/test_linux_2-CheckScript.sh")
-    assert os.path.isfile("app/out-files/test_linux_2/test_linux_2-FixScript.sh")
-    assert os.path.isfile("app/out-files/test_linux_2/test_linux_2-ManualCheck.txt")
-    assert os.path.isfile("app/out-files/test_linux_2/test_linux_2-ManualFix.txt")
-    compare_files("app/out-files/test_linux_2/test_linux_2-CheckScript.sh", "app/tests/testFiles/check/test_linux_2/test_linux_2-CheckScript.sh")
-    compare_files("app/out-files/test_linux_2/test_linux_2-FixScript.sh", "app/tests/testFiles/check/test_linux_2/test_linux_2-FixScript.sh")
-    compare_files("app/out-files/test_linux_2/test_linux_2-ManualCheck.txt", "app/tests/testFiles/check/test_linux_2/test_linux_2-ManualCheck.txt")
-    compare_files("app/out-files/test_linux_2/test_linux_2-ManualFix.txt", "app/tests/testFiles/check/test_linux_2/test_linux_2-ManualFix.txt")
+    assert os.path.isfile(
+        "app/out-files/test_linux_2/test_linux_2-CheckScript.sh")
+    assert os.path.isfile(
+        "app/out-files/test_linux_2/test_linux_2-FixScript.sh")
+    assert os.path.isfile(
+        "app/out-files/test_linux_2/test_linux_2-ManualCheck.txt")
+    assert os.path.isfile(
+        "app/out-files/test_linux_2/test_linux_2-ManualFix.txt")
+    compare_files(
+        "app/out-files/test_linux_2/test_linux_2-CheckScript.sh",
+        "app/tests/testFiles/check/test_linux_2/test_linux_2-CheckScript.sh")
+    compare_files(
+        "app/out-files/test_linux_2/test_linux_2-FixScript.sh",
+        "app/tests/testFiles/check/test_linux_2/test_linux_2-FixScript.sh")
+    compare_files(
+        "app/out-files/test_linux_2/test_linux_2-ManualCheck.txt",
+        "app/tests/testFiles/check/test_linux_2/test_linux_2-ManualCheck.txt")
+    compare_files(
+        "app/out-files/test_linux_2/test_linux_2-ManualFix.txt",
+        "app/tests/testFiles/check/test_linux_2/test_linux_2-ManualFix.txt")
 
 
 def test_linux_script_empty():
-    shutil.copyfile("app/tests/testFiles/test_linux_3.xml", "app/uploads/test_linux_3.xml")
+    shutil.copyfile("app/tests/testFiles/test_linux_3.xml",
+                    "app/uploads/test_linux_3.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_3.xml", "Linux")
     vuln_id_list = []
     linuxCreateScript(guide, vuln_id_list)
 
-    assert os.path.isfile("app/out-files/test_linux_3/test_linux_3-CheckScript.sh")
-    assert os.path.isfile("app/out-files/test_linux_3/test_linux_3-FixScript.sh")
-    assert os.path.isfile("app/out-files/test_linux_3/test_linux_3-ManualCheck.txt")
-    assert os.path.isfile("app/out-files/test_linux_3/test_linux_3-ManualFix.txt")
-    compare_files("app/out-files/test_linux_3/test_linux_3-CheckScript.sh", "app/tests/testFiles/check/test_linux_3/test_linux_3-CheckScript.sh")
-    compare_files("app/out-files/test_linux_3/test_linux_3-FixScript.sh", "app/tests/testFiles/check/test_linux_3/test_linux_3-FixScript.sh")
-    compare_files("app/out-files/test_linux_3/test_linux_3-ManualCheck.txt", "app/tests/testFiles/check/test_linux_3/test_linux_3-ManualCheck.txt")
-    compare_files("app/out-files/test_linux_3/test_linux_3-ManualFix.txt", "app/tests/testFiles/check/test_linux_3/test_linux_3-ManualFix.txt")
+    assert os.path.isfile(
+        "app/out-files/test_linux_3/test_linux_3-CheckScript.sh")
+    assert os.path.isfile(
+        "app/out-files/test_linux_3/test_linux_3-FixScript.sh")
+    assert os.path.isfile(
+        "app/out-files/test_linux_3/test_linux_3-ManualCheck.txt")
+    assert os.path.isfile(
+        "app/out-files/test_linux_3/test_linux_3-ManualFix.txt")
+    compare_files(
+        "app/out-files/test_linux_3/test_linux_3-CheckScript.sh",
+        "app/tests/testFiles/check/test_linux_3/test_linux_3-CheckScript.sh")
+    compare_files(
+        "app/out-files/test_linux_3/test_linux_3-FixScript.sh",
+        "app/tests/testFiles/check/test_linux_3/test_linux_3-FixScript.sh")
+    compare_files(
+        "app/out-files/test_linux_3/test_linux_3-ManualCheck.txt",
+        "app/tests/testFiles/check/test_linux_3/test_linux_3-ManualCheck.txt")
+    compare_files(
+        "app/out-files/test_linux_3/test_linux_3-ManualFix.txt",
+        "app/tests/testFiles/check/test_linux_3/test_linux_3-ManualFix.txt")
 
 
 def test_windows_script():
-    shutil.copyfile("app/tests/testFiles/test_windows_2.xml", "app/uploads/test_windows_2.xml")
+    shutil.copyfile("app/tests/testFiles/test_windows_2.xml",
+                    "app/uploads/test_windows_2.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_2.xml", "Windows")
     vuln_id_list = ["V-254239", "V-254243", "V-254244"]
     windowsCreateScript(guide, vuln_id_list)
 
-    assert os.path.isfile("app/out-files/test_windows_2/test_windows_2-CheckScript.ps1")
-    assert os.path.isfile("app/out-files/test_windows_2/test_windows_2-FixScript.ps1")
-    assert os.path.isfile("app/out-files/test_windows_2/test_windows_2-ManualCheck.txt")
-    assert os.path.isfile("app/out-files/test_windows_2/test_windows_2-ManualFix.txt")
-    compare_files("app/out-files/test_windows_2/test_windows_2-CheckScript.ps1", "app/tests/testFiles/check/test_windows_2/test_windows_2-CheckScript.ps1")
-    compare_files("app/out-files/test_windows_2/test_windows_2-FixScript.ps1", "app/tests/testFiles/check/test_windows_2/test_windows_2-FixScript.ps1")
-    compare_files("app/out-files/test_windows_2/test_windows_2-ManualCheck.txt", "app/tests/testFiles/check/test_windows_2/test_windows_2-ManualCheck.txt")
-    compare_files("app/out-files/test_windows_2/test_windows_2-ManualFix.txt", "app/tests/testFiles/check/test_windows_2/test_windows_2-ManualFix.txt")
+    assert os.path.isfile(
+        "app/out-files/test_windows_2/test_windows_2-CheckScript.ps1")
+    assert os.path.isfile(
+        "app/out-files/test_windows_2/test_windows_2-FixScript.ps1")
+    assert os.path.isfile(
+        "app/out-files/test_windows_2/test_windows_2-ManualCheck.txt")
+    assert os.path.isfile(
+        "app/out-files/test_windows_2/test_windows_2-ManualFix.txt")
+    compare_files(
+        "app/out-files/test_windows_2/test_windows_2-CheckScript.ps1",
+        "app/tests/testFiles/check/test_windows_2/test_windows_2-CheckScript.ps1"
+    )
+    compare_files(
+        "app/out-files/test_windows_2/test_windows_2-FixScript.ps1",
+        "app/tests/testFiles/check/test_windows_2/test_windows_2-FixScript.ps1"
+    )
+    compare_files(
+        "app/out-files/test_windows_2/test_windows_2-ManualCheck.txt",
+        "app/tests/testFiles/check/test_windows_2/test_windows_2-ManualCheck.txt"
+    )
+    compare_files(
+        "app/out-files/test_windows_2/test_windows_2-ManualFix.txt",
+        "app/tests/testFiles/check/test_windows_2/test_windows_2-ManualFix.txt"
+    )
 
 
 def test_windows_script_empty():
-    shutil.copyfile("app/tests/testFiles/test_windows_3.xml", "app/uploads/test_windows_3.xml")
+    shutil.copyfile("app/tests/testFiles/test_windows_3.xml",
+                    "app/uploads/test_windows_3.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_3.xml", "Windows")
     vuln_id_list = []
     windowsCreateScript(guide, vuln_id_list)
 
-    assert os.path.isfile("app/out-files/test_windows_3/test_windows_3-CheckScript.ps1")
-    assert os.path.isfile("app/out-files/test_windows_3/test_windows_3-FixScript.ps1")
-    assert os.path.isfile("app/out-files/test_windows_3/test_windows_3-ManualCheck.txt")
-    assert os.path.isfile("app/out-files/test_windows_3/test_windows_3-ManualFix.txt")
-    compare_files("app/out-files/test_windows_3/test_windows_3-CheckScript.ps1", "app/tests/testFiles/check/test_windows_3/test_windows_3-CheckScript.ps1")
-    compare_files("app/out-files/test_windows_3/test_windows_3-FixScript.ps1", "app/tests/testFiles/check/test_windows_3/test_windows_3-FixScript.ps1")
-    compare_files("app/out-files/test_windows_3/test_windows_3-ManualCheck.txt", "app/tests/testFiles/check/test_windows_3/test_windows_3-ManualCheck.txt")
-    compare_files("app/out-files/test_windows_3/test_windows_3-ManualFix.txt", "app/tests/testFiles/check/test_windows_3/test_windows_3-ManualFix.txt")
+    assert os.path.isfile(
+        "app/out-files/test_windows_3/test_windows_3-CheckScript.ps1")
+    assert os.path.isfile(
+        "app/out-files/test_windows_3/test_windows_3-FixScript.ps1")
+    assert os.path.isfile(
+        "app/out-files/test_windows_3/test_windows_3-ManualCheck.txt")
+    assert os.path.isfile(
+        "app/out-files/test_windows_3/test_windows_3-ManualFix.txt")
+    compare_files(
+        "app/out-files/test_windows_3/test_windows_3-CheckScript.ps1",
+        "app/tests/testFiles/check/test_windows_3/test_windows_3-CheckScript.ps1"
+    )
+    compare_files(
+        "app/out-files/test_windows_3/test_windows_3-FixScript.ps1",
+        "app/tests/testFiles/check/test_windows_3/test_windows_3-FixScript.ps1"
+    )
+    compare_files(
+        "app/out-files/test_windows_3/test_windows_3-ManualCheck.txt",
+        "app/tests/testFiles/check/test_windows_3/test_windows_3-ManualCheck.txt"
+    )
+    compare_files(
+        "app/out-files/test_windows_3/test_windows_3-ManualFix.txt",
+        "app/tests/testFiles/check/test_windows_3/test_windows_3-ManualFix.txt"
+    )
 
 
 def test_linux_generate_xml():
-    shutil.copyfile("app/tests/testFiles/test_linux_2.xml", "app/uploads/test_linux_2.xml")
+    shutil.copyfile("app/tests/testFiles/test_linux_2.xml",
+                    "app/uploads/test_linux_2.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_2.xml", "Linux")
-    
+
     guide.stig_rule_dict["V-230341"].rule_title = "A"
     guide.stig_rule_dict["V-230341"].rule_fix_text = "A"
     guide.stig_rule_dict["V-230341"].rule_description = "A"
     guide.stig_rule_dict["V-230341"].check_content = "A"
-    
+
     guide.stig_rule_dict["V-230222"].rule_title = "B"
     guide.stig_rule_dict["V-230222"].rule_fix_text = "B"
     guide.stig_rule_dict["V-230222"].rule_description = "B"
@@ -200,19 +268,23 @@ def test_linux_generate_xml():
 
     generateXml(guide)
 
-    assert os.path.isfile("app/out-files/test_linux_2/updated-test_linux_2.xml")
-    compare_files("app/out-files/test_linux_2/updated-test_linux_2.xml", "app/tests/testFiles/check/test_linux_2/updated-test_linux_2.xml")
+    assert os.path.isfile(
+        "app/out-files/test_linux_2/updated-test_linux_2.xml")
+    compare_files(
+        "app/out-files/test_linux_2/updated-test_linux_2.xml",
+        "app/tests/testFiles/check/test_linux_2/updated-test_linux_2.xml")
 
 
 def test_windows_generate_xml():
-    shutil.copyfile("app/tests/testFiles/test_windows_2.xml", "app/uploads/test_windows_2.xml")
+    shutil.copyfile("app/tests/testFiles/test_windows_2.xml",
+                    "app/uploads/test_windows_2.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_2.xml", "Windows")
-    
+
     guide.stig_rule_dict["V-254239"].rule_title = "A"
     guide.stig_rule_dict["V-254239"].rule_fix_text = "A"
     guide.stig_rule_dict["V-254239"].rule_description = "A"
     guide.stig_rule_dict["V-254239"].check_content = "A"
-    
+
     guide.stig_rule_dict["V-254243"].rule_title = "B"
     guide.stig_rule_dict["V-254243"].rule_fix_text = "B"
     guide.stig_rule_dict["V-254243"].rule_description = "B"
@@ -220,48 +292,63 @@ def test_windows_generate_xml():
 
     generateXml(guide)
 
-    assert os.path.isfile("app/out-files/test_windows_2/updated-test_windows_2.xml")
-    compare_files("app/out-files/test_windows_2/updated-test_windows_2.xml", "app/tests/testFiles/check/test_windows_2/updated-test_windows_2.xml")
+    assert os.path.isfile(
+        "app/out-files/test_windows_2/updated-test_windows_2.xml")
+    compare_files(
+        "app/out-files/test_windows_2/updated-test_windows_2.xml",
+        "app/tests/testFiles/check/test_windows_2/updated-test_windows_2.xml")
 
 
 def test_linux_zip_file_generate():
-    shutil.copyfile("app/tests/testFiles/test_linux_4.xml", "app/uploads/test_linux_4.xml")
+    shutil.copyfile("app/tests/testFiles/test_linux_4.xml",
+                    "app/uploads/test_linux_4.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_4.xml", "Linux")
     vuln_id_list = []
 
     linuxCreateScript(guide, vuln_id_list)
 
-    assert os.path.isfile("app/out-files/test_linux_4/test_linux_4-CheckScript.sh")
-    assert os.path.isfile("app/out-files/test_linux_4/test_linux_4-FixScript.sh")
-    assert os.path.isfile("app/out-files/test_linux_4/test_linux_4-ManualCheck.txt")
-    assert os.path.isfile("app/out-files/test_linux_4/test_linux_4-ManualFix.txt")
+    assert os.path.isfile(
+        "app/out-files/test_linux_4/test_linux_4-CheckScript.sh")
+    assert os.path.isfile(
+        "app/out-files/test_linux_4/test_linux_4-FixScript.sh")
+    assert os.path.isfile(
+        "app/out-files/test_linux_4/test_linux_4-ManualCheck.txt")
+    assert os.path.isfile(
+        "app/out-files/test_linux_4/test_linux_4-ManualFix.txt")
 
     generateXml(guide)
-    
-    assert os.path.isfile("app/out-files/test_linux_4/updated-test_linux_4.xml")
+
+    assert os.path.isfile(
+        "app/out-files/test_linux_4/updated-test_linux_4.xml")
 
     generateZip(guide)
 
     os.chdir(root_dir)
-    
+
     assert os.path.isfile("app/out-files/test_linux_4/test_linux_4.zip")
 
 
 def test_windows_zip_file_generate():
-    shutil.copyfile("app/tests/testFiles/test_windows_4.xml", "app/uploads/test_windows_4.xml")
+    shutil.copyfile("app/tests/testFiles/test_windows_4.xml",
+                    "app/uploads/test_windows_4.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_4.xml", "Windows")
     Vuln_id_list = []
 
     windowsCreateScript(guide, Vuln_id_list)
 
-    assert os.path.isfile("app/out-files/test_windows_4/test_windows_4-CheckScript.ps1")
-    assert os.path.isfile("app/out-files/test_windows_4/test_windows_4-FixScript.ps1")
-    assert os.path.isfile("app/out-files/test_windows_4/test_windows_4-ManualCheck.txt")
-    assert os.path.isfile("app/out-files/test_windows_4/test_windows_4-ManualFix.txt")
+    assert os.path.isfile(
+        "app/out-files/test_windows_4/test_windows_4-CheckScript.ps1")
+    assert os.path.isfile(
+        "app/out-files/test_windows_4/test_windows_4-FixScript.ps1")
+    assert os.path.isfile(
+        "app/out-files/test_windows_4/test_windows_4-ManualCheck.txt")
+    assert os.path.isfile(
+        "app/out-files/test_windows_4/test_windows_4-ManualFix.txt")
 
     generateXml(guide)
 
-    assert os.path.isfile("app/out-files/test_windows_4/updated-test_windows_4.xml")
+    assert os.path.isfile(
+        "app/out-files/test_windows_4/updated-test_windows_4.xml")
 
     generateZip(guide)
 

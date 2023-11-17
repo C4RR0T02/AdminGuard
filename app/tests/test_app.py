@@ -4,7 +4,6 @@ import shutil
 from io import BytesIO
 from ..app import app
 
-
 root_dir = os.getcwd()
 
 
@@ -354,4 +353,3 @@ def test_get_template_generate_page(client):
     response = client.get('/template-generate')
     assert response.status_code == 200
     assert b'Vulnerability Scanner Template Generator' in response.data
-    

@@ -30,7 +30,7 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        python -m flake8
+        python -m flake8 app
         python -m yapf --recursive --diff --parallel app
     
     - name: Test with pytest
