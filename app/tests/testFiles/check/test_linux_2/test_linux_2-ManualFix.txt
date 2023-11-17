@@ -1,0 +1,12 @@
+FIX CONTENT TO BE MANUALLY CHECKED
+--------------------------------------------------------------
+V-230341 - RHEL 8 must prevent system messages from being presented when three unsuccessful logon attempts occur.
+Configure the operating system to prevent informative messages from being presented at logon attempts.
+
+    Add/Modify the "/etc/security/faillock.conf" file to match the following line:
+
+    silent
+--------------------------------------------------------------
+V-230222 - RHEL 8 vendor packaged system security patches and updates must be installed and up to date.
+Install the operating system patches or updated packages available from Red Hat within 30 days or sooner as local policy dictates.
+--------------------------------------------------------------

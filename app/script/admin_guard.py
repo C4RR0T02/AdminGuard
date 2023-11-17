@@ -4,6 +4,9 @@ from urllib.parse import unquote
 import math
 import os
 import re
+import zipfile
+from lxml.builder import ElementMaker
+from lxml import etree
 
 # Find any text between square brackets
 square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
@@ -20,6 +23,8 @@ underscore_regex = re.compile(r"_", re.IGNORECASE)
 # Find any text which contain a caret
 caret_regex = re.compile(r"\^", re.IGNORECASE)
 not_regex_regex = re.compile(r"[a-zA-Z]{1}", re.IGNORECASE)
+
+root_dir = os.getcwd()
 
 
 class Guide:
@@ -38,7 +43,7 @@ class StigRule:
 
     def __init__(self, rule_name, rule_title, vuln_id, rule_id, rule_weight,
                  rule_severity, stig_id, rule_fix_text, rule_description,
-                 check_content):
+                 check_content, check_system, dc_title, dc_publisher, dc_type, dc_subject, dc_identifier, ident_system, ident_content, fix_ref, fix_id, check_content_ref_href, check_content_ref_name, false_positives, false_negatives, documentable, mitigations, severity_override_guidance, potential_impacts, third_party_tools, mitigation_control, responsibility, iacontrols):
         self.rule_name = rule_name
         self.rule_title = rule_title
         self.vuln_id = vuln_id
@@ -49,6 +54,29 @@ class StigRule:
         self.rule_fix_text = rule_fix_text
         self.rule_description = rule_description
         self.check_content = check_content
+        self.check_system = check_system
+        self.dc_title = dc_title
+        self.dc_publisher = dc_publisher
+        self.dc_type = dc_type
+        self.dc_subject = dc_subject
+        self.dc_identifier = dc_identifier
+        self.ident_system = ident_system
+        self.ident_content = ident_content
+        self.fix_ref = fix_ref
+        self.fix_id = fix_id
+        self.check_content_ref_href = check_content_ref_href
+        self.check_content_ref_name = check_content_ref_name
+        self.false_positives = false_positives
+        self.false_negatives = false_negatives
+        self.documentable = documentable
+        self.mitigations = mitigations
+        self.severity_override_guidance = severity_override_guidance
+        self.potential_impacts = potential_impacts
+        self.third_party_tools = third_party_tools
+        self.mitigation_control = mitigation_control
+        self.responsibility = responsibility
+        self.iacontrols = iacontrols
+
         self.category_score = self._calculateScore()
         self.check_commands = ''
         self.fix_commands = ''
@@ -58,7 +86,6 @@ class StigRule:
             command_list = []
             field_split = field.split("\n")
             for field_line in field_split:
-                field_text_to_fill = []
 
                 field_line = field_line.strip()
 
@@ -67,23 +94,7 @@ class StigRule:
 
                 field_command = field_line.replace("$ ", "")
 
-                if path_to_file_bracket_regex.findall(field_command):
-                    for command in path_to_file_bracket_regex.findall(
-                            field_command):
-                        field_text_to_fill.append(command)
-                else:
-                    for command in square_bracket_regex.findall(field_command):
-                        if not_regex_regex.findall(command):
-                            field_text_to_fill.append(command)
-
-                for command in path_to_file_regex.findall(field_command):
-                    field_text_to_fill.append(command)
-
-                for command in angle_bracket_regex.findall(field_command):
-                    field_text_to_fill.append(command)
-
-                new_command = Command(field_command, field_text_to_fill)
-                command_list.append(new_command)
+                command_list.append(field_command)
             return command_list
 
         if type == "Windows":
@@ -93,7 +104,6 @@ class StigRule:
             field_split = field.split("\n")
             for field_line in field_split:
                 field_command = ""
-                field_text_to_fill = []
 
                 if not field_line.startswith(
                         'Enter "') or field_line.startswith("Enter '"):
@@ -121,11 +131,7 @@ class StigRule:
                     if field_command.endswith('.'):
                         field_command = field_command[:-1]
 
-                for command in square_bracket_regex.findall(field_command):
-                    field_text_to_fill.append(command)
-
-                new_command = Command(field_command, field_text_to_fill)
-                command_list.append(new_command)
+                command_list.append(field_command)
             return command_list
 
     def _calculateScore(self):
@@ -152,7 +158,7 @@ class StigRule:
                 math.ceil(
                     float(severity_Dictionary[self.rule_severity]) *
                     (float(self.rule_weight) / 2)))
-
+                    
             for category_name, category_score_limit in severity_categories_dictionary.items(
             ):
                 if category_score >= category_score_limit:
@@ -163,31 +169,15 @@ class StigRule:
 
         return self.category_score
 
+    def replaceFields(self, field, replacement):
+        field_data = self.field
+        if field_data is None:
+            self.field = field_data
+        else:
+            self.field = replacement
+
     def __str__(self) -> str:
         return f"{str(self.rule_name)} - {str(self.rule_title)} - {str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_weight)} - {str(self.rule_severity)} - {str(self.stig_id)} - {str(self.rule_fix_text)} - {str(self.rule_description)} - {str(self.check_content)} - {str(self.category_score)}"
-
-
-class Command:
-
-    def __init__(self, command, replacements):
-        self.command = command
-        self.replacements = replacements
-
-    def replaceCommand(self, target_replacements):
-        new_command = self.command
-        for replacement_key in self.replacements:
-            if replacement_key in target_replacements:
-                replacement_value = target_replacements[replacement_key]
-                new_command = new_command.replace(replacement_key,
-                                                  replacement_value)
-            else:
-                # print(f"Replacement Key: {replacement_key} not found in target_replacements")
-                pass
-
-        return new_command
-
-    def __repr__(self) -> str:
-        return f"Command({str(self.command)} - {str(self.replacements)})"
 
 
 class RuleInput:
@@ -202,8 +192,7 @@ class RuleInput:
 
 
 def getPowerShellCommands():
-    current_directory = os.getcwd()
-    filepath = os.path.join(current_directory, 'app', 'script',
+    filepath = os.path.join(root_dir, 'app', 'script',
                             'powershell_commands.txt')
     with open(filepath, 'r', encoding='utf-8') as powershell_command_file:
         powershell_commands = powershell_command_file.read().splitlines()
@@ -242,25 +231,83 @@ def parseGuide(filename, guide_type):
         rule_severity = group_rule_info['severity']
         rule_title = group_rule_info.find('title').text
         stig_id = group_rule_info.find('version').text
+
+        # Extract Reference Information from Rule Information
+        reference_info = group_rule_info.find('reference')
+        dc_title = reference_info.find('dc:title').text
+        dc_publisher = reference_info.find('dc:publisher').text
+        dc_type = reference_info.find('dc:type').text
+        dc_subject = reference_info.find('dc:subject').text
+        dc_identifier = reference_info.find('dc:identifier').text
+        
+        # Extract Ident Information from Rule Information
+        ident_system = group_rule_info.find('ident')['system']
+        ident_content = group_rule_info.find('ident').text
+
+        # Extract Fix Information from Rule Information
+        fix_ref = group_rule_info.find('fixtext')['fixref']
         rule_fix_text = group_rule_info.find('fixtext').text
+        fix_id = group_rule_info.find('fix')['id']
+
         # Extract Rule Description
         group_description_info = group_rule_info.find('description').text
         # URL Decode Rule Description
         group_description_info_decoded = unquote(group_description_info)
         # Transform back into XML
-        group_description_info_xml = BeautifulSoup(
-            group_description_info_decoded, 'xml')
-        rule_description = group_description_info_xml.find(
-            'VulnDiscussion').text
+        group_description_info_xml = BeautifulSoup(group_description_info_decoded, 'xml')
+        rule_description = group_description_info_xml.find('VulnDiscussion').text
+        if group_description_info_xml.find('FalsePositives') is None:
+            false_positives = ''
+        else:
+            false_positives = group_description_info_xml.find('FalsePositives').text
+        if group_description_info_xml.find('FalseNegatives') is None:
+            false_negatives = ''
+        else:
+            false_negatives = group_description_info_xml.find('FalseNegatives').text
+        if group_description_info_xml.find('Documentable') is None:
+            documentable = ''
+        else:
+            documentable = group_description_info_xml.find('Documentable').text
+        if group_description_info_xml.find('Mitigations') is None:
+            mitigations = ''
+        else:
+            mitigations = group_description_info_xml.find('Mitigations').text
+        if group_description_info_xml.find('SeverityOverrideGuidance') is None:
+            severity_override_guidance = ''
+        else:
+            severity_override_guidance = group_description_info_xml.find('SeverityOverrideGuidance').text
+        if group_description_info_xml.find('PotentialImpacts') is None:
+            potential_impacts = ''
+        else:
+            potential_impacts = group_description_info_xml.find('PotentialImpacts').text
+        if group_description_info_xml.find('ThirdPartyTools') is None:
+            third_party_tools = ''
+        else:
+            third_party_tools = group_description_info_xml.find('ThirdPartyTools').text
+        if group_description_info_xml.find('MitigationControl') is None:
+            mitigation_control = ''
+        else:
+            mitigation_control = group_description_info_xml.find('MitigationControl').text
+        if group_description_info_xml.find('Responsibility') is None:
+            responsibility = ''
+        else:
+            responsibility = group_description_info_xml.find('Responsibility').text
+        if group_description_info_xml.find('IAControls') is None:
+            iacontrols = ''
+        else:
+            iacontrols = group_description_info_xml.find('IAControls').text
 
         # Extract Check Information from Rule Information
         check_rule_info = group_rule_info.find('check')
+        check_system = check_rule_info['system']
+        check_content_ref_href = check_rule_info.find('check-content-ref')['href']
+        check_content_ref_name = check_rule_info.find('check-content-ref')['name']
         check_content = check_rule_info.find('check-content').text
 
         # Create Object
         rule = StigRule(rule_name, rule_title, vuln_id, rule_id, rule_weight,
                         rule_severity, stig_id, rule_fix_text,
-                        rule_description, check_content)
+                        rule_description, check_content, check_system, dc_title, dc_publisher, dc_type, dc_subject, dc_identifier, ident_system, ident_content, fix_ref, fix_id, check_content_ref_href, check_content_ref_name, false_positives, false_negatives, documentable, mitigations, severity_override_guidance, potential_impacts, third_party_tools, mitigation_control, responsibility, iacontrols)
         rule.check_commands = rule._getRequiredFields(guide_type,
                                                       check_content)
         rule.fix_commands = rule._getRequiredFields(guide_type, rule_fix_text)
@@ -272,14 +319,22 @@ def parseGuide(filename, guide_type):
     return guide
 
 
-def linuxCreateScript(guide, user_input):
-
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
-    if not os.path.isdir(output_folder):
-        os.mkdir(output_folder)
+def linuxCreateScript(guide, enable_list):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
+
+    output_folder = os.path.join(root_dir, "app", "out-files")
+    if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        subdirectory = os.path.join(output_folder, guide_file_name)
+        for file in os.listdir(subdirectory):
+            os.remove(os.path.join(subdirectory, file))
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        os.chdir(output_folder)
+        os.mkdir(guide_file_name)
+        os.chdir(root_dir)
 
     check_script = """#!/bin/bash
 mkdir AdminGuard
@@ -325,93 +380,77 @@ run_command() {
 --------------------------------------------------------------
 '''
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualCheck.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualCheck.txt",
               "ab") as linux_manual_check:
         linux_manual_check.write(manual_check.encode())
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualFix.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualFix.txt",
               "ab") as linux_manual_fix:
         linux_manual_fix.write(manual_fix.encode())
 
-    if len(user_input) == 0:
+    if len(enable_list) == 0:
         with open(
-                output_folder + "/" + guide_file_name + "-" + "CheckScript.sh",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "CheckScript.sh",
                 "wb") as linux_check_script:
             linux_check_script.write(check_script.encode())
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh",
+        with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
                   "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
-
-        user_check_input = user_input[vuln_id]["check"]
         if len(target_rule.check_commands) == 0:
-            check_script += "echo 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
-            manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
+            check_script += "echo 'Manual check required for " + vuln_id + "' >> check_script_logs.txt" + "\n"
+            manual_check = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualCheck.txt", "ab") as linux_manual_check:
                 linux_manual_check.write(manual_check.encode())
 
-        for check_cmd_index, check_cmd in enumerate(
-                target_rule.check_commands):
-            replacement_dict = user_check_input.get(check_cmd_index, None)
-            if not replacement_dict:
-                if check_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {check_cmd.command}"
-                    )
-                parsed_command = check_cmd.command
-            else:
-                parsed_command = check_cmd.replaceCommand(replacement_dict)
-
-            check_script = check_script + "echo " + parsed_command + " >> check_script_logs.txt" + "\n"
-            check_script = check_script + "run_command '" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+        for check_cmd in target_rule.check_commands:
+            check_script = check_script + "echo '" + check_cmd + "' >> check_script_logs.txt" + "\n"
+            check_script = check_script + "run_command '" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
         with open(
-                output_folder + "/" + guide_file_name + "-" + "CheckScript.sh",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "CheckScript.sh",
                 "wb") as linux_check_script:
             linux_check_script.write(check_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
-        user_fix_input = user_input[vuln_id]["fix"]
         if len(target_rule.fix_commands) == 0:
-            fix_script += "echo 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
-            manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
+            fix_script += "echo 'Manual fix required for " + vuln_id + "' >> fix_script_logs.txt" + "\n"
+            manual_fix = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualFix.txt", "ab") as linux_manual_fix:
                 linux_manual_fix.write(manual_fix.encode())
-        for fix_cmd_index, fix_cmd in enumerate(target_rule.fix_commands):
-            replacement_dict = user_fix_input.get(fix_cmd_index, None)
-            if not replacement_dict:
-                if fix_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {fix_cmd.command}"
-                    )
-                parsed_command = fix_cmd.command
-            else:
-                parsed_command = fix_cmd.replaceCommand(replacement_dict)
-
-            fix_script += "echo " + parsed_command + " >> fix_script_logs.txt" + "\n"
-            fix_script += "run_command '" + parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
-        with open(output_folder + "/" + guide_file_name + "-" + "FixScript.sh",
+        for fix_cmd in target_rule.fix_commands:
+            fix_script += "echo '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
+            fix_script += "run_command '" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+        with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.sh",
                   "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
 
 
-def windowsCreateScript(guide, user_input):
-
-    output_folder = os.path.join(os.getcwd(), "app", "out-files")
-    if not os.path.isdir(output_folder):
-        os.mkdir(output_folder)
+def windowsCreateScript(guide, enable_list):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
 
+    output_folder = os.path.join(root_dir, "app", "out-files")
+    if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        subdirectory = os.path.join(output_folder, guide_file_name)
+        for file in os.listdir(subdirectory):
+            os.remove(os.path.join(subdirectory, file))
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        os.chdir(output_folder)
+        os.mkdir(guide_file_name)
+        os.chdir(root_dir)
+    
     check_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'check_script_logs.txt' -ItemType 'file' | out-null
@@ -458,81 +497,189 @@ function run_command {
 --------------------------------------------------------------
 '''
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualCheck.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualCheck.txt",
               "ab") as windows_manual_check:
         windows_manual_check.write(manual_check.encode())
 
-    with open(output_folder + "/" + guide_file_name + "-" + "ManualFix.txt",
+    with open(output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "ManualFix.txt",
               "ab") as windows_manual_fix:
         windows_manual_fix.write(manual_fix.encode())
 
-    if len(user_input) == 0:
+    if len(enable_list) == 0:
         with open(
-                output_folder + "/" + guide_file_name + "-" +
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                 "CheckScript.ps1", "wb") as windows_check_script:
             windows_check_script.write(check_script.encode())
         with open(
-                output_folder + "/" + guide_file_name + "-" + "FixScript.ps1",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.ps1",
                 "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
-        user_check_input = user_input[vuln_id]["check"]
         if len(target_rule.check_commands) == 0:
-            check_script += "Write-Output 'Manual check required for" + vuln_id + "' >> check_script_logs.txt" + "\n"
-            manual_check = vuln_id + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
+            check_script += "Write-Output 'Manual check required for " + vuln_id + "' >> check_script_logs.txt" + "\n"
+            manual_check = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualCheck.txt", "ab") as windows_manual_check:
                 windows_manual_check.write(manual_check.encode())
-        for check_cmd_index, check_cmd in enumerate(
-                target_rule.check_commands):
-            replacement_dict = user_check_input.get(check_cmd_index, None)
-            if not replacement_dict:
-                if check_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {check_cmd.command}"
-                    )
-                parsed_command = check_cmd.command
-            else:
-                parsed_command = check_cmd.replaceCommand(replacement_dict)
-
-            check_script += "Write-Output '" + parsed_command + "' >> check_script_logs.txt" + "\n"
-            check_script += "run_command " + "'" + parsed_command + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+        for check_cmd in target_rule.check_commands:
+            check_script += "Write-Output '" + check_cmd + "' >> check_script_logs.txt" + "\n"
+            check_script += "run_command " + "'" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
 
         with open(
-                output_folder + "/" + guide_file_name + "-" +
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                 "CheckScript.ps1", "wb") as windows_check_script:
             windows_check_script.write(check_script.encode())
 
-    for vuln_id in user_input:
+    for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
-        user_fix_input = user_input[vuln_id]["fix"]
         if len(target_rule.fix_commands) == 0:
-            fix_script += "Write-Output 'Manual fix required for" + vuln_id + "' >> fix_script_logs.txt" + "\n"
-            manual_fix = vuln_id + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
+            fix_script += "Write-Output 'Manual fix required for " + vuln_id + "' >> fix_script_logs.txt" + "\n"
+            manual_fix = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
             with open(
-                    output_folder + "/" + guide_file_name + "-" +
+                    output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" +
                     "ManualFix.txt", "ab") as windows_manual_fix:
                 windows_manual_fix.write(manual_fix.encode())
-        for fix_cmd_index, fix_cmd in enumerate(target_rule.fix_commands):
-            replacement_dict = user_fix_input.get(fix_cmd_index, None)
-            if not replacement_dict:
-                if fix_cmd.replacements:
-                    raise Exception(
-                        f"Missing check replacement values for {fix_cmd.command}"
-                    )
-                parsed_command = fix_cmd.command
-            else:
-                parsed_command = fix_cmd.replaceCommand(replacement_dict)
-
-            fix_script += "Write-Output '" + parsed_command + "' >> fix_script_logs.txt" + "\n"
-            fix_script += "run_command " + "'" + parsed_command + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+        for fix_cmd in target_rule.fix_commands:
+            fix_script += "Write-Output '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
+            fix_script += "run_command " + "'" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
 
         with open(
-                output_folder + "/" + guide_file_name + "-" + "FixScript.ps1",
+                output_folder + "/" + guide_file_name + "/" + guide_file_name + "-" + "FixScript.ps1",
                 "wb") as windows_fix_script:
             windows_fix_script.write(fix_script.encode())
+
+
+def generateXml(guide):
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
+    file = os.path.join(root_dir, "app", "uploads", guide_file_name + ".xml")
+    output_folder = os.path.join(root_dir, "app", "out-files")
+    file_content = ''
+    line_number = 0
+
+    if os.path.isdir(output_folder) and os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        subdirectory = os.path.join(output_folder, guide_file_name)
+        if file in os.listdir(subdirectory):
+            os.remove(os.path.join(subdirectory, file))
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, guide_file_name)):
+        os.chdir(output_folder)
+        os.mkdir(guide_file_name)
+        os.chdir(root_dir)
+
+    with open(file, 'r', encoding='utf-8') as guide_file:
+        guide_data = guide_file.readlines()
+        while line_number < 21:
+            file_content += guide_data[line_number]
+            line_number += 1
+
+    E = ElementMaker()
+    EMAPPEDDC = ElementMaker(namespace='http://purl.org/dc/elements/1.1/', nsmap={'dc': 'http://purl.org/dc/elements/1.1/'})
+    GROUP = E.Group
+    TITLE = E.title
+    DESCRIPTION = E.description 
+    RULE = E.Rule 
+    VERSION = E.version
+    REFERENCE = E.reference
+    DC_TITLE = EMAPPEDDC.title
+    DC_PUBLISHER = EMAPPEDDC.publisher
+    DC_TYPE = EMAPPEDDC.type
+    DC_SUBJECT = EMAPPEDDC.subject
+    DC_IDENTIFIER = EMAPPEDDC.identifier
+    IDENT = E.ident
+    FIXTEXT = E.fixtext
+    FIX = E.fix
+    CHECK = E.check
+
+    for rule in guide.stig_rule_dict.values():
+
+        encoded_description = '&lt;VulnDiscussion&gt;' + rule.rule_description + '&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;' + rule.false_positives + '&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;' + rule.false_negatives + '&lt;/FalseNegatives&gt;&lt;Documentable&gt;' + rule.documentable + '&lt;/Documentable&gt;&lt;Mitigations&gt;' + rule.mitigations + '&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;' + rule.severity_override_guidance + '&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;' + rule.potential_impacts + '&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;' + rule.third_party_tools + '&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;' + rule.mitigation_control + '&lt;/MitigationControl&gt;&lt;Responsibility&gt;' + rule.responsibility + '&lt;/Responsibility&gt;&lt;IAControls&gt;' + rule.iacontrols + '&lt;/IAControls&gt;'
+
+        file_content += etree.tostring(GROUP(
+            TITLE(
+                rule.rule_title,
+            ), 
+            DESCRIPTION(
+                '&lt;GroupDescription&gt;&lt;/GroupDescription&gt;',
+            ),
+            RULE(
+                VERSION(
+                    rule.stig_id,
+                ),
+                TITLE(
+                    rule.rule_title,
+                ),
+                DESCRIPTION(
+                    encoded_description,
+                ),
+                REFERENCE(
+                    DC_TITLE(
+                        rule.dc_title,
+                    ),
+                    DC_PUBLISHER(
+                        rule.dc_publisher,
+                    ),
+                    DC_TYPE(
+                        rule.dc_type,
+                    ),
+                    DC_SUBJECT(
+                        rule.dc_subject,
+                    ),
+                    DC_IDENTIFIER(
+                        rule.dc_identifier,
+                    ),
+                ),
+                IDENT(
+                    rule.ident_content,
+                    system = rule.ident_system,
+                ),
+                FIXTEXT(
+                    rule.rule_fix_text,
+                    fixref = rule.fix_ref,
+                ),
+                FIX(
+                    id = rule.fix_id,
+                ),
+                CHECK(
+                    E("check-content-ref", href = rule.check_content_ref_href, name = rule.check_content_ref_name),
+                    E("check-content", rule.check_content),
+                    system = rule.check_system
+                ),
+                id = rule.rule_id,
+                weight = rule.rule_weight,
+                severity = rule.rule_severity,
+            ),
+            id = rule.vuln_id
+        ), pretty_print=True).decode()
+
+    file_content += '</Benchmark>' + "\n"
+    
+    with open(output_folder + "/" + guide_file_name + "/" + "updated-" + guide_file_name + ".xml", "wb") as windows_fix_script:
+        windows_fix_script.write(file_content.encode())
+
+
+def generateZip(guide):
+
+    guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
+        "\\")[-1]
+    output_folder = os.path.join(root_dir, "app", "out-files", guide_file_name)
+    zipped_file = os.path.join(output_folder, guide_file_name + ".zip")
+
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if os.path.isfile(zipped_file):
+        os.remove(zipped_file)
+
+    os.chdir(output_folder)
+
+    with zipfile.ZipFile(zipped_file, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=5) as zipf:
+        for file in os.listdir():
+            zipf.write(file)  
+
+    os.chdir(root_dir)

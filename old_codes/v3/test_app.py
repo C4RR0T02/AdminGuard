@@ -5,9 +5,6 @@ from io import BytesIO
 from ..app import app
 
 
-root_dir = os.getcwd()
-
-
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
@@ -90,7 +87,7 @@ def test_script_fields_get_linux(client):
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
-        assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-230222" aria-expanded="true" aria-controls="collapse-V-230222">''' in response.data
+        assert b'<input class="form-control" id="V-230309.fix.1.[Test]" name="V-230309.fix.1.[Test]" type="text" value="">\n' in response.data
 
 
 def test_script_fields_get_windows(client):
@@ -107,7 +104,7 @@ def test_script_fields_get_windows(client):
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
-        assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-254239" aria-expanded="true" aria-controls="collapse-V-254239">''' in response.data
+        assert b'<input class="form-control" id="V-254243.check.0.[application account name]" name="V-254243.check.0.[application account name]" type="text" value="">\n' in response.data
 
 
 def test_script_fields_get_invalid(client):
@@ -185,7 +182,7 @@ def test_script_download_get_page_linux(client):
             new_url = response.headers['Location']
             response = client.get(new_url)
             assert response.status_code == 200
-            assert b'''<h1 class="text-center my-3 mx-auto">Download Scripts for test_linux_2</h1>''' in response.data
+            assert b'<h1 class="text-center my-5 mx-auto">Download Scripts for test_linux_2</h1>\n' in response.data
 
 
 def test_script_download_get_page_windows(client):
@@ -206,7 +203,7 @@ def test_script_download_get_page_windows(client):
             new_url = response.headers['Location']
             response = client.get(new_url)
             assert response.status_code == 200
-            assert b'''<h1 class="text-center my-3 mx-auto">Download Scripts for test_windows_2</h1>''' in response.data
+            assert b'<h1 class="text-center my-5 mx-auto">Download Scripts for test_windows_2</h1>\n' in response.data
 
 
 def test_download_file_linux(client):
@@ -232,18 +229,6 @@ def test_download_file_linux(client):
                 assert response.status_code == 200
                 fix_script_url = '/script-generate/test_linux_2/download/fixscript'
                 response = client.get(fix_script_url)
-                assert response.status_code == 200
-                manual_check_url = '/script-generate/test_linux_2/download/manualcheck'
-                response = client.get(manual_check_url)
-                assert response.status_code == 200
-                manual_fix_url = '/script-generate/test_linux_2/download/manualfix'
-                response = client.get(manual_fix_url)
-                assert response.status_code == 200
-                new_guide_url = '/script-generate/test_linux_2/download/newguide'
-                response = client.get(new_guide_url)
-                assert response.status_code == 200
-                zip_file_url = '/script-generate/test_linux_2/download/zipped'
-                response = client.get(zip_file_url)
                 assert response.status_code == 200
 
 
@@ -271,18 +256,6 @@ def test_download_file_windows(client):
                 fix_script_url = '/script-generate/test_windows_2/download/fixscript'
                 response = client.get(fix_script_url)
                 assert response.status_code == 200
-                manual_check_url = '/script-generate/test_windows_2/download/manualcheck'
-                response = client.get(manual_check_url)
-                assert response.status_code == 200
-                manual_fix_url = '/script-generate/test_windows_2/download/manualfix'
-                response = client.get(manual_fix_url)
-                assert response.status_code == 200
-                new_guide_url = '/script-generate/test_windows_2/download/newguide'
-                response = client.get(new_guide_url)
-                assert response.status_code == 200
-                zip_file_url = '/script-generate/test_windows_2/download/zipped'
-                response = client.get(zip_file_url)
-                assert response.status_code == 200
 
 
 def test_download_invalid_file(client):
@@ -304,50 +277,47 @@ def test_download_invalid_file(client):
             response = client.get(new_url)
             if response.status_code == 200:
                 os.remove(
-                    os.path.join(app.config['download_folder'], 'test_linux_4',
+                    os.path.join(app.config['download_folder'],
                                  'test_linux_4-CheckScript.sh'))
                 os.remove(
-                    os.path.join(app.config['download_folder'], 'test_linux_4',
+                    os.path.join(app.config['download_folder'],
                                  'test_linux_4-FixScript.sh'))
-                os.remove(
-                    os.path.join(app.config['download_folder'], 'test_linux_4',
-                                 'test_linux_4-ManualCheck.txt'))
-                os.remove(
-                    os.path.join(app.config['download_folder'], 'test_linux_4',
-                                 'test_linux_4-ManualFix.txt'))
-                os.remove(
-                    os.path.join(app.config['download_folder'], 'test_linux_4',
-                                 'updated-test_linux_4.xml'))
-                os.remove(
-                    os.path.join(app.config['download_folder'], 'test_linux_4',
-                                 'test_linux_4.zip'))
                 check_script_url = '/script-generate/test_linux_4/download/checkscript'
                 response = client.get(check_script_url)
                 assert response.status_code == 404
                 fix_script_url = '/script-generate/test_linux_4/download/fixscript'
                 response = client.get(fix_script_url)
                 assert response.status_code == 404
-                manual_check_url = '/script-generate/test_linux_4/download/manualcheck'
-                response = client.get(manual_check_url)
-                assert response.status_code == 404
-                manual_fix_url = '/script-generate/test_linux_4/download/manualfix'
-                response = client.get(manual_fix_url)
-                assert response.status_code == 404
-                new_guide_url = '/script-generate/test_linux_4/download/newguide'
-                response = client.get(new_guide_url)
-                assert response.status_code == 404
-                zip_file_url = '/script-generate/test_linux_4/download/zipped'
-                response = client.get(zip_file_url)
-                assert response.status_code == 404
 
 
 def test_remove_files():
-    for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
-        if folder.startswith("test"):
-            shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
-    for file in os.listdir(os.path.join(root_dir, "app", "uploads")):
-        if file.startswith("test"):
-            os.remove(os.path.join(root_dir, "app", "uploads", file))
+    folder_path = os.path.join(os.getcwd(), "app", "uploads")
+    if os.path.exists(folder_path) and os.path.isdir(folder_path):
+        items = os.listdir(folder_path)
+
+        files = [
+            item for item in items if item.startswith("test")
+            and os.path.isfile(os.path.join(folder_path, item))
+        ]
+
+        if len(files) > 0:
+            for file in files:
+                os.remove(os.path.join(folder_path, file))
+    assert True
+
+    folder_path = os.path.join(os.getcwd(), "app", "out-files")
+    if os.path.exists(folder_path) and os.path.isdir(folder_path):
+        items = os.listdir(folder_path)
+
+        files = [
+            item for item in items if item.startswith("test")
+            and os.path.isfile(os.path.join(folder_path, item))
+        ]
+
+        if len(files) > 0:
+            for file in files:
+                os.remove(os.path.join(folder_path, file))
+    assert True
 
 
 def test_get_template_generate_page(client):
