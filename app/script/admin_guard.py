@@ -8,22 +8,6 @@ import zipfile
 from lxml.builder import ElementMaker
 from lxml import etree
 
-# Find any text between square brackets
-square_bracket_regex = re.compile(r"\[[^]]+\]", re.IGNORECASE)
-# Find any text between slashes matching /path/to/file
-path_to_file_regex = re.compile(r"\/path\/to\/file", re.IGNORECASE)
-path_to_file_bracket_regex = re.compile(
-    r"/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/\[[A-Za-z0-9]+\]/", re.IGNORECASE)
-# Find any text between angle brackets
-angle_bracket_regex = re.compile(r"<[^>]+>", re.IGNORECASE)
-# Find any text which contain a slash
-slash_regex = re.compile(r"\/", re.IGNORECASE)
-# Find any text which contain an underscore
-underscore_regex = re.compile(r"_", re.IGNORECASE)
-# Find any text which contain a caret
-caret_regex = re.compile(r"\^", re.IGNORECASE)
-not_regex_regex = re.compile(r"[a-zA-Z]{1}", re.IGNORECASE)
-
 root_dir = os.getcwd()
 
 
