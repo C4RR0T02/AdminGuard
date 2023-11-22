@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 from urllib.parse import unquote
 import math
 import os
-import re
 import zipfile
 from lxml.builder import ElementMaker
 from lxml import etree
@@ -13,7 +12,7 @@ root_dir = os.getcwd()
 
 class Guide:
 
-    def __init__(self, guide_name, file_content, stig_rule_dict, guide_type):
+    def __init__(self, guide_name: str, file_content: list, stig_rule_dict: dict, guide_type: str):
         self.guide_name = guide_name
         self.file_content = file_content
         self.stig_rule_dict = stig_rule_dict
@@ -25,15 +24,15 @@ class Guide:
 
 class StigRule:
 
-    def __init__(self, rule_name, rule_title, vuln_id, rule_id, rule_weight,
-                 rule_severity, stig_id, rule_fix_text, rule_description,
-                 check_content, check_system, dc_title, dc_publisher, dc_type,
-                 dc_subject, dc_identifier, ident_system, ident_content,
-                 fix_ref, fix_id, check_content_ref_href,
-                 check_content_ref_name, false_positives, false_negatives,
-                 documentable, mitigations, severity_override_guidance,
-                 potential_impacts, third_party_tools, mitigation_control,
-                 responsibility, iacontrols):
+    def __init__(self, rule_name: str, rule_title: str, vuln_id: str, rule_id: str, rule_weight: str,
+                 rule_severity: str, stig_id: str, rule_fix_text: str, rule_description: str,
+                 check_content: str, check_system: str, dc_title: str, dc_publisher: str, dc_type: str,
+                 dc_subject: str, dc_identifier: str, ident_system: str, ident_content: str,
+                 fix_ref: str, fix_id: str, check_content_ref_href: str,
+                 check_content_ref_name: str, false_positives: str, false_negatives: str,
+                 documentable: str, mitigations: str, severity_override_guidance: str,
+                 potential_impacts: str, third_party_tools: str, mitigation_control: str,
+                 responsibility: str, iacontrols: str):
         self.rule_name = rule_name
         self.rule_title = rule_title
         self.vuln_id = vuln_id
@@ -71,7 +70,7 @@ class StigRule:
         self.check_commands = ''
         self.fix_commands = ''
 
-    def _getRequiredFields(self, type, field):
+    def _getRequiredFields(self, type: str, field: str):
         if type == "Linux":
             command_list = []
             field_split = field.split("\n")
@@ -159,7 +158,7 @@ class StigRule:
 
         return self.category_score
 
-    def replaceFields(self, field, replacement):
+    def replaceFields(self, field: str, replacement: str):
         field_data = self.field
         if field_data is None:
             self.field = field_data
@@ -172,7 +171,7 @@ class StigRule:
 
 class RuleInput:
 
-    def __init__(self, vuln_id, check_replacement, fix_replacement):
+    def __init__(self, vuln_id: str, check_replacement: str, fix_replacement: str):
         self.vuln_id = vuln_id
         self.check_replacement = check_replacement
         self.fix_replacement = fix_replacement
@@ -189,7 +188,7 @@ def getPowerShellCommands():
     return powershell_commands
 
 
-def parseGuide(filename, guide_type):
+def parseGuide(filename: str, guide_type: str):
     # Defining Variables
     rule_dictionary = {}
 
@@ -327,7 +326,7 @@ def parseGuide(filename, guide_type):
     return guide
 
 
-def linuxCreateScript(guide, enable_list):
+def linuxCreateScript(guide: Guide, enable_list: list):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
@@ -449,7 +448,7 @@ run_command() {
             linux_fix_script.write(fix_script.encode())
 
 
-def windowsCreateScript(guide, enable_list):
+def windowsCreateScript(guide: Guide, enable_list: list):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
@@ -574,7 +573,7 @@ function run_command {
             windows_fix_script.write(fix_script.encode())
 
 
-def generateXml(guide):
+def generateXml(guide: Guide):
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
     file = os.path.join(root_dir, "app", "uploads", guide_file_name + ".xml")
@@ -666,7 +665,7 @@ def generateXml(guide):
         windows_fix_script.write(file_content.encode())
 
 
-def generateZip(guide):
+def generateZip(guide: Guide):
 
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]

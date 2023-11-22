@@ -14,7 +14,7 @@ def compare_files(file1, file2):
 
 
 def test_calculate_score_linux():
-    stig_rule = StigRule("", "", "", "", 10.0, 'high', '', '', '', '', '', '',
+    stig_rule = StigRule("", "", "", "", "10.0", 'high', '', '', '', '', '', '',
                          '', '', '', '', '', '', '', '', '', '', '', '', '',
                          '', '', '', '', '', '', '')
 
@@ -22,7 +22,7 @@ def test_calculate_score_linux():
 
 
 def test_calculate_score_Windows():
-    stig_rule = StigRule("", "", "", "", 10.0, "medium", "", '', '', '', '',
+    stig_rule = StigRule("", "", "", "", "10.0", "medium", "", '', '', '', '',
                          '', '', '', '', '', '', '', '', '', '', '', '', '',
                          '', '', '', '', '', '', '', '')
 
@@ -30,7 +30,7 @@ def test_calculate_score_Windows():
 
 
 def test_calculate_score_invalid():
-    stig_rule = StigRule("", "", "", "", 10.0, "", "", '', '', '', '', '', '',
+    stig_rule = StigRule("", "", "", "", "10.0", "", "", '', '', '', '', '', '',
                          '', '', '', '', '', '', '', '', '', '', '', '', '',
                          '', '', '', '', '', '')
 
@@ -38,7 +38,7 @@ def test_calculate_score_invalid():
 
 
 def test_calculate_score_invalid_2():
-    stig_rule = StigRule("", "", "", "", None, "medium", "", '', '', '', '',
+    stig_rule = StigRule("", "", "", "", "", "medium", "", '', '', '', '',
                          '', '', '', '', '', '', '', '', '', '', '', '', '',
                          '', '', '', '', '', '', '', '')
 
