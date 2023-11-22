@@ -12,7 +12,8 @@ root_dir = os.getcwd()
 
 class Guide:
 
-    def __init__(self, guide_name: str, file_content: list, stig_rule_dict: dict, guide_type: str):
+    def __init__(self, guide_name: str, file_content: list,
+                 stig_rule_dict: dict, guide_type: str):
         self.guide_name = guide_name
         self.file_content = file_content
         self.stig_rule_dict = stig_rule_dict
@@ -24,14 +25,17 @@ class Guide:
 
 class StigRule:
 
-    def __init__(self, rule_name: str, rule_title: str, vuln_id: str, rule_id: str, rule_weight: str,
-                 rule_severity: str, stig_id: str, rule_fix_text: str, rule_description: str,
-                 check_content: str, check_system: str, dc_title: str, dc_publisher: str, dc_type: str,
-                 dc_subject: str, dc_identifier: str, ident_system: str, ident_content: str,
+    def __init__(self, rule_name: str, rule_title: str, vuln_id: str,
+                 rule_id: str, rule_weight: str, rule_severity: str,
+                 stig_id: str, rule_fix_text: str, rule_description: str,
+                 check_content: str, check_system: str, dc_title: str,
+                 dc_publisher: str, dc_type: str, dc_subject: str,
+                 dc_identifier: str, ident_system: str, ident_content: str,
                  fix_ref: str, fix_id: str, check_content_ref_href: str,
-                 check_content_ref_name: str, false_positives: str, false_negatives: str,
-                 documentable: str, mitigations: str, severity_override_guidance: str,
-                 potential_impacts: str, third_party_tools: str, mitigation_control: str,
+                 check_content_ref_name: str, false_positives: str,
+                 false_negatives: str, documentable: str, mitigations: str,
+                 severity_override_guidance: str, potential_impacts: str,
+                 third_party_tools: str, mitigation_control: str,
                  responsibility: str, iacontrols: str):
         self.rule_name = rule_name
         self.rule_title = rule_title
@@ -171,7 +175,8 @@ class StigRule:
 
 class RuleInput:
 
-    def __init__(self, vuln_id: str, check_replacement: str, fix_replacement: str):
+    def __init__(self, vuln_id: str, check_replacement: str,
+                 fix_replacement: str):
         self.vuln_id = vuln_id
         self.check_replacement = check_replacement
         self.fix_replacement = fix_replacement
