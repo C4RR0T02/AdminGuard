@@ -93,7 +93,7 @@ def createGuideForm(guide: Guide, formdata=None):
 
 
 @app.route('/script-generate/<guide_name>', methods=['GET'])
-def scriptFieldsGet(guide_name):
+def scriptFieldsGet(guide_name: str):
     guide_details = guide_dictionary.get(guide_name)
     guide = guide_details.get("guide_content")
     if guide is None:
@@ -106,7 +106,7 @@ def scriptFieldsGet(guide_name):
 
 
 @app.route('/script-generate/<guide_name>', methods=['POST'])
-def scriptFieldsPost(guide_name):
+def scriptFieldsPost(guide_name: str):
     guide_details = guide_dictionary.get(guide_name)
     guide_type = guide_details.get("guide_type")
     guide = guide_details.get("guide_content")
@@ -154,7 +154,7 @@ def scriptFieldsPost(guide_name):
 
 
 @app.route('/script-generate/<guide_name>/download', methods=['GET'])
-def scriptDownload(guide_name):
+def scriptDownload(guide_name: str):
     if request.method == 'GET':
         downloadCheckScript = url_for('downloadScript',
                                       guide_name=guide_name,
@@ -188,7 +188,7 @@ def scriptDownload(guide_name):
 
 
 @app.route('/script-generate/<guide_name>/download/<file>', methods=['GET'])
-def downloadScript(guide_name, file):
+def downloadScript(guide_name: str, file: str):
     guide_details = guide_dictionary.get(guide_name)
     guide_type = guide_details["guide_type"]
 
