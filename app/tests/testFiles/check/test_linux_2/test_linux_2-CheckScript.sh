@@ -20,8 +20,8 @@ echo 'sudo yum history list | more' >> check_script_logs.txt
 run_command 'sudo yum history list | more >> check_script_logs.txt' 'Check Script for V-230222'
 echo 'sudo find / -fstype xfs -nogroup' >> check_script_logs.txt
 run_command 'sudo find / -fstype xfs -nogroup >> check_script_logs.txt' 'Check Script for V-230327'
-echo 'sudo chmod test' >> check_script_logs.txt
-run_command 'sudo chmod test >> check_script_logs.txt' 'Check Script for V-230309'
+echo 'sudo chmod 600 test' >> check_script_logs.txt
+run_command 'sudo chmod 600 test >> check_script_logs.txt' 'Check Script for V-230309'
 echo 'sudo find [PART] -xdev -type f -perm -0002 -print [Test]' >> check_script_logs.txt
 run_command 'sudo find [PART] -xdev -type f -perm -0002 -print [Test] >> check_script_logs.txt' 'Check Script for V-230309'
 echo 'sudo grep <file> /home/*/.*' >> check_script_logs.txt

@@ -474,7 +474,6 @@ def windowsCreateScript(guide: Guide, enable_list: list):
     check_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'check_script_logs.txt' -ItemType 'file' | out-null
-New-Item -Name 'manual_check.txt' -ItemType 'file' | out-null
 
 function run_command {
     param (
@@ -493,7 +492,6 @@ function run_command {
     fix_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'fix_script_logs.txt' -ItemType 'file' | out-null
-New-Item -Name 'manual_fix.txt' -ItemType 'file' | out-null
 
 function run_command {
     param (
