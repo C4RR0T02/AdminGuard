@@ -1,11 +1,6 @@
-<div style="display: flex; align-items: center; justify-content: center;">
-    <div style="text-align: center;">
-        <h1>AdminGuard:</h1>
-        <h1>Strengthening OS Security from Within</h1>
-    </div>
-    <img src="app/static/img/AdminGuardLogo.webp" alt="AdminGuard logo" title="AdminGuard" height="90" style="margin-left:10px;" />
-</div>
-<hr>
+# AdminGuard: Strengthening OS Security from Within
+
+### 
 
 ## :thought_balloon: What is AdminGuard?
 
