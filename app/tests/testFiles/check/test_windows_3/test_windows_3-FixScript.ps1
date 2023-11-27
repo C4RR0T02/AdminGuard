@@ -1,7 +1,6 @@
 mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'fix_script_logs.txt' -ItemType 'file' | out-null
-New-Item -Name 'manual_fix.txt' -ItemType 'file' | out-null
 
 function run_command {
     param (

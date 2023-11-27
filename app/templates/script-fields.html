@@ -71,16 +71,14 @@
                                 <strong>
                                   Severity:
                                 </strong> 
-                                {{ rule.category_score }} &emsp; 
-                              </p>
-                            </div>
-                            <div class="d-flex align-items-center gap-2 px-2">
-                              <strong>
+                                {{ rule.category_score }} &emsp;
+                                <strong>
                                 Enable:
-                              </strong> 
-                              <div class="form-check form-switch">
-                                {{ form[rule.vuln_id ~ ".enable"](class_="form-check-input") }}
-                              </div>
+                                </strong> 
+                                <div class="form-check form-switch">
+                                  {{ form[rule.vuln_id ~ ".enable"](class_="form-check-input", style="margin-top: 20px;") }}
+                                </div>
+                              </p>
                             </div>
                           </div>
                         </button>
