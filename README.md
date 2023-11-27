@@ -1,7 +1,5 @@
 # AdminGuard: Strengthening OS Security from Within
 
-### 
-
 ## :thought_balloon: What is AdminGuard?
 
 AdminGuard is a Web Application Tool which allows users to read, modify and generate scripts for fixing and checking based on the Security Technical Implementation Guide (STIG) provided by The DoD Cyber Exchange. To download the STIG guides, the following link can be used https://public.cyber.mil/stigs/downloads/
@@ -10,6 +8,9 @@ AdminGuard is a Web Application Tool which allows users to read, modify and gene
 
 ## :clipboard: Table Of Content
 
+- [AdminGuard: Strengthening OS Security from Within](#adminguard-strengthening-os-security-from-within)
+  - [:thought\_balloon: What is AdminGuard?](#thought_balloon-what-is-adminguard)
+  - [:clipboard: Table Of Content](#clipboard-table-of-content)
 - [Ways to Run :runner:](#ways-to-run-runner)
 - [Running Dockerized :whale:](#running-dockerized-whale)
 - [Native installation](#native-installation)
@@ -98,3 +99,11 @@ To run the Python Flask Server, execute the following commands
 ```
 python -m flask --app .\app\app.py run
 ```
+
+Navigate to the following site on your browser
+
+```
+http://<your ip address>:<port>
+```
+
+![AdminGuard Home Page](/wiki/images/select_tool.jpg)
