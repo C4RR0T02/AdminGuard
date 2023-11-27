@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import unquote
 import math
 import os
+import shutil
 import zipfile
 from lxml.builder import ElementMaker
 from lxml import etree
@@ -656,20 +657,30 @@ def generateZip(guide: Guide):
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
     output_folder = os.path.join(root_dir, "app", "out-files", guide_file_name)
+    zipping_directory = os.path.join(root_dir, "app", "out-files", "zip", guide_file_name)
     zipped_file = os.path.join(output_folder, guide_file_name + ".zip")
+    temp_zipped_file = os.path.join(zipping_directory, guide_file_name + ".zip")
 
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
     if os.path.isfile(zipped_file):
         os.remove(zipped_file)
+    if not os.path.isdir(zipping_directory):
+        os.makedirs(zipping_directory)
+    
+    os.chdir(zipping_directory)
 
-    os.chdir(output_folder)
-
-    with zipfile.ZipFile(zipped_file,
+    with zipfile.ZipFile(temp_zipped_file,
                          "w",
                          compression=zipfile.ZIP_DEFLATED,
                          compresslevel=5) as zipf:
-        for file in os.listdir():
+        for file in os.listdir(output_folder):
+            if file.endswith(".zip"):
+                continue
+            file_path = os.path.join(output_folder, file)
+            shutil.copyfile(file_path, os.path.join(zipping_directory, file))
             zipf.write(file)
+
+    shutil.copyfile(temp_zipped_file, zipped_file)
 
     os.chdir(root_dir)
