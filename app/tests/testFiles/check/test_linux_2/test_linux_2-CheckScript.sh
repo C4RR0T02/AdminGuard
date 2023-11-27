@@ -1,28 +1,19 @@
-#!/bin/bash
+#! /bin/bash
 mkdir AdminGuard
 cd AdminGuard
 touch check_script_logs.txt
 touch manual_check.txt
+cd ..
 
-run_command() {
-    local cmd="$1"
-    local description="$2"
-
-    output=$(eval "$cmd" 2>&1)
-    if [ $? -ne 0 ]; then
-        echo "Error while running $description"
-        echo "Error while running $description" >> error_logs.txt
-    fi
-}
 echo 'sudo grep silent /etc/security/faillock.conf' >> check_script_logs.txt
-run_command 'sudo grep silent /etc/security/faillock.conf >> check_script_logs.txt' 'Check Script for V-230341'
+sudo grep silent /etc/security/faillock.conf >> check_script_logs.txt || echo "Error while running Check Script for V-230341" >> error_logs.txt
 echo 'sudo yum history list | more' >> check_script_logs.txt
-run_command 'sudo yum history list | more >> check_script_logs.txt' 'Check Script for V-230222'
+sudo yum history list | more >> check_script_logs.txt || echo "Error while running Check Script for V-230222" >> error_logs.txt
 echo 'sudo find / -fstype xfs -nogroup' >> check_script_logs.txt
-run_command 'sudo find / -fstype xfs -nogroup >> check_script_logs.txt' 'Check Script for V-230327'
+sudo find / -fstype xfs -nogroup >> check_script_logs.txt || echo "Error while running Check Script for V-230327" >> error_logs.txt
 echo 'sudo chmod 600 test' >> check_script_logs.txt
-run_command 'sudo chmod 600 test >> check_script_logs.txt' 'Check Script for V-230309'
+sudo chmod 600 test >> check_script_logs.txt || echo "Error while running Check Script for V-230309" >> error_logs.txt
 echo 'sudo find [PART] -xdev -type f -perm -0002 -print [Test]' >> check_script_logs.txt
-run_command 'sudo find [PART] -xdev -type f -perm -0002 -print [Test] >> check_script_logs.txt' 'Check Script for V-230309'
+sudo find [PART] -xdev -type f -perm -0002 -print [Test] >> check_script_logs.txt || echo "Error while running Check Script for V-230309" >> error_logs.txt
 echo 'sudo grep <file> /home/*/.*' >> check_script_logs.txt
-run_command 'sudo grep <file> /home/*/.* >> check_script_logs.txt' 'Check Script for V-230309'
+sudo grep <file> /home/*/.* >> check_script_logs.txt || echo "Error while running Check Script for V-230309" >> error_logs.txt

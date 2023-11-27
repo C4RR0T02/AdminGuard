@@ -349,40 +349,22 @@ def linuxCreateScript(guide: Guide, enable_list: list):
         os.mkdir(guide_file_name)
         os.chdir(root_dir)
 
-    check_script = """#!/bin/bash
+    check_script = """#! /bin/bash
 mkdir AdminGuard
 cd AdminGuard
 touch check_script_logs.txt
 touch manual_check.txt
+cd ..
 
-run_command() {
-    local cmd="$1"
-    local description="$2"
-
-    output=$(eval "$cmd" 2>&1)
-    if [ $? -ne 0 ]; then
-        echo "Error while running $description"
-        echo "Error while running $description" >> error_logs.txt
-    fi
-}
 """
 
-    fix_script = """#!/bin/bash
+    fix_script = """#! /bin/bash
 mkdir AdminGuard
 cd AdminGuard
 touch fix_script_logs.txt
 touch manual_fix.txt
+cd ..
 
-run_command() {
-    local cmd="$1"
-    local description="$2"
-
-    output=$(eval "$cmd" 2>&1)
-    if [ $? -ne 0 ]; then
-        echo "Error while running $description"
-        echo "Error while running $description" >> error_logs.txt
-    fi
-}
 """
 
     manual_check = '''CHECK CONTENT TO BE MANUALLY CHECKED
@@ -425,8 +407,8 @@ run_command() {
                 linux_manual_check.write(manual_check.encode())
 
         for check_cmd in target_rule.check_commands:
-            check_script = check_script + "echo '" + check_cmd + "' >> check_script_logs.txt" + "\n"
-            check_script = check_script + "run_command '" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
+            check_script += "echo '" + check_cmd + "' >> check_script_logs.txt" + "\n"
+            check_script += check_cmd + " >> check_script_logs.txt || echo " + '"Error while running Check Script for ' + vuln_id + '" >> error_logs.txt' + "\n"
 
         with open(
                 output_folder + "/" + guide_file_name + "/" + guide_file_name +
@@ -446,7 +428,8 @@ run_command() {
                 linux_manual_fix.write(manual_fix.encode())
         for fix_cmd in target_rule.fix_commands:
             fix_script += "echo '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
-            fix_script += "run_command '" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
+            fix_script += fix_cmd + " >> fix_script_logs.txt || echo " + '"Error while running Fix Script for ' + vuln_id + '" >> error_logs.txt' + "\n"
+
         with open(
                 output_folder + "/" + guide_file_name + "/" + guide_file_name +
                 "-" + "FixScript.sh", "wb") as linux_fix_script:
