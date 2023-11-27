@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, abort
-from flaskext.markdown import Markdown
 from wtforms import BooleanField, StringField, validators
 from wtforms.form import BaseForm
 
@@ -12,7 +11,6 @@ import os
 
 # Flask Server
 app = Flask(__name__)
-Markdown(app)
 
 guide_dictionary = {}
 form_data_rule_dictionary = {}
@@ -259,4 +257,4 @@ def internal_server_error(e):
 
 # main driver function
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
