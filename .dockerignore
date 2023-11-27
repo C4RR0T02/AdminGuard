@@ -10,3 +10,14 @@
 .gitignore
 .env
 .vscode
+
+# ignore workflow files
+.github/workflows/
+
+# Ignore test files
+**/tests/
+**/test_*.py
+
+# Ignore non application files
+**/old_codes/
+**/documentation/
