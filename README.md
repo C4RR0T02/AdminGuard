@@ -106,4 +106,4 @@ Navigate to the following site on your browser
 http://<your ip address>:<port>
 ```
 
-![AdminGuard Home Page](/app/static/img//select_tool.jpg)
+![AdminGuard Home Page](/wiki/images/select_tool.jpg)
