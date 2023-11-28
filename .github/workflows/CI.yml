@@ -35,5 +35,5 @@ jobs:
     
     - name: Test with pytest
       run: |
-        python -m pytest app/tests/test_admin_guard.py -vs
+        python -m pytest app/tests/test_stig_script_gen.py -vs
         python -m pytest app/tests/test_app.py -vs

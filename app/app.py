@@ -3,9 +3,9 @@ from wtforms import BooleanField, StringField, validators
 from wtforms.form import BaseForm
 
 if __name__ == '__main__':
-    from script.admin_guard import *  # Importation for running app
+    from script.stig_script_gen import *  # Importation for running app
 else:
-    from .script.admin_guard import *  # Importation for running test case
+    from .script.stig_script_gen import *  # Importation for running test case
 
 import os
 
