@@ -253,6 +253,7 @@ def parseGuide(filename: str, guide_type: str):
             group_description_info_decoded, 'xml')
         rule_description = group_description_info_xml.find(
             'VulnDiscussion').text
+        # Check if these values are present in the XML
         if group_description_info_xml.find('FalsePositives') is None:
             false_positives = ''
         else:
@@ -338,6 +339,8 @@ def linuxCreateScript(guide: Guide, enable_list: list):
         "\\")[-1]
 
     output_folder = os.path.join(root_dir, "app", "out-files")
+
+    # Remove existing files if they exist or create folders if they don't exist
     if os.path.isdir(output_folder) and os.path.isdir(
             os.path.join(output_folder, guide_file_name)):
         subdirectory = os.path.join(output_folder, guide_file_name)
@@ -350,6 +353,7 @@ def linuxCreateScript(guide: Guide, enable_list: list):
         os.mkdir(guide_file_name)
         os.chdir(root_dir)
 
+    # Create check and fix scripts, and manual check and fix files
     check_script = """#! /bin/bash
 mkdir AdminGuard
 cd AdminGuard
@@ -376,6 +380,7 @@ cd ..
 --------------------------------------------------------------
 '''
 
+    # Write manual check and fix files
     with open(
             output_folder + "/" + guide_file_name + "/" + guide_file_name +
             "-" + "ManualCheck.txt", "ab") as linux_manual_check:
@@ -386,6 +391,7 @@ cd ..
             "-" + "ManualFix.txt", "ab") as linux_manual_fix:
         linux_manual_fix.write(manual_fix.encode())
 
+    # if no rules are enabled, write check and fix scripts
     if len(enable_list) == 0:
         with open(
                 output_folder + "/" + guide_file_name + "/" + guide_file_name +
@@ -396,8 +402,10 @@ cd ..
                 "-" + "FixScript.sh", "wb") as linux_fix_script:
             linux_fix_script.write(fix_script.encode())
 
+    # if rules are enabled, write check and fix scripts with commands
     for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
+        # if no commands are in the list, indicate that it requires manual check
         if len(target_rule.check_commands) == 0:
             check_script += "echo 'Manual check required for " + vuln_id + "' >> check_script_logs.txt" + "\n"
             manual_check = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
@@ -407,6 +415,7 @@ cd ..
                     "ab") as linux_manual_check:
                 linux_manual_check.write(manual_check.encode())
 
+        # if commands are in the list, write them to the check script
         for check_cmd in target_rule.check_commands:
             check_script += "echo '" + check_cmd + "' >> check_script_logs.txt" + "\n"
             check_script += check_cmd + " >> check_script_logs.txt || echo " + '"Error while running Check Script for ' + vuln_id + '" >> error_logs.txt' + "\n"
@@ -419,6 +428,7 @@ cd ..
     for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
+        # if no commands are in the list, indicate that it requires manual fix
         if len(target_rule.fix_commands) == 0:
             fix_script += "echo 'Manual fix required for " + vuln_id + "' >> fix_script_logs.txt" + "\n"
             manual_fix = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
@@ -427,6 +437,8 @@ cd ..
                     guide_file_name + "-" + "ManualFix.txt",
                     "ab") as linux_manual_fix:
                 linux_manual_fix.write(manual_fix.encode())
+        
+        # if commands are in the list, write them to the fix script
         for fix_cmd in target_rule.fix_commands:
             fix_script += "echo '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
             fix_script += fix_cmd + " >> fix_script_logs.txt || echo " + '"Error while running Fix Script for ' + vuln_id + '" >> error_logs.txt' + "\n"
@@ -443,6 +455,8 @@ def windowsCreateScript(guide: Guide, enable_list: list):
         "\\")[-1]
 
     output_folder = os.path.join(root_dir, "app", "out-files")
+
+    # Remove existing files if they exist or create folders if they don't exist
     if os.path.isdir(output_folder) and os.path.isdir(
             os.path.join(output_folder, guide_file_name)):
         subdirectory = os.path.join(output_folder, guide_file_name)
@@ -455,6 +469,7 @@ def windowsCreateScript(guide: Guide, enable_list: list):
         os.mkdir(guide_file_name)
         os.chdir(root_dir)
 
+    # Create check and fix scripts, and manual check and fix files
     check_script = """mkdir AdminGuard | out-null
 Set-Location AdminGuard
 New-Item -Name 'check_script_logs.txt' -ItemType 'file' | out-null
@@ -499,6 +514,7 @@ function run_command {
 --------------------------------------------------------------
 '''
 
+    # Write manual check and fix files
     with open(
             output_folder + "/" + guide_file_name + "/" + guide_file_name +
             "-" + "ManualCheck.txt", "ab") as windows_manual_check:
@@ -509,6 +525,7 @@ function run_command {
             "-" + "ManualFix.txt", "ab") as windows_manual_fix:
         windows_manual_fix.write(manual_fix.encode())
 
+    # if no rules are enabled, write check and fix scripts
     if len(enable_list) == 0:
         with open(
                 output_folder + "/" + guide_file_name + "/" + guide_file_name +
@@ -522,6 +539,7 @@ function run_command {
     for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
+        # if no commands are in the list, indicate that it requires manual check
         if len(target_rule.check_commands) == 0:
             check_script += "Write-Output 'Manual check required for " + vuln_id + "' >> check_script_logs.txt" + "\n"
             manual_check = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.check_content + "\n" + "--------------------------------------------------------------" + "\n"
@@ -530,6 +548,8 @@ function run_command {
                     guide_file_name + "-" + "ManualCheck.txt",
                     "ab") as windows_manual_check:
                 windows_manual_check.write(manual_check.encode())
+
+        # if commands are in the list, write them to the check script
         for check_cmd in target_rule.check_commands:
             check_script += "Write-Output '" + check_cmd + "' >> check_script_logs.txt" + "\n"
             check_script += "run_command " + "'" + check_cmd + " >> check_script_logs.txt' 'Check Script for " + vuln_id + "'" + "\n"
@@ -542,6 +562,7 @@ function run_command {
     for vuln_id in enable_list:
         target_rule = guide.stig_rule_dict[vuln_id]
 
+        # if no commands are in the list, indicate that it requires manual fix
         if len(target_rule.fix_commands) == 0:
             fix_script += "Write-Output 'Manual fix required for " + vuln_id + "' >> fix_script_logs.txt" + "\n"
             manual_fix = vuln_id + " - " + target_rule.rule_title + "\n" + target_rule.rule_fix_text + "\n" + "--------------------------------------------------------------" + "\n"
@@ -550,6 +571,8 @@ function run_command {
                     guide_file_name + "-" + "ManualFix.txt",
                     "ab") as windows_manual_fix:
                 windows_manual_fix.write(manual_fix.encode())
+        
+        # if commands are in the list, write them to the fix script
         for fix_cmd in target_rule.fix_commands:
             fix_script += "Write-Output '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
             fix_script += "run_command " + "'" + fix_cmd + " >> fix_script_logs.txt' 'Fix Script for " + vuln_id + "'" + "\n"
@@ -568,6 +591,7 @@ def generateXml(guide: Guide):
     file_content = ''
     line_number = 0
 
+    # Remove existing files if they exist or create folders if they don't exist
     if os.path.isdir(output_folder) and os.path.isdir(
             os.path.join(output_folder, guide_file_name)):
         subdirectory = os.path.join(output_folder, guide_file_name)
@@ -580,12 +604,14 @@ def generateXml(guide: Guide):
         os.mkdir(guide_file_name)
         os.chdir(root_dir)
 
+    # Read first 20 lines of the file and append it to the new file content
     with open(file, 'r', encoding='utf-8') as guide_file:
         guide_data = guide_file.readlines()
         while line_number < 21:
             file_content += guide_data[line_number]
             line_number += 1
 
+    # Creating the XML elements
     E = ElementMaker()
     EMAPPEDDC = ElementMaker(namespace='http://purl.org/dc/elements/1.1/',
                              nsmap={'dc': 'http://purl.org/dc/elements/1.1/'})
@@ -607,8 +633,10 @@ def generateXml(guide: Guide):
 
     for rule in guide.stig_rule_dict.values():
 
+        # Encode the description of the rule to prevent XML errors appending any information that is missing
         encoded_description = '&lt;VulnDiscussion&gt;' + rule.rule_description + '&lt;/VulnDiscussion&gt;&lt;FalsePositives&gt;' + rule.false_positives + '&lt;/FalsePositives&gt;&lt;FalseNegatives&gt;' + rule.false_negatives + '&lt;/FalseNegatives&gt;&lt;Documentable&gt;' + rule.documentable + '&lt;/Documentable&gt;&lt;Mitigations&gt;' + rule.mitigations + '&lt;/Mitigations&gt;&lt;SeverityOverrideGuidance&gt;' + rule.severity_override_guidance + '&lt;/SeverityOverrideGuidance&gt;&lt;PotentialImpacts&gt;' + rule.potential_impacts + '&lt;/PotentialImpacts&gt;&lt;ThirdPartyTools&gt;' + rule.third_party_tools + '&lt;/ThirdPartyTools&gt;&lt;MitigationControl&gt;' + rule.mitigation_control + '&lt;/MitigationControl&gt;&lt;Responsibility&gt;' + rule.responsibility + '&lt;/Responsibility&gt;&lt;IAControls&gt;' + rule.iacontrols + '&lt;/IAControls&gt;'
 
+        # Append the rule to the file content and display it in a neat and readable format
         file_content += etree.tostring(GROUP(
             TITLE(rule.rule_title, ),
             DESCRIPTION('&lt;GroupDescription&gt;&lt;/GroupDescription&gt;', ),
@@ -644,8 +672,10 @@ def generateXml(guide: Guide):
             id=rule.vuln_id),
                                        pretty_print=True).decode()
 
+    # Append the closing tag for the XML file
     file_content += '</Benchmark>' + "\n"
 
+    # Write the file content to the output folder
     with open(
             output_folder + "/" + guide_file_name + "/" + "updated-" +
             guide_file_name + ".xml", "wb") as windows_fix_script:
@@ -663,6 +693,7 @@ def generateZip(guide: Guide):
     temp_zipped_file = os.path.join(zipping_directory,
                                     guide_file_name + ".zip")
 
+    # Remove existing file if they exist or create folders if they don't exist
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
     if os.path.isfile(zipped_file):
@@ -677,12 +708,15 @@ def generateZip(guide: Guide):
                          compression=zipfile.ZIP_DEFLATED,
                          compresslevel=5) as zipf:
         for file in os.listdir(output_folder):
+            # Skip zipped files
             if file.endswith(".zip"):
                 continue
             file_path = os.path.join(output_folder, file)
+            # Copy file to zipping directory
             shutil.copyfile(file_path, os.path.join(zipping_directory, file))
+            # Add file to zip archive
             zipf.write(file)
-
+    # Copy zipped file to output folder
     shutil.copyfile(temp_zipped_file, zipped_file)
 
     os.chdir(root_dir)

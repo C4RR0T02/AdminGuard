@@ -16,6 +16,8 @@ guide_dictionary = {}
 form_data_rule_dictionary = {}
 
 path = os.getcwd()
+
+# Create upload and download folders if they don't exist
 upload_folder = os.path.join(path, 'app', 'uploads')
 if not os.path.isdir(upload_folder):
     os.mkdir(upload_folder)
@@ -25,6 +27,7 @@ if not os.path.isdir(download_folder):
     os.mkdir(download_folder)
     print("created download folder")
 
+# Set app config
 app.config['upload_folder'] = upload_folder
 app.config['download_folder'] = download_folder
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
@@ -39,8 +42,10 @@ def index():
 @app.route('/script-generate', methods=['GET', 'POST'])
 def scriptGenerate():
     if request.method == 'POST':
+        # Get the guide type and uploaded file
         selected_guide_type = request.form.get('guide_type', default=None)
         uploaded_file = request.files['file']
+        # Check if the file is valid and upload it to the server
         if uploaded_file.filename != '':
             file_ext = os.path.splitext(uploaded_file.filename)[1]
             if file_ext not in app.config['UPLOAD_EXTENSIONS']:
@@ -48,9 +53,10 @@ def scriptGenerate():
             upload_file_path = os.path.join(app.config['upload_folder'],
                                             uploaded_file.filename)
             uploaded_file.save(upload_file_path)
+            # Parse the guide
             guide = parseGuide(upload_file_path, selected_guide_type)
             guide_name = uploaded_file.filename.split('.')[0]
-
+            # Add the guide to the dictionary with the guide name as the key
             guide_dictionary[guide_name] = dict()
             guide_dictionary[guide_name]["guide_content"] = guide
             guide_dictionary[guide_name]["guide_type"] = selected_guide_type
@@ -73,9 +79,9 @@ def enableCheck(enable_id):
 def createGuideForm(guide: Guide, formdata=None):
     form_fields = dict()
     for rule in guide.stig_rule_dict.values():
+        # Create fields for the various rule attributes
         form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable",
                                                              default=True)
-
         form_fields[f"{rule.vuln_id}.rule_title"] = StringField(
             "rule_title", [enableCheck(f"{rule.vuln_id}.enable")])
         form_fields[f"{rule.vuln_id}.rule_fix_text"] = StringField(
@@ -92,10 +98,12 @@ def createGuideForm(guide: Guide, formdata=None):
 
 @app.route('/script-generate/<guide_name>', methods=['GET'])
 def scriptFieldsGet(guide_name: str):
+    # Get the guide information from the dictionary
     guide_details = guide_dictionary.get(guide_name)
     guide = guide_details.get("guide_content")
     if guide is None:
         return "Guide not found", 404
+    # Create a form for the guide
     form = createGuideForm(guide)
     return render_template('script-fields.html',
                            enumerate=enumerate,
@@ -105,9 +113,11 @@ def scriptFieldsGet(guide_name: str):
 
 @app.route('/script-generate/<guide_name>', methods=['POST'])
 def scriptFieldsPost(guide_name: str):
+    # Get the guide information from the dictionary
     guide_details = guide_dictionary.get(guide_name)
     guide_type = guide_details.get("guide_type")
     guide = guide_details.get("guide_content")
+    # Initialize a list to store the enabled vuln_ids
     enable_list = []
 
     if guide is None or guide_type is None:
@@ -116,9 +126,11 @@ def scriptFieldsPost(guide_name: str):
     fragments = dict(request.form)
 
     for data in fragments.items():
+        # Check if the vuln_id is enabled and add it to the list
         if data[0].endswith(".enable") and data[1] == 'y':
             vuln_id = data[0].split(".")[0]
             enable_list.append(vuln_id)
+        # Update the rule attributes
         if data[0].endswith(".rule_title"):
             vuln_id = data[0].split(".")[0]
             rule = guide.stig_rule_dict[vuln_id]
@@ -140,11 +152,13 @@ def scriptFieldsPost(guide_name: str):
             rule.check_commands = rule._getRequiredFields(
                 guide_type, rule.check_content)
 
+    # Create the script files based on the guide type and enabled vuln_ids
     if guide_details.get("guide_type") == "Windows":
         windowsCreateScript(guide, enable_list)
     elif guide_details.get("guide_type") == "Linux":
         linuxCreateScript(guide, enable_list)
 
+    # Generate the XML and zip files
     generateXml(guide)
     generateZip(guide)
 
@@ -154,6 +168,7 @@ def scriptFieldsPost(guide_name: str):
 @app.route('/script-generate/<guide_name>/download', methods=['GET'])
 def scriptDownload(guide_name: str):
     if request.method == 'GET':
+        # define the download links
         downloadCheckScript = url_for('downloadScript',
                                       guide_name=guide_name,
                                       file='checkscript')
@@ -187,9 +202,11 @@ def scriptDownload(guide_name: str):
 
 @app.route('/script-generate/<guide_name>/download/<file>', methods=['GET'])
 def downloadScript(guide_name: str, file: str):
+    # Get the guide information from the dictionary
     guide_details = guide_dictionary.get(guide_name)
     guide_type = guide_details["guide_type"]
 
+    # Set the file extension based on the guide type
     if guide_type == "Linux":
         file_extension = ".sh"
     elif guide_type == "Windows":
@@ -197,6 +214,7 @@ def downloadScript(guide_name: str, file: str):
     else:
         file_extension = ""
 
+    # Send file based on file requested or return a 404 error when no file found
     if file == 'checkscript':
         checkscript = os.path.join(
             download_folder, guide_name,
@@ -240,6 +258,7 @@ def templateGenerate():
     return render_template('template-generate.html')
 
 
+# Error handlers
 @app.errorhandler(400)
 def bad_request(e):
     return render_template('400.html'), 400  # Bad Request
