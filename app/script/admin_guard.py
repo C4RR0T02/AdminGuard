@@ -437,7 +437,7 @@ cd ..
                     guide_file_name + "-" + "ManualFix.txt",
                     "ab") as linux_manual_fix:
                 linux_manual_fix.write(manual_fix.encode())
-        
+
         # if commands are in the list, write them to the fix script
         for fix_cmd in target_rule.fix_commands:
             fix_script += "echo '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
@@ -571,7 +571,7 @@ function run_command {
                     guide_file_name + "-" + "ManualFix.txt",
                     "ab") as windows_manual_fix:
                 windows_manual_fix.write(manual_fix.encode())
-        
+
         # if commands are in the list, write them to the fix script
         for fix_cmd in target_rule.fix_commands:
             fix_script += "Write-Output '" + fix_cmd + "' >> fix_script_logs.txt" + "\n"
