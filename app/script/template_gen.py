@@ -1,7 +1,7 @@
 # Imports
 import os
 import re
-from nessusaudit import *
+from .nessusaudit import *
 
 root_dir = os.getcwd()
 
@@ -69,8 +69,8 @@ def parseTemplate(template_name, guide_type):
     return template
 
 # template = parseTemplate("./app/tests/testFiles/DISA_STIG_Red_Hat_Enterprise_Linux_8_v1r11.audit", "Linux")
-# print(template.template_rule_dict[0].values())
-# print(template.template_rule_dict[0].keys())
+# # print(template.template_rule_dict[0].values())
+# # print(template.template_rule_dict[0].keys())
 # for vuln_id in template.template_rule_dict[0].keys():
 #     rule = template.template_rule_dict[0][vuln_id].dictionary_fields.dictionary_fields.keys()
 #     # for array_value in rule:

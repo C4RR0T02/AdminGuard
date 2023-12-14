@@ -6,10 +6,12 @@ if __name__ == '__main__':
     # Importation for running app
     from script.stig_script_gen import *
     from script.template_gen import *
+    from script.nessusaudit import *
 else:
     # Importation for running test case
     from .script.stig_script_gen import *
     from .script.template_gen import *
+    from .script.nessusaudit import *
 
 import os
 
@@ -25,12 +27,15 @@ path = os.getcwd()
 # Create upload and download folders if they don't exist
 upload_folder = os.path.join(path, 'app', 'uploads')
 if not os.path.isdir(upload_folder):
-    os.mkdir(upload_folder)
-    print("created upload folder")
+    os.mkdirs(upload_folder)
+if not os.path.isdir(os.path.join(upload_folder, 'stig')):
+    os.mkdir(os.path.join(upload_folder, 'stig'))
+if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
+    os.mkdir(os.path.join(upload_folder, 'vatemplate'))
+
 download_folder = os.path.join(path, 'app', 'out-files')
 if not os.path.isdir(download_folder):
-    os.mkdir(download_folder)
-    print("created download folder")
+    os.mkdirs(download_folder)
 
 # Set app config
 app.config['upload_folder'] = upload_folder
@@ -55,7 +60,7 @@ def scriptGenerate():
             file_ext = os.path.splitext(uploaded_file.filename)[1]
             if file_ext not in app.config['UPLOAD_EXTENSIONS']:
                 abort(400)
-            upload_file_path = os.path.join(app.config['upload_folder'],
+            upload_file_path = os.path.join(app.config['upload_folder'], "stig", 
                                             uploaded_file.filename)
             uploaded_file.save(upload_file_path)
             # Parse the guide
@@ -257,6 +262,8 @@ def downloadScript(guide_name: str, file: str):
             abort(404)
         return send_file(zipped, as_attachment=True)
 
+    abort(404)
+
 
 @app.route('/template-generate', methods=['GET', 'POST'])
 def templateGenerate():
@@ -269,7 +276,7 @@ def templateGenerate():
             file_ext = os.path.splitext(uploaded_file.filename)[1]
             if file_ext not in app.config['UPLOAD_EXTENSIONS']:
                 abort(400)
-            upload_file_path = os.path.join(app.config['upload_folder'],
+            upload_file_path = os.path.join(app.config['upload_folder'], "vatemplate",
                                             uploaded_file.filename)
             uploaded_file.save(upload_file_path)
             # Parse the template
@@ -285,6 +292,22 @@ def templateGenerate():
     return render_template('template-generate.html')
 
 
+def createTemplateForm(template: Template, formdata=None):
+    form_fields = dict()
+    for vuln_id in template.template_rule_dict[0].keys():
+        rule = template.template_rule_dict[0][vuln_id]
+        list_of_keys = list(rule.dictionary_fields.dictionary_fields.keys())
+        # Create fields for the various rule attributes
+        form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable",
+                                                             default=True)
+        for key in list_of_keys:
+            form_fields[f"{vuln_id}.{key}"] = StringField(
+                f"{vuln_id}.{key}", [enableCheck(f"{vuln_id}.enable")])
+
+    form = BaseForm(form_fields)
+    form.process(formdata)
+    return form
+
 @app.route('/template-generate/<template_name>', methods=['GET'])
 def templateFieldsGet(template_name: str):
     # Get the template information from the dictionary
@@ -299,43 +322,84 @@ def templateFieldsGet(template_name: str):
                            template=template,
                            form=form)
 
-def createTemplateForm(template: Template, formdata=None):
-    form_fields = dict()
-    for vuln_id in template.template_rule_dict[0].keys():
-        rule = template.template_rule_dict[0][vuln_id]
-        list_of_keys = list(rule.dictionary_fields.dictionary_fields.keys())
-        # Create fields for the various rule attributes
-    #     form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable",
-    #                                                          default=True)
-    #     form_fields[f"{rule.vuln_id}.rule_title"] = StringField(
-    #         "rule_title", [enableCheck(f"{rule.vuln_id}.enable")])
-    #     form_fields[f"{rule.vuln_id}.rule_fix_text"] = StringField(
-    #         "rule_fix_text", [enableCheck(f"{rule.vuln_id}.enable")])
-    #     form_fields[f"{rule.vuln_id}.rule_description"] = StringField(
-    #         "rule_description", [enableCheck(f"{rule.vuln_id}.enable")])
-    #     form_fields[f"{rule.vuln_id}.check_content"] = StringField(
-    #         "check_content", [enableCheck(f"{rule.vuln_id}.enable")])
+@app.route('/template-generate/<template_name>', methods=['POST'])
+def templateFieldsPost(template_name: str):
+    # Get the template information from the dictionary
+    template_details = template_dictionary.get(template_name)
+    template_type = template_details.get("template_type")
+    template = template_details.get("template_content")
+    # Initialize a list to store the enabled vuln_ids
+    enable_list = []
 
-    # form = BaseForm(form_fields)
-    # form.process(formdata)
-    # return form
+    if template is None or template_type is None:
+        return "Template not found", 404
+
+    fragments = dict(request.form)
+
+    for data in fragments.items():
+        # Check if the vuln_id is enabled and add it to the list
+        if data[0].endswith(".enable") and data[1] == 'y':
+            vuln_id = data[0].split(".")[0]
+            enable_list.append(vuln_id)
+        # Update the rule attributes
+        while data[0].endswith(".enable") is False:
+            vuln_id = data[0].split(".")[0]
+            rule = template.template_rule_dict[0][vuln_id]
+            rule.dictionary_fields.dictionary_fields[data[0].split(".")[1]] = data[1]
+
+    # Create the template file based on the type
+    # if template_details.get("template_type") == "Windows":
+    #     windowsCreateScript(template, enable_list)
+    # elif template_details.get("template_type") == "Linux":
+    #     linuxCreateScript(template, enable_list)
+
+    return redirect(url_for('templateDownload', template_name=template_name))
+
+@app.route('/template-generate/<template_name>/download', methods=['GET'])
+def templateDownload(template_name: str):
+    if request.method == 'GET':
+        # define the download links
+        # downloadTemplate = url_for('downloadTemplate',
+        #                               template_name=template_name,
+        #                               file='template')
+        return render_template(
+            'template-download.html',
+            template_name=template_name,
+            # downloadTemplate=downloadTemplate,
+        )
+    return render_template('template-download.html')
+
+
+@app.route('/template-generate/<template_name>/download/<file>', methods=['GET'])
+def downloadTemplate(template_name: str, file: str):
+    # Send file based on file requested or return a 404 error when no file found
+    if file == 'template':
+        template = os.path.join(
+            download_folder, template_name,
+            template_name + '-updated.audit')
+        if not os.path.isfile(template):
+            abort(404)
+        return send_file(template, as_attachment=True)
+
+    abort(404)
+
 
 # Error handlers
-@app.errorhandler(400)
-def bad_request(e):
-    return render_template('errors/400.html'), 400  # Bad Request
+# @app.errorhandler(400)
+# def bad_request(e):
+#     return render_template('errors/400.html'), 400  # Bad Request
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('errors/404.html'), 404,  # Page Not Found
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     return render_template('errors/404.html'), 404,  # Page Not Found
 
 
-@app.errorhandler(500)
-def internal_server_error(e):
-    return render_template('errors/500.html'), 500  # Internal Server Error
+# @app.errorhandler(500)
+# def internal_server_error(e):
+#     return render_template('errors/500.html'), 500  # Internal Server Error
 
 
 # main driver function
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
