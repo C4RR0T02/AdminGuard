@@ -5,22 +5,6 @@
         <title>AdminGuard</title>
         <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-        <script>
-          console.log('Before function');
-          function submitTemplateForm() {
-            console.log('Submitting form data...');
-            const formData = new FormData();
-            const fragments = {};
-            const field_data_dictionary = {};
-            let enableField = null;
-            let rule_fields = '';
-            console.log(template.template_rule_dict[0].keys())
-    
-            {% for vuln_id in template.template_rule_dict[0].keys() %}
-                console.log(vuln_id)
-            {% endfor %}
-          }
-        </script>
     </head>
     <body class="bg-dark text-white">
         <div class="mt-5">
@@ -54,19 +38,21 @@
                         <div class="accordion-body">
                           {% set rule = template.template_rule_dict[0][vuln_id].dictionary_fields.dictionary_fields %}
                           {% for field in rule.keys() %}
-                          {% set field_id = vuln_id ~ "."  ~ field %}
-                          <div class="d-flex">
-                            <div class="flex-fill">
-                              <label for="{{ field_id }}" class="col-form-label"><strong>{{ field }}: </strong></label>
-                              <br>
-                              <textarea class="auto-expand form-control{{ ' is-invalid' if form[field_id].errors else '' }}" id="{{ field_id }}" name="{{ field_id }}" rows="3">{{ rule[field] }}</textarea>
-                              {% if form[field_id].errors %}
-                                  <div class="invalid-feedback">
-                                      {% for error in form[field_id].errors %}{{ error }}{% endfor %}
-                                  </div>
-                              {% endif %}
-                            </div>
-                          </div>
+                            {% if rule[field] != "n/a" %}
+                              {% set field_id = vuln_id ~ "."  ~ field %}
+                              <div class="d-flex">
+                                <div class="flex-fill">
+                                  <label for="{{ field_id }}" class="col-form-label"><strong>{{ field }}: </strong></label>
+                                  <br>
+                                  <textarea class="auto-expand form-control{{ ' is-invalid' if form[field_id].errors else '' }}" id="{{ field_id }}" name="{{ field_id }}" rows="3">{{ rule[field] }}</textarea>
+                                  {% if form[field_id].errors %}
+                                      <div class="invalid-feedback">
+                                          {% for error in form[field_id].errors %}{{ error }}{% endfor %}
+                                      </div>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            {% endif %}
                           {% endfor %}
                         </div>
                       </div>
