@@ -83,6 +83,9 @@ A heartfelt thank you to the following resources that contributed to the success
 
 # Template-generate
 - [NessusAudit](https://github.com/kamarizl/nessusaudit)
+- [NessusAudit - Forked Repo](https://github.com/benwoo1110/nessusaudit)
+- [Nessus Compliance Check Reference](https://docs.tenable.com/nessus/compliance-checks-reference/Content/PDF/NessusComplianceChecksReference.pdf)
+- [Tenable Audit Files Template](https://www.tenable.com/downloads/download-all-compliance-audit-files)
 
 # Error Pages
 - [W3Schools - CSS Web Safe Fonts](https://www.w3schools.com/cssref/css_websafe_fonts.php)
