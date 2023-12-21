@@ -103,12 +103,13 @@ def gen_template(template: Template):
                         new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n'
                     line_number += 1
             else:
-                content_find = True
+                content_find_1 = True
+                content_find_2 = True
                 temp_line_number = line_number
-                while content_find == True:
+                while content_find_1 == True or content_find_2 == True:
                     next_line = file_content[temp_line_number + 1]
                     if next_line.strip().startswith("reference"):
-                        content_find = False
+                        content_find_1 = False
                         vuln_id = next_line.split("|")[-1].strip().replace(
                             '"', '')
                         template_rule_dict_without_index = template.template_rule_dict[
@@ -124,7 +125,8 @@ def gen_template(template: Template):
                                 new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n'
                             line_number += 1
                     if next_line.strip().startswith("</custom_item>"):
-                        content_find = False
+                        content_find_2 = False
+                        line_number = temp_line_number
                     temp_line_number += 1
             index += 1
         line_number += 1
