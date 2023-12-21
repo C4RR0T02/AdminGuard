@@ -586,7 +586,8 @@ function run_command {
 def generateXml(guide: Guide):
     guide_file_name = guide.guide_name.split("/")[-1].split(".")[0].split(
         "\\")[-1]
-    file = os.path.join(root_dir, "app", "uploads", "stig", guide_file_name + ".xml")
+    file = os.path.join(root_dir, "app", "uploads", "stig",
+                        guide_file_name + ".xml")
     output_folder = os.path.join(root_dir, "app", "out-files")
     file_content = ''
     line_number = 0
@@ -677,8 +678,9 @@ def generateXml(guide: Guide):
 
     # Write the file content to the output folder
     with open(
-            os.path.join(output_folder, guide_file_name, "updated-" +
-            guide_file_name + ".xml"), "wb") as windows_fix_script:
+            os.path.join(output_folder, guide_file_name,
+                         "updated-" + guide_file_name + ".xml"),
+            "wb") as windows_fix_script:
         windows_fix_script.write(file_content.encode())
 
 

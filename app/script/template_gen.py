@@ -1,14 +1,13 @@
 # Imports
 import os
-import re
-from lxml.builder import ElementMaker
-from lxml import etree
+
 if __name__ == "__main__":
     from nessusaudit import *
 else:
     from .nessusaudit import *
 
 root_dir = os.getcwd()
+
 
 class Template:
 
@@ -18,16 +17,17 @@ class Template:
         self.file_content = file_content
         self.template_rule_dict = template_rule_dict
         self.guide_type = guide_type
-    
+
     def __str__(self) -> str:
         return f"{self.template_name} : {self.file_content} : {self.template_rule_dict} : {self.guide_type}"
-    
+
+
 class RuleItems:
 
     def __init__(self, vuln_id: str, dictionary_fields: dict):
         self.vuln_id = vuln_id
         self.dictionary_fields = dictionary_fields
-    
+
     def replaceTemplateFields(self, field: str, replacement: dict):
         field_data = self.field
         if field_data is None:
@@ -38,6 +38,7 @@ class RuleItems:
     def __str__(self) -> str:
         return f"{str(self.dictionary_fields)}"
 
+
 class RuleTemplateInput:
 
     def __init__(self, vuln_id: str, replacement: dict):
@@ -46,6 +47,7 @@ class RuleTemplateInput:
 
     def __str__(self) -> str:
         return f"{self.vuln_id} : {self.replacement}"
+
 
 def parseTemplate(template_name: str, template_type: str):
 
@@ -82,7 +84,7 @@ def gen_template(template: Template):
         file_content = f.readlines()
     while line_number < len(file_content):
         line_content = file_content[line_number]
-        indentation_count  = line_content.count(" ")
+        indentation_count = line_content.count(" ")
         if not line_content.strip().startswith("<custom_item>"):
             new_file_content += f"{line_content}"
             line_number += 1
@@ -90,7 +92,8 @@ def gen_template(template: Template):
         if line_content.strip().startswith("<custom_item>"):
             new_file_content += f"{' ' * indentation_count}<custom_item>\n"
             if index in template.template_rule_dict[1].keys():
-                template_rule_dict_with_index = template.template_rule_dict[1][index].dictionary_fields.dictionary_fields
+                template_rule_dict_with_index = template.template_rule_dict[1][
+                    index].dictionary_fields.dictionary_fields
                 for key, value in template_rule_dict_with_index.items():
                     if value == "n/a":
                         continue
@@ -98,7 +101,7 @@ def gen_template(template: Template):
                         new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t{value}\n'
                     else:
                         new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n'
-                    line_number += 1  
+                    line_number += 1
             else:
                 content_find = True
                 temp_line_number = line_number
@@ -106,15 +109,19 @@ def gen_template(template: Template):
                     next_line = file_content[temp_line_number + 1]
                     if next_line.strip().startswith("reference"):
                         content_find = False
-                        vuln_id = next_line.split("|")[-1].strip().replace('"', '')
-                        template_rule_dict_without_index = template.template_rule_dict[0][vuln_id].dictionary_fields.dictionary_fields
-                        for key, value in template_rule_dict_without_index.items():
+                        vuln_id = next_line.split("|")[-1].strip().replace(
+                            '"', '')
+                        template_rule_dict_without_index = template.template_rule_dict[
+                            0][vuln_id].dictionary_fields.dictionary_fields
+                        for key, value in template_rule_dict_without_index.items(
+                        ):
                             if value == "n/a":
                                 continue
-                            if key != "type" and key.split("_")[-1] == "required":
+                            if key != "type" and key.split(
+                                    "_")[-1] == "required":
                                 new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t{value}\n'
                             else:
-                                new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n' 
+                                new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n'
                             line_number += 1
                     if next_line.strip().startswith("</custom_item>"):
                         content_find = False
@@ -122,8 +129,13 @@ def gen_template(template: Template):
             index += 1
         line_number += 1
 
-    output_dir = os.path.join(root_dir, "app", "out-files", template_name.split('/')[-1].split('.')[0])
+    output_dir = os.path.join(root_dir, "app", "out-files",
+                              template_name.split('/')[-1].split('.')[0])
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    with open(os.path.join(output_dir, f"{template_name.split('/')[-1].split('.')[0]}-updated.audit"), "w") as f:
+    with open(
+            os.path.join(
+                output_dir,
+                f"{template_name.split('/')[-1].split('.')[0]}-updated.audit"),
+            "w") as f:
         f.write(new_file_content)

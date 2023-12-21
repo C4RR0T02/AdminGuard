@@ -330,7 +330,7 @@ def test_linux_zip_file_generate():
 
 def test_windows_zip_file_generate():
     shutil.copyfile("app/tests/testFiles/test_windows_4.xml",
-                    "app/uploads/test_windows_4.xml")
+                    "app/uploads/stig/test_windows_4.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_4.xml", "Windows")
     Vuln_id_list = []
 
@@ -364,3 +364,8 @@ def test_remove_files():
     for file in os.listdir(os.path.join(root_dir, "app", "uploads")):
         if file.startswith("test"):
             os.remove(os.path.join(root_dir, "app", "uploads", file))
+    for folder in os.listdir(os.path.join(root_dir, "app", "out-files",
+                                          "zip")):
+        if folder.startswith("test"):
+            shutil.rmtree(
+                os.path.join(root_dir, "app", "out-files", "zip", folder))

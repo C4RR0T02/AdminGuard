@@ -49,6 +49,7 @@ def index():
 
 # Script Generation
 
+
 @app.route('/script-generate', methods=['GET', 'POST'])
 def scriptGenerate():
     if request.method == 'POST':
@@ -60,8 +61,8 @@ def scriptGenerate():
             file_ext = os.path.splitext(uploaded_file.filename)[1]
             if file_ext not in app.config['UPLOAD_EXTENSIONS']:
                 abort(400)
-            upload_file_path = os.path.join(app.config['upload_folder'], "stig", 
-                                            uploaded_file.filename)
+            upload_file_path = os.path.join(app.config['upload_folder'],
+                                            "stig", uploaded_file.filename)
             uploaded_file.save(upload_file_path)
             # Parse the guide
             guide = parseGuide(upload_file_path, selected_guide_type)
@@ -264,20 +265,24 @@ def downloadScript(guide_name: str, file: str):
 
     abort(404)
 
+
 # Template Generation
+
 
 @app.route('/template-generate', methods=['GET', 'POST'])
 def templateGenerate():
     if request.method == 'POST':
         # Get the template type and uploaded file
-        selected_template_type = request.form.get('template_type', default=None)
+        selected_template_type = request.form.get('template_type',
+                                                  default=None)
         uploaded_file = request.files['file']
         # Check if the file is valid and upload it to the server
         if uploaded_file.filename != '':
             file_ext = os.path.splitext(uploaded_file.filename)[1]
             if file_ext not in app.config['UPLOAD_EXTENSIONS']:
                 abort(400)
-            upload_file_path = os.path.join(app.config['upload_folder'], "vatemplate",
+            upload_file_path = os.path.join(app.config['upload_folder'],
+                                            "vatemplate",
                                             uploaded_file.filename)
             uploaded_file.save(upload_file_path)
             # Parse the template
@@ -286,7 +291,8 @@ def templateGenerate():
             # Add the template to the dictionary with the template name as the key
             template_dictionary[template_name] = dict()
             template_dictionary[template_name]["template_content"] = template
-            template_dictionary[template_name]["template_type"] = selected_template_type
+            template_dictionary[template_name][
+                "template_type"] = selected_template_type
             return redirect(
                 url_for('templateFieldsGet',
                         template_name=uploaded_file.filename.split('.')[0]))
@@ -309,6 +315,7 @@ def createTemplateForm(template: Template, formdata=None):
     form.process(formdata)
     return form
 
+
 @app.route('/template-generate/<template_name>', methods=['GET'])
 def templateFieldsGet(template_name: str):
     # Get the template information from the dictionary
@@ -322,6 +329,7 @@ def templateFieldsGet(template_name: str):
                            enumerate=enumerate,
                            template=template,
                            form=form)
+
 
 @app.route('/template-generate/<template_name>', methods=['POST'])
 def templateFieldsPost(template_name: str):
@@ -360,8 +368,8 @@ def templateDownload(template_name: str):
     if request.method == 'GET':
         # define the download links
         downloadTemplate = url_for('downloadTemplate',
-                                      template_name=template_name,
-                                      file='template')
+                                   template_name=template_name,
+                                   file='template')
         return render_template(
             'template-download.html',
             template_name=template_name,
@@ -370,13 +378,13 @@ def templateDownload(template_name: str):
     return render_template('template-download.html')
 
 
-@app.route('/template-generate/<template_name>/download/<file>', methods=['GET'])
+@app.route('/template-generate/<template_name>/download/<file>',
+           methods=['GET'])
 def downloadTemplate(template_name: str, file: str):
     # Send file based on file requested or return a 404 error when no file found
     if file == 'template':
-        template = os.path.join(
-            download_folder, template_name,
-            template_name + '-updated.audit')
+        template = os.path.join(download_folder, template_name,
+                                template_name + '-updated.audit')
         if not os.path.isfile(template):
             abort(404)
         return send_file(template, as_attachment=True)

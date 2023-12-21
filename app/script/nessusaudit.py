@@ -1,11 +1,11 @@
 import re
 
+
 class NessusAudit():
     ''' convert nessus audit file python object '''
 
     def __init__(self, auditFile):
         self.auditFile = open(auditFile, 'r').readlines()
-
 
     def _elementList(self):
         ''' it return the element under <custom_item> .. </custom_item> '''
@@ -24,7 +24,6 @@ class NessusAudit():
         elementList.append('ref')
         return elementList
 
-
     def array(self):
         ''' this return list of dictionary contain all element'''
         startFlag = 99
@@ -37,8 +36,8 @@ class NessusAudit():
         for line in self.auditFile:
             # set the flag to start enumerate elemet under </custem_item>
             if re.match(r'.+(<custom_item).+', line):
-                startFlag = 1           
-            # if found line with </custom_item> reset the flag and start 
+                startFlag = 1
+            # if found line with </custom_item> reset the flag and start
             # to store item in tempDatastore into actuall array
             if re.match(r'.+(</custom_item).+', line):
                 startFlag = 0
@@ -47,7 +46,7 @@ class NessusAudit():
                     if element not in tempDatastore:
                         tempDatastore[element] = "n/a"
                 array.append(tempDatastore)
-                tempDatastore = {} # reset datastore
+                tempDatastore = {}  # reset datastore
             # START
             # start to collect the elements
             if startFlag == 1:
@@ -68,7 +67,7 @@ class NessusAudit():
                                     tempDatastore[element] = ref[1]
                                     # store the number in its keys
                                     tempDatastore["ref"] = ref[0]
-                                # if description contains no numbering, just 
+                                # if description contains no numbering, just
                                 # push to temp datastore
                                 else:
                                     tempDatastore[element] = value
