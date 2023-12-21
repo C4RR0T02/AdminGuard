@@ -1,7 +1,12 @@
 # Imports
 import os
 import re
-from .nessusaudit import *
+from lxml.builder import ElementMaker
+from lxml import etree
+if __name__ == "__main__":
+    from nessusaudit import *
+else:
+    from .nessusaudit import *
 
 root_dir = os.getcwd()
 
@@ -19,9 +24,8 @@ class Template:
     
 class RuleItems:
 
-    def __init__(self, vuln_id, dictionary_fields):
+    def __init__(self, vuln_id: str, dictionary_fields: dict):
         self.vuln_id = vuln_id
-
         self.dictionary_fields = dictionary_fields
     
     def replaceTemplateFields(self, field: str, replacement: dict):
@@ -43,7 +47,7 @@ class RuleTemplateInput:
     def __str__(self) -> str:
         return f"{self.vuln_id} : {self.replacement}"
 
-def parseTemplate(template_name, guide_type):
+def parseTemplate(template_name: str, template_type: str):
 
     audit_file = NessusAudit(template_name)
     dictionary_fields = dict()
@@ -64,15 +68,62 @@ def parseTemplate(template_name, guide_type):
     rules_list.append(dictionary_fields)
     rules_list.append(rules_without_vuln_id)
 
-    template = Template(template_name, audit_file, rules_list, guide_type)
+    template = Template(template_name, audit_file, rules_list, template_type)
 
     return template
 
-# template = parseTemplate("./app/tests/testFiles/DISA_STIG_Red_Hat_Enterprise_Linux_8_v1r11.audit", "Linux")
-# # print(template.template_rule_dict[0].values())
-# # print(template.template_rule_dict[0].keys())
-# for vuln_id in template.template_rule_dict[0].keys():
-#     rule = template.template_rule_dict[0][vuln_id].dictionary_fields.dictionary_fields.keys()
-#     # for array_value in rule:
-#     print(rule)
-#     break
+
+def gen_template(template: Template):
+    template_name = template.template_name
+    new_file_content = ""
+    index = 0
+    line_number = 0
+    with open(template_name, "r") as f:
+        file_content = f.readlines()
+    while line_number < len(file_content):
+        line_content = file_content[line_number]
+        indentation_count  = line_content.count(" ")
+        if not line_content.strip().startswith("<custom_item>"):
+            new_file_content += f"{line_content}"
+            line_number += 1
+            continue
+        if line_content.strip().startswith("<custom_item>"):
+            new_file_content += f"{' ' * indentation_count}<custom_item>\n"
+            if index in template.template_rule_dict[1].keys():
+                template_rule_dict_with_index = template.template_rule_dict[1][index].dictionary_fields.dictionary_fields
+                for key, value in template_rule_dict_with_index.items():
+                    if value == "n/a":
+                        continue
+                    if key != "type" and key.split("_")[-1] == "required":
+                        new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t{value}\n'
+                    else:
+                        new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n'
+                    line_number += 1  
+            else:
+                content_find = True
+                temp_line_number = line_number
+                while content_find == True:
+                    next_line = file_content[temp_line_number + 1]
+                    if next_line.strip().startswith("reference"):
+                        content_find = False
+                        vuln_id = next_line.split("|")[-1].strip().replace('"', '')
+                        template_rule_dict_without_index = template.template_rule_dict[0][vuln_id].dictionary_fields.dictionary_fields
+                        for key, value in template_rule_dict_without_index.items():
+                            if value == "n/a":
+                                continue
+                            if key != "type" and key.split("_")[-1] == "required":
+                                new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t{value}\n'
+                            else:
+                                new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n' 
+                            line_number += 1
+                    if next_line.strip().startswith("</custom_item>"):
+                        content_find = False
+                    temp_line_number += 1
+            index += 1
+        line_number += 1
+
+    output_dir = os.path.join(root_dir, "app", "out-files", template_name.split('/')[-1].split('.')[0])
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    with open(os.path.join(output_dir, f"{template_name.split('/')[-1].split('.')[0]}-updated.audit"), "w") as f:
+        f.write(new_file_content)

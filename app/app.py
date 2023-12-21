@@ -26,12 +26,10 @@ path = os.getcwd()
 
 # Create upload and download folders if they don't exist
 upload_folder = os.path.join(path, 'app', 'uploads')
-if not os.path.isdir(upload_folder):
-    os.mkdirs(upload_folder)
 if not os.path.isdir(os.path.join(upload_folder, 'stig')):
-    os.mkdir(os.path.join(upload_folder, 'stig'))
+    os.mkdirs(os.path.join(upload_folder, 'stig'))
 if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
-    os.mkdir(os.path.join(upload_folder, 'vatemplate'))
+    os.mkdirs(os.path.join(upload_folder, 'vatemplate'))
 
 download_folder = os.path.join(path, 'app', 'out-files')
 if not os.path.isdir(download_folder):
@@ -48,6 +46,8 @@ app.config['UPLOAD_EXTENSIONS'] = ['.xml', '.audit']
 def index():
     return render_template('index.html')
 
+
+# Script Generation
 
 @app.route('/script-generate', methods=['GET', 'POST'])
 def scriptGenerate():
@@ -264,6 +264,7 @@ def downloadScript(guide_name: str, file: str):
 
     abort(404)
 
+# Template Generation
 
 @app.route('/template-generate', methods=['GET', 'POST'])
 def templateGenerate():
@@ -336,36 +337,35 @@ def templateFieldsPost(template_name: str):
 
     fragments = dict(request.form)
 
-    for data in fragments.items():
+    for key, value in fragments.items():
+        vuln_id, field_name = key.split(".", 1)
         # Check if the vuln_id is enabled and add it to the list
-        if data[0].endswith(".enable") and data[1] == 'y':
-            vuln_id = data[0].split(".")[0]
+        if field_name == "enable" and value == 'y':
             enable_list.append(vuln_id)
         # Update the rule attributes
-        while data[0].endswith(".enable") is False:
-            vuln_id = data[0].split(".")[0]
+        else:
             rule = template.template_rule_dict[0][vuln_id]
-            rule.dictionary_fields.dictionary_fields[data[0].split(".")[1]] = data[1]
+            rule.dictionary_fields.dictionary_fields[field_name] = value
 
-    # Create the template file based on the type
-    # if template_details.get("template_type") == "Windows":
-    #     windowsCreateScript(template, enable_list)
-    # elif template_details.get("template_type") == "Linux":
-    #     linuxCreateScript(template, enable_list)
+    # Generate the template file
+    gen_template(template)
+
+    print(template.template_rule_dict[0]["V-230221"])
 
     return redirect(url_for('templateDownload', template_name=template_name))
+
 
 @app.route('/template-generate/<template_name>/download', methods=['GET'])
 def templateDownload(template_name: str):
     if request.method == 'GET':
         # define the download links
-        # downloadTemplate = url_for('downloadTemplate',
-        #                               template_name=template_name,
-        #                               file='template')
+        downloadTemplate = url_for('downloadTemplate',
+                                      template_name=template_name,
+                                      file='template')
         return render_template(
             'template-download.html',
             template_name=template_name,
-            # downloadTemplate=downloadTemplate,
+            downloadTemplate=downloadTemplate,
         )
     return render_template('template-download.html')
 
@@ -385,19 +385,19 @@ def downloadTemplate(template_name: str, file: str):
 
 
 # Error handlers
-# @app.errorhandler(400)
-# def bad_request(e):
-#     return render_template('errors/400.html'), 400  # Bad Request
+@app.errorhandler(400)
+def bad_request(e):
+    return render_template('errors/400.html'), 400  # Bad Request
 
 
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     return render_template('errors/404.html'), 404,  # Page Not Found
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html'), 404,  # Page Not Found
 
 
-# @app.errorhandler(500)
-# def internal_server_error(e):
-#     return render_template('errors/500.html'), 500  # Internal Server Error
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('errors/500.html'), 500  # Internal Server Error
 
 
 # main driver function
