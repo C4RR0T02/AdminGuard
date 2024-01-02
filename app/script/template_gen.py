@@ -112,32 +112,44 @@ def gen_template(template: Template):
                         content_find_1 = False
                         vuln_id = next_line.split("|")[-1].strip().replace(
                             '"', '')
-                        template_rule_dict_without_index = template.template_rule_dict[
-                            0][vuln_id].dictionary_fields.dictionary_fields
-                        for key, value in template_rule_dict_without_index.items(
-                        ):
-                            if value == "n/a":
-                                continue
-                            if key != "type" and key.split(
-                                    "_")[-1] == "required":
-                                new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t{value}\n'
-                            else:
-                                new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n'
-                            line_number += 1
+                        if vuln_id  in template.template_rule_dict[0].keys():
+                            template_rule_dict_without_index = template.template_rule_dict[
+                                0][vuln_id].dictionary_fields.dictionary_fields
+                            for key, value in template_rule_dict_without_index.items(
+                            ):
+                                if value == "n/a":
+                                    continue
+                                if key != "type" and key.split(
+                                        "_")[-1] == "required":
+                                    new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t{value}\n'
+                                else:
+                                    new_file_content += f'{" " * (indentation_count + 2)}{key}\t:\t"{value}"\n'
+                                line_number += 1
                     if next_line.strip().startswith("</custom_item>"):
                         content_find_2 = False
                         line_number = temp_line_number
                     temp_line_number += 1
             index += 1
         line_number += 1
+    
+    output_folder = os.path.join(root_dir, "app", "out-files")
+    template_name = template_name.split(".")[0].split("\\")[-1]
 
-    output_dir = os.path.join(root_dir, "app", "out-files",
-                              template_name.split('/')[-1].split('.')[0])
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    # Remove existing files if they exist or create folders if they don't exist
+    if os.path.isdir(output_folder) and os.path.isdir(
+            os.path.join(output_folder, template_name)):
+        subdirectory = os.path.join(output_folder, template_name)
+        for file in os.listdir(subdirectory):
+            os.remove(os.path.join(subdirectory, file))
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
+    if not os.path.isdir(os.path.join(output_folder, template_name)):
+        os.chdir(output_folder)
+        os.mkdir(template_name)
+        os.chdir(root_dir)
+
     with open(
             os.path.join(
-                output_dir,
-                f"{template_name.split('/')[-1].split('.')[0]}-updated.audit"),
+                output_folder, template_name, template_name + "-updated.audit"),
             "w") as f:
         f.write(new_file_content)

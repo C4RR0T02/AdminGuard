@@ -352,13 +352,12 @@ def templateFieldsPost(template_name: str):
             enable_list.append(vuln_id)
         # Update the rule attributes
         else:
-            rule = template.template_rule_dict[0][vuln_id]
-            rule.dictionary_fields.dictionary_fields[field_name] = value
+            if vuln_id in template.template_rule_dict[0].keys():
+                rule = template.template_rule_dict[0][vuln_id]
+                rule.dictionary_fields.dictionary_fields[field_name] = value
 
     # Generate the template file
     gen_template(template)
-
-    print(template.template_rule_dict[0]["V-230221"])
 
     return redirect(url_for('templateDownload', template_name=template_name))
 
