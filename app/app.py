@@ -26,10 +26,12 @@ path = os.getcwd()
 
 # Create upload and download folders if they don't exist
 upload_folder = os.path.join(path, 'app', 'uploads')
+if not os.path.isdir(upload_folder):
+    os.mkdir(upload_folder)
 if not os.path.isdir(os.path.join(upload_folder, 'stig')):
-    os.mkdirs(os.path.join(upload_folder, 'stig'))
+    os.mkdir(os.path.join(upload_folder, 'stig'))
 if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
-    os.mkdirs(os.path.join(upload_folder, 'vatemplate'))
+    os.mkdir(os.path.join(upload_folder, 'vatemplate'))
 
 download_folder = os.path.join(path, 'app', 'out-files')
 if not os.path.isdir(download_folder):
