@@ -323,8 +323,6 @@ def test_linux_zip_file_generate():
 
     generateZip(guide)
 
-    os.chdir(root_dir)
-
     assert os.path.isfile("app/out-files/test_linux_4/test_linux_4.zip")
 
 
@@ -351,8 +349,6 @@ def test_windows_zip_file_generate():
         "app/out-files/test_windows_4/updated-test_windows_4.xml")
 
     generateZip(guide)
-
-    os.chdir(root_dir)
 
     assert os.path.isfile("app/out-files/test_windows_4/test_windows_4.zip")
 
