@@ -112,7 +112,7 @@ def gen_template(template: Template):
                         content_find_1 = False
                         vuln_id = next_line.split("|")[-1].strip().replace(
                             '"', '')
-                        if vuln_id  in template.template_rule_dict[0].keys():
+                        if vuln_id in template.template_rule_dict[0].keys():
                             template_rule_dict_without_index = template.template_rule_dict[
                                 0][vuln_id].dictionary_fields.dictionary_fields
                             for key, value in template_rule_dict_without_index.items(
@@ -131,7 +131,7 @@ def gen_template(template: Template):
                     temp_line_number += 1
             index += 1
         line_number += 1
-    
+
     output_folder = os.path.join(root_dir, "app", "out-files")
     template_name = template_name.split(".")[0].split("\\")[-1]
 
@@ -149,7 +149,6 @@ def gen_template(template: Template):
         os.chdir(root_dir)
 
     with open(
-            os.path.join(
-                output_folder, template_name, template_name + "-updated.audit"),
-            "w") as f:
+            os.path.join(output_folder, template_name,
+                         template_name + "-updated.audit"), "w") as f:
         f.write(new_file_content)
