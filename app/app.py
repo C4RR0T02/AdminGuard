@@ -3,9 +3,15 @@ from wtforms import BooleanField, StringField, validators
 from wtforms.form import BaseForm
 
 if __name__ == '__main__':
-    from script.admin_guard import *  # Importation for running app
+    # Importation for running app
+    from script.stig_script_gen import *
+    from script.template_gen import *
+    from script.nessusaudit import *
 else:
-    from .script.admin_guard import *  # Importation for running test case
+    # Importation for running test case
+    from .script.stig_script_gen import *
+    from .script.template_gen import *
+    from .script.nessusaudit import *
 
 import os
 
@@ -13,6 +19,7 @@ import os
 app = Flask(__name__)
 
 guide_dictionary = {}
+template_dictionary = {}
 form_data_rule_dictionary = {}
 
 path = os.getcwd()
@@ -21,22 +28,28 @@ path = os.getcwd()
 upload_folder = os.path.join(path, 'app', 'uploads')
 if not os.path.isdir(upload_folder):
     os.mkdir(upload_folder)
-    print("created upload folder")
+if not os.path.isdir(os.path.join(upload_folder, 'stig')):
+    os.mkdir(os.path.join(upload_folder, 'stig'))
+if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
+    os.mkdir(os.path.join(upload_folder, 'vatemplate'))
+
 download_folder = os.path.join(path, 'app', 'out-files')
 if not os.path.isdir(download_folder):
     os.mkdir(download_folder)
-    print("created download folder")
 
 # Set app config
 app.config['upload_folder'] = upload_folder
 app.config['download_folder'] = download_folder
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
-app.config['UPLOAD_EXTENSIONS'] = ['.xml']
+app.config['UPLOAD_EXTENSIONS'] = ['.xml', '.audit']
 
 
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
+
+
+# Script Generation
 
 
 @app.route('/script-generate', methods=['GET', 'POST'])
@@ -51,7 +64,7 @@ def scriptGenerate():
             if file_ext not in app.config['UPLOAD_EXTENSIONS']:
                 abort(400)
             upload_file_path = os.path.join(app.config['upload_folder'],
-                                            uploaded_file.filename)
+                                            "stig", uploaded_file.filename)
             uploaded_file.save(upload_file_path)
             # Parse the guide
             guide = parseGuide(upload_file_path, selected_guide_type)
@@ -252,28 +265,150 @@ def downloadScript(guide_name: str, file: str):
             abort(404)
         return send_file(zipped, as_attachment=True)
 
+    abort(404)
 
-@app.route('/template-generate', methods=['GET'])
+
+# Template Generation
+
+
+@app.route('/template-generate', methods=['GET', 'POST'])
 def templateGenerate():
+    if request.method == 'POST':
+        # Get the template type and uploaded file
+        selected_template_type = request.form.get('template_type',
+                                                  default=None)
+        uploaded_file = request.files['file']
+        # Check if the file is valid and upload it to the server
+        if uploaded_file.filename != '':
+            file_ext = os.path.splitext(uploaded_file.filename)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+                abort(400)
+            upload_file_path = os.path.join(app.config['upload_folder'],
+                                            "vatemplate",
+                                            uploaded_file.filename)
+            uploaded_file.save(upload_file_path)
+            # Parse the template
+            template = parseTemplate(upload_file_path, selected_template_type)
+            template_name = uploaded_file.filename.split('.')[0]
+            # Add the template to the dictionary with the template name as the key
+            template_dictionary[template_name] = dict()
+            template_dictionary[template_name]["template_content"] = template
+            template_dictionary[template_name][
+                "template_type"] = selected_template_type
+            return redirect(
+                url_for('templateFieldsGet',
+                        template_name=uploaded_file.filename.split('.')[0]))
     return render_template('template-generate.html')
+
+
+def createTemplateForm(template: Template, formdata=None):
+    form_fields = dict()
+    for vuln_id in template.template_rule_dict[0].keys():
+        rule = template.template_rule_dict[0][vuln_id]
+        list_of_keys = list(rule.dictionary_fields.dictionary_fields.keys())
+        # Create fields for the various rule attributes
+        form_fields[f"{rule.vuln_id}.enable"] = BooleanField("Enable",
+                                                             default=True)
+        for key in list_of_keys:
+            form_fields[f"{vuln_id}.{key}"] = StringField(
+                f"{vuln_id}.{key}", [enableCheck(f"{vuln_id}.enable")])
+
+    form = BaseForm(form_fields)
+    form.process(formdata)
+    return form
+
+
+@app.route('/template-generate/<template_name>', methods=['GET'])
+def templateFieldsGet(template_name: str):
+    # Get the template information from the dictionary
+    template_details = template_dictionary.get(template_name)
+    template = template_details.get("template_content")
+    if template is None:
+        return "Template not found", 404
+    # Create a form for the template
+    form = createTemplateForm(template)
+    return render_template('template-fields.html',
+                           enumerate=enumerate,
+                           template=template,
+                           form=form)
+
+
+@app.route('/template-generate/<template_name>', methods=['POST'])
+def templateFieldsPost(template_name: str):
+    # Get the template information from the dictionary
+    template_details = template_dictionary.get(template_name)
+    template_type = template_details.get("template_type")
+    template = template_details.get("template_content")
+    # Initialize a list to store the enabled vuln_ids
+    enable_list = []
+
+    if template is None or template_type is None:
+        return "Template not found", 404
+
+    fragments = dict(request.form)
+
+    for key, value in fragments.items():
+        vuln_id, field_name = key.split(".", 1)
+        # Check if the vuln_id is enabled and add it to the list
+        if field_name == "enable" and value == 'y':
+            enable_list.append(vuln_id)
+        # Update the rule attributes
+        else:
+            if vuln_id in template.template_rule_dict[0].keys():
+                rule = template.template_rule_dict[0][vuln_id]
+                rule.dictionary_fields.dictionary_fields[field_name] = value
+
+    # Generate the template file
+    gen_template(template)
+
+    return redirect(url_for('templateDownload', template_name=template_name))
+
+
+@app.route('/template-generate/<template_name>/download', methods=['GET'])
+def templateDownload(template_name: str):
+    if request.method == 'GET':
+        # define the download links
+        downloadTemplate = url_for('downloadTemplate',
+                                   template_name=template_name,
+                                   file='template')
+        return render_template(
+            'template-download.html',
+            template_name=template_name,
+            downloadTemplate=downloadTemplate,
+        )
+    return render_template('template-download.html')
+
+
+@app.route('/template-generate/<template_name>/download/<file>',
+           methods=['GET'])
+def downloadTemplate(template_name: str, file: str):
+    # Send file based on file requested or return a 404 error when no file found
+    if file == 'template':
+        template = os.path.join(download_folder, template_name,
+                                template_name + '-updated.audit')
+        if not os.path.isfile(template):
+            abort(404)
+        return send_file(template, as_attachment=True)
+
+    abort(404)
 
 
 # Error handlers
 @app.errorhandler(400)
 def bad_request(e):
-    return render_template('400.html'), 400  # Bad Request
+    return render_template('errors/400.html'), 400  # Bad Request
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404,  # Page Not Found
+    return render_template('errors/404.html'), 404,  # Page Not Found
 
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('500.html'), 500  # Internal Server Error
+    return render_template('errors/500.html'), 500  # Internal Server Error
 
 
 # main driver function
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

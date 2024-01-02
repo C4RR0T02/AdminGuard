@@ -6,7 +6,7 @@
         <link rel="icon" type="image/x-icon" href="/static/img/AdminGuard.ico">
         <script src="/static/bootstrap/js/bootstrap.min.js"></script>
         <script>
-          function submitForm() {
+          function submitScriptForm() {
             const formData = new FormData();
             const fragments = {};
             let vuln_id = '';
@@ -143,7 +143,7 @@
                 </div>
               {% endfor %}
               <div class="d-flex justify-content-center my-5">
-                <button class="btn btn-primary" id="get-form-data" onclick="submitForm()">Generate Script</button>
+                <button class="btn btn-primary" id="get-form-data" onclick="submitScriptForm()">Generate Script</button>
               </div>
             </form>
         </div>
