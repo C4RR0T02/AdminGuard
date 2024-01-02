@@ -35,7 +35,7 @@ if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
 
 download_folder = os.path.join(path, 'app', 'out-files')
 if not os.path.isdir(download_folder):
-    os.mkdirs(download_folder)
+    os.mkdir(download_folder)
 
 # Set app config
 app.config['upload_folder'] = upload_folder
