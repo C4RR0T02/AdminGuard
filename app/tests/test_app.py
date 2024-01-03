@@ -496,7 +496,119 @@ def test_template_fields_post_windows(client):
             assert response.status_code == 200
 
 
+def test_template_download_get_page_linux(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+    with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
+    response = client.post('/template-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.post(new_url)
+        if response.status_code == 302:
+            new_url = response.headers['Location']
+            response = client.get(new_url)
+            assert response.status_code == 200
+            assert b'''<h1 class="text-center my-3 mx-auto">Download Scripts for test_linux_template_1</h1>''' in response.data
 
+
+def test_template_download_get_page_windows(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
+    response = client.post('/template-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.post(new_url)
+        if response.status_code == 302:
+            new_url = response.headers['Location']
+            response = client.get(new_url)
+            assert response.status_code == 200
+            assert b'''<h1 class="text-center my-3 mx-auto">Download Scripts for test_windows_template_1</h1>''' in response.data
+
+
+def test_template_download_file_linux(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+    with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
+    response = client.post('/template-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.post(new_url)
+        if response.status_code == 302:
+            new_url = response.headers['Location']
+            response = client.get(new_url)
+            if response.status_code == 200:
+                template_url = '/script-generate/test_linux_template_1/download/template'
+                response = client.get(template_url)
+                assert response.status_code == 200
+
+
+
+def test_template_download_file_windows(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
+    response = client.post('/template-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.post(new_url)
+        if response.status_code == 302:
+            new_url = response.headers['Location']
+            response = client.get(new_url)
+            if response.status_code == 200:
+                template_url = '/template-generate/test_windows_2/download/template'
+                response = client.get(template_url)
+                assert response.status_code == 200
+
+
+def test_template_download_invalid_file_template(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_template_2.audit',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_2.audit'))
+    with open('app/tests/testFiles/test_linux_template_2.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_linux_template_2.audit')
+    response = client.post('/template-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.post(new_url)
+        if response.status_code == 302:
+            new_url = response.headers['Location']
+            response = client.get(new_url)
+            if response.status_code == 200:
+                os.remove(
+                    os.path.join(app.config['download_folder'], 'test_linux_template_2',
+                                 'test_linux_template_2-updated.audit'))
+                template_url = '/template-generate/test_linux_template_2/download/template'
+                response = client.get(template_url)
+                assert response.status_code == 404
 
 
 def test_remove_files():
