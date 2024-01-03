@@ -1,8 +1,21 @@
 import os
 import shutil
-from ..app import *
+from app.script.stig_script_gen import *
 
 root_dir = os.getcwd()
+
+# Create upload and download folders if they don't exist
+upload_folder = os.path.join(root_dir, 'app', 'uploads')
+if not os.path.isdir(upload_folder):
+    os.mkdir(upload_folder)
+if not os.path.isdir(os.path.join(upload_folder, 'stig')):
+    os.mkdir(os.path.join(upload_folder, 'stig'))
+if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
+    os.mkdir(os.path.join(upload_folder, 'vatemplate'))
+
+download_folder = os.path.join(root_dir, 'app', 'out-files')
+if not os.path.isdir(download_folder):
+    os.mkdir(download_folder)
 
 
 def compare_files(file1, file2):
@@ -124,7 +137,7 @@ If unapproved shared accounts exist, this is a finding.'''
 
 def test_linux_script():
     shutil.copyfile("app/tests/testFiles/test_linux_2.xml",
-                    "app/uploads/test_linux_2.xml")
+                    "app/uploads/stig/test_linux_2.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_2.xml", "Linux")
     vuln_id_list = ["V-230341", "V-230222", "V-230327", "V-230309"]
     linuxCreateScript(guide, vuln_id_list)
@@ -153,7 +166,7 @@ def test_linux_script():
 
 def test_linux_script_empty():
     shutil.copyfile("app/tests/testFiles/test_linux_3.xml",
-                    "app/uploads/test_linux_3.xml")
+                    "app/uploads/stig/test_linux_3.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_3.xml", "Linux")
     vuln_id_list = []
     linuxCreateScript(guide, vuln_id_list)
@@ -182,7 +195,7 @@ def test_linux_script_empty():
 
 def test_windows_script():
     shutil.copyfile("app/tests/testFiles/test_windows_2.xml",
-                    "app/uploads/test_windows_2.xml")
+                    "app/uploads/stig/test_windows_2.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_2.xml", "Windows")
     vuln_id_list = ["V-254239", "V-254243", "V-254244"]
     windowsCreateScript(guide, vuln_id_list)
@@ -215,7 +228,7 @@ def test_windows_script():
 
 def test_windows_script_empty():
     shutil.copyfile("app/tests/testFiles/test_windows_3.xml",
-                    "app/uploads/test_windows_3.xml")
+                    "app/uploads/stig/test_windows_3.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_3.xml", "Windows")
     vuln_id_list = []
     windowsCreateScript(guide, vuln_id_list)
@@ -248,7 +261,7 @@ def test_windows_script_empty():
 
 def test_linux_generate_xml():
     shutil.copyfile("app/tests/testFiles/test_linux_2.xml",
-                    "app/uploads/test_linux_2.xml")
+                    "app/uploads/stig/test_linux_2.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_2.xml", "Linux")
 
     guide.stig_rule_dict["V-230341"].rule_title = "A"
@@ -277,7 +290,7 @@ def test_linux_generate_xml():
 
 def test_windows_generate_xml():
     shutil.copyfile("app/tests/testFiles/test_windows_2.xml",
-                    "app/uploads/test_windows_2.xml")
+                    "app/uploads/stig/test_windows_2.xml")
     guide = parseGuide("app/tests/testFiles/test_windows_2.xml", "Windows")
 
     guide.stig_rule_dict["V-254239"].rule_title = "A"
@@ -301,7 +314,7 @@ def test_windows_generate_xml():
 
 def test_linux_zip_file_generate():
     shutil.copyfile("app/tests/testFiles/test_linux_4.xml",
-                    "app/uploads/test_linux_4.xml")
+                    "app/uploads/stig/test_linux_4.xml")
     guide = parseGuide("app/tests/testFiles/test_linux_4.xml", "Linux")
     vuln_id_list = []
 
@@ -357,9 +370,9 @@ def test_remove_files():
     for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
         if folder.startswith("test"):
             shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
-    for file in os.listdir(os.path.join(root_dir, "app", "uploads")):
+    for file in os.listdir(os.path.join(root_dir, "app", "uploads", "stig")):
         if file.startswith("test"):
-            os.remove(os.path.join(root_dir, "app", "uploads", file))
+            os.remove(os.path.join(root_dir, "app", "uploads", "stig", file))
     for folder in os.listdir(os.path.join(root_dir, "app", "out-files",
                                           "zip")):
         if folder.startswith("test"):
