@@ -33,7 +33,7 @@ def test_get_script_generate_page(client):
 def test_post_script_generate_page_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_1.xml',
-        os.path.join(app.config['upload_folder'], 'test_linux_1.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_linux_1.xml'))
     with open('app/tests/testFiles/test_linux_1.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_1.xml')
     response = client.post('/script-generate',
@@ -51,7 +51,7 @@ def test_post_script_generate_page_linux(client):
 def test_post_script_generate_page_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_1.xml',
-        os.path.join(app.config['upload_folder'], 'test_windows_1.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_1.xml'))
     with open('app/tests/testFiles/test_windows_1.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_1.xml')
     response = client.post('/script-generate',
@@ -68,7 +68,7 @@ def test_post_script_generate_page_windows(client):
 
 def test_post_script_generate_page_invalid(client):
     shutil.copyfile('app/tests/testFiles/test.yaml',
-                    os.path.join(app.config['upload_folder'], 'test.yaml'))
+                    os.path.join(app.config['upload_folder'], 'stig', 'test.yaml'))
     with open('app/tests/testFiles/test.yaml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test.yaml')
     response = client.post('/script-generate',
@@ -82,7 +82,7 @@ def test_post_script_generate_page_invalid(client):
 def test_script_fields_get_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
     response = client.post('/script-generate',
@@ -100,7 +100,7 @@ def test_script_fields_get_linux(client):
 def test_script_fields_get_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -118,7 +118,7 @@ def test_script_fields_get_windows(client):
 def test_script_fields_get_invalid(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -135,7 +135,7 @@ def test_script_fields_get_invalid(client):
 def test_script_fields_post_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
     response = client.post('/script-generate',
@@ -155,7 +155,7 @@ def test_script_fields_post_linux(client):
 def test_script_fields_post_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -175,7 +175,7 @@ def test_script_fields_post_windows(client):
 def test_script_download_get_page_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
     response = client.post('/script-generate',
@@ -196,7 +196,7 @@ def test_script_download_get_page_linux(client):
 def test_script_download_get_page_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -217,7 +217,7 @@ def test_script_download_get_page_windows(client):
 def test_script_download_file_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_linux_2.xml'))
     with open('app/tests/testFiles/test_linux_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_2.xml')
     response = client.post('/script-generate',
@@ -255,7 +255,7 @@ def test_script_download_file_linux(client):
 def test_script_download_file_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -293,7 +293,7 @@ def test_script_download_file_windows(client):
 def test_download_invalid_file_script(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_4.xml',
-        os.path.join(app.config['upload_folder'], 'test_linux_4.xml'))
+        os.path.join(app.config['upload_folder'], 'stig', 'test_linux_4.xml'))
     with open('app/tests/testFiles/test_linux_4.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_4.xml')
     response = client.post('/script-generate',
@@ -356,10 +356,11 @@ def test_get_template_generate_page(client):
 def test_post_template_generate_page_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'test_linux_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+    print(os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
     with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
-    response = client.post('/script-generate',
+    response = client.post('/template-generate',
                            data={
                                'guide_type': 'Linux',
                                'file': uploaded_file
@@ -374,10 +375,10 @@ def test_post_template_generate_page_linux(client):
 def test_post_template_generate_page_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'test_windows_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
     with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
-    response = client.post('/script-generate',
+    response = client.post('/template-generate',
                            data={
                                'guide_type': 'Windows',
                                'file': uploaded_file
@@ -391,10 +392,10 @@ def test_post_template_generate_page_windows(client):
 
 def test_post_template_generate_page_invalid(client):
     shutil.copyfile('app/tests/testFiles/test.yaml',
-                    os.path.join(app.config['upload_folder'], 'test.yaml'))
+                    os.path.join(app.config['upload_folder'], 'vatemplate', 'test.yaml'))
     with open('app/tests/testFiles/test.yaml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test.yaml')
-    response = client.post('/script-generate',
+    response = client.post('/template-generate',
                            data={
                                'guide_type': 'Linux',
                                'file': uploaded_file
@@ -405,10 +406,10 @@ def test_post_template_generate_page_invalid(client):
 def test_template_fields_get_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'test_linux_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
     with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
-    response = client.post('/script-generate',
+    response = client.post('/template-generate',
                            data={
                                'guide_type': 'Linux',
                                'file': uploaded_file
@@ -423,10 +424,10 @@ def test_template_fields_get_linux(client):
 def test_template_fields_get_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'test_windows_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
     with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
-    response = client.post('/script-generate',
+    response = client.post('/template-generate',
                            data={
                                'guide_type': 'Windows',
                                'file': uploaded_file
@@ -441,10 +442,10 @@ def test_template_fields_get_windows(client):
 def test_template_fields_get_invalid(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'test_windows_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
     with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
-    response = client.post('/script-generate',
+    response = client.post('/template-generate',
                            data={
                                'guide_type': 'Windows',
                                'file': uploaded_file
@@ -455,6 +456,46 @@ def test_template_fields_get_invalid(client):
         assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-230221" aria-expanded="true" aria-controls="collapse-V-230221">''' not in response.data
 
 
+def test_template_fields_post_linux(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+    with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
+    response = client.post('/template-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.post(new_url)
+        if response.status_code == 302:
+            new_url = response.headers['Location']
+            response = client.get(new_url)
+            assert response.status_code == 200
+
+
+def test_template_fields_post_windows(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
+    response = client.post('/template-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.post(new_url)
+        if response.status_code == 302:
+            new_url = response.headers['Location']
+            response = client.get(new_url)
+            assert response.status_code == 200
+
+
 
 
 
@@ -462,6 +503,9 @@ def test_remove_files():
     for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
         if folder.startswith("test"):
             shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
-    for file in os.listdir(os.path.join(root_dir, "app", "uploads")):
+    for file in os.listdir(os.path.join(root_dir, "app", "uploads", "stig")):
         if file.startswith("test"):
-            os.remove(os.path.join(root_dir, "app", "uploads", file))
+            os.remove(os.path.join(root_dir, "app", "uploads", "stig", file))
+    for file in os.listdir(os.path.join(root_dir, "app", "uploads", "vatemplate")):
+        if file.startswith("test"):
+            os.remove(os.path.join(root_dir, "app", "uploads", "vatemplate", file))
