@@ -14,11 +14,15 @@ def client():
     yield client
 
 
+# Flask app tests for home page
+
 def test_get_home_page(client):
     response = client.get('/')
     assert response.status_code == 200
     assert b'Strengthening OS Security from Within' in response.data
 
+
+# Flask app tests for script generation
 
 def test_get_script_generate_page(client):
     response = client.get('/script-generate')
@@ -52,7 +56,7 @@ def test_post_script_generate_page_windows(client):
         uploaded_file = (BytesIO(file.read()), 'test_windows_1.xml')
     response = client.post('/script-generate',
                            data={
-                               'guide_type': 'Linux',
+                               'guide_type': 'Windows',
                                'file': uploaded_file
                            })
     if response.status_code == 302:
@@ -89,6 +93,7 @@ def test_script_fields_get_linux(client):
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
+        assert response.status_code == 200
         assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-230222" aria-expanded="true" aria-controls="collapse-V-230222">''' in response.data
 
 
@@ -106,6 +111,7 @@ def test_script_fields_get_windows(client):
     if response.status_code == 302:
         new_url = response.headers['Location']
         response = client.get(new_url)
+        assert response.status_code == 200
         assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-254239" aria-expanded="true" aria-controls="collapse-V-254239">''' in response.data
 
 
@@ -208,7 +214,7 @@ def test_script_download_get_page_windows(client):
             assert b'''<h1 class="text-center my-3 mx-auto">Download Scripts for test_windows_2</h1>''' in response.data
 
 
-def test_download_file_linux(client):
+def test_script_download_file_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_2.xml',
         os.path.join(app.config['upload_folder'], 'test_linux_2.xml'))
@@ -246,7 +252,7 @@ def test_download_file_linux(client):
                 assert response.status_code == 200
 
 
-def test_download_file_windows(client):
+def test_script_download_file_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
         os.path.join(app.config['upload_folder'], 'test_windows_2.xml'))
@@ -284,7 +290,7 @@ def test_download_file_windows(client):
                 assert response.status_code == 200
 
 
-def test_download_invalid_file(client):
+def test_download_invalid_file_script(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_4.xml',
         os.path.join(app.config['upload_folder'], 'test_linux_4.xml'))
@@ -340,6 +346,118 @@ def test_download_invalid_file(client):
                 assert response.status_code == 404
 
 
+# Flask app tests for template generation
+
+def test_get_template_generate_page(client):
+    response = client.get('/template-generate')
+    assert response.status_code == 200
+    assert b'Upload DISA Audit File' in response.data
+
+def test_post_template_generate_page_linux(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'test_linux_template_1.audit'))
+    with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.get(new_url)
+        assert response.status_code == 200
+        assert b'<h1 class="text-center mb-5">Customize DISA Audit file</h1>' in response.data
+
+
+def test_post_template_generate_page_windows(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.get(new_url)
+        assert response.status_code == 200
+        assert b'<h1 class="text-center mb-5">Customize DISA Audit file</h1>' in response.data
+
+
+def test_post_template_generate_page_invalid(client):
+    shutil.copyfile('app/tests/testFiles/test.yaml',
+                    os.path.join(app.config['upload_folder'], 'test.yaml'))
+    with open('app/tests/testFiles/test.yaml', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test.yaml')
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
+    assert response.status_code == 400
+
+
+def test_template_fields_get_linux(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_linux_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'test_linux_template_1.audit'))
+    with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Linux',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.get(new_url)
+        assert response.status_code == 200
+        assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-230221" aria-expanded="true" aria-controls="collapse-V-230221">''' in response.data
+
+
+def test_template_fields_get_windows(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.get(new_url)
+        assert response.status_code == 200
+        assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-254239" aria-expanded="true" aria-controls="collapse-V-254239">''' in response.data
+
+
+def test_template_fields_get_invalid(client):
+    shutil.copyfile(
+        'app/tests/testFiles/test_windows_template_1.audit',
+        os.path.join(app.config['upload_folder'], 'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
+    response = client.post('/script-generate',
+                           data={
+                               'guide_type': 'Windows',
+                               'file': uploaded_file
+                           })
+    if response.status_code == 302:
+        new_url = response.headers['Location']
+        response = client.get(new_url)
+        assert b'''<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-V-230221" aria-expanded="true" aria-controls="collapse-V-230221">''' not in response.data
+
+
+
+
+
 def test_remove_files():
     for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
         if folder.startswith("test"):
@@ -347,9 +465,3 @@ def test_remove_files():
     for file in os.listdir(os.path.join(root_dir, "app", "uploads")):
         if file.startswith("test"):
             os.remove(os.path.join(root_dir, "app", "uploads", file))
-
-
-def test_get_template_generate_page(client):
-    response = client.get('/template-generate')
-    assert response.status_code == 200
-    assert b'Vulnerability Scanner Template Generator' in response.data
