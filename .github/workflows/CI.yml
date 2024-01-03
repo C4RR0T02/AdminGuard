@@ -37,3 +37,4 @@ jobs:
       run: |
         python -m pytest app/tests/test_app.py -vs
         python -m pytest app/tests/test_stig_script_gen.py -vs
+        python -m pytest app/tests/test_template_gen.py -vs
