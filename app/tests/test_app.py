@@ -16,6 +16,7 @@ def client():
 
 # Flask app tests for home page
 
+
 def test_get_home_page(client):
     response = client.get('/')
     assert response.status_code == 200
@@ -23,6 +24,7 @@ def test_get_home_page(client):
 
 
 # Flask app tests for script generation
+
 
 def test_get_script_generate_page(client):
     response = client.get('/script-generate')
@@ -51,7 +53,8 @@ def test_post_script_generate_page_linux(client):
 def test_post_script_generate_page_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_1.xml',
-        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_1.xml'))
+        os.path.join(app.config['upload_folder'], 'stig',
+                     'test_windows_1.xml'))
     with open('app/tests/testFiles/test_windows_1.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_1.xml')
     response = client.post('/script-generate',
@@ -67,8 +70,9 @@ def test_post_script_generate_page_windows(client):
 
 
 def test_post_script_generate_page_invalid(client):
-    shutil.copyfile('app/tests/testFiles/test.yaml',
-                    os.path.join(app.config['upload_folder'], 'stig', 'test.yaml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test.yaml',
+        os.path.join(app.config['upload_folder'], 'stig', 'test.yaml'))
     with open('app/tests/testFiles/test.yaml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test.yaml')
     response = client.post('/script-generate',
@@ -100,7 +104,8 @@ def test_script_fields_get_linux(client):
 def test_script_fields_get_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig',
+                     'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -118,7 +123,8 @@ def test_script_fields_get_windows(client):
 def test_script_fields_get_invalid(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig',
+                     'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -155,7 +161,8 @@ def test_script_fields_post_linux(client):
 def test_script_fields_post_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig',
+                     'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -196,7 +203,8 @@ def test_script_download_get_page_linux(client):
 def test_script_download_get_page_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig',
+                     'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -255,7 +263,8 @@ def test_script_download_file_linux(client):
 def test_script_download_file_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_2.xml',
-        os.path.join(app.config['upload_folder'], 'stig', 'test_windows_2.xml'))
+        os.path.join(app.config['upload_folder'], 'stig',
+                     'test_windows_2.xml'))
     with open('app/tests/testFiles/test_windows_2.xml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_2.xml')
     response = client.post('/script-generate',
@@ -348,16 +357,21 @@ def test_download_invalid_file_script(client):
 
 # Flask app tests for template generation
 
+
 def test_get_template_generate_page(client):
     response = client.get('/template-generate')
     assert response.status_code == 200
     assert b'Upload DISA Audit File' in response.data
 
+
 def test_post_template_generate_page_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
-    print(os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_linux_template_1.audit'))
+    print(
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_linux_template_1.audit'))
     with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
     response = client.post('/template-generate',
@@ -375,8 +389,10 @@ def test_post_template_generate_page_linux(client):
 def test_post_template_generate_page_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
-    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit',
+              'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
     response = client.post('/template-generate',
                            data={
@@ -391,8 +407,9 @@ def test_post_template_generate_page_windows(client):
 
 
 def test_post_template_generate_page_invalid(client):
-    shutil.copyfile('app/tests/testFiles/test.yaml',
-                    os.path.join(app.config['upload_folder'], 'vatemplate', 'test.yaml'))
+    shutil.copyfile(
+        'app/tests/testFiles/test.yaml',
+        os.path.join(app.config['upload_folder'], 'vatemplate', 'test.yaml'))
     with open('app/tests/testFiles/test.yaml', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test.yaml')
     response = client.post('/template-generate',
@@ -406,7 +423,8 @@ def test_post_template_generate_page_invalid(client):
 def test_template_fields_get_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_linux_template_1.audit'))
     with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
     response = client.post('/template-generate',
@@ -424,8 +442,10 @@ def test_template_fields_get_linux(client):
 def test_template_fields_get_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
-    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit',
+              'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
     response = client.post('/template-generate',
                            data={
@@ -442,8 +462,10 @@ def test_template_fields_get_windows(client):
 def test_template_fields_get_invalid(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
-    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit',
+              'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
     response = client.post('/template-generate',
                            data={
@@ -459,7 +481,8 @@ def test_template_fields_get_invalid(client):
 def test_template_fields_post_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_linux_template_1.audit'))
     with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
     response = client.post('/template-generate',
@@ -479,8 +502,10 @@ def test_template_fields_post_linux(client):
 def test_template_fields_post_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
-    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit',
+              'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
     response = client.post('/template-generate',
                            data={
@@ -499,7 +524,8 @@ def test_template_fields_post_windows(client):
 def test_template_download_get_page_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_linux_template_1.audit'))
     with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
     response = client.post('/template-generate',
@@ -520,8 +546,10 @@ def test_template_download_get_page_linux(client):
 def test_template_download_get_page_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
-    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit',
+              'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
     response = client.post('/template-generate',
                            data={
@@ -541,7 +569,8 @@ def test_template_download_get_page_windows(client):
 def test_template_download_file_linux(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_1.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_linux_template_1.audit'))
     with open('app/tests/testFiles/test_linux_template_1.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_1.audit')
     response = client.post('/template-generate',
@@ -561,12 +590,13 @@ def test_template_download_file_linux(client):
                 assert response.status_code == 200
 
 
-
 def test_template_download_file_windows(client):
     shutil.copyfile(
         'app/tests/testFiles/test_windows_template_1.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_windows_template_1.audit'))
-    with open('app/tests/testFiles/test_windows_template_1.audit', 'rb') as file:
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_windows_template_1.audit'))
+    with open('app/tests/testFiles/test_windows_template_1.audit',
+              'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_windows_template_1.audit')
     response = client.post('/template-generate',
                            data={
@@ -588,7 +618,8 @@ def test_template_download_file_windows(client):
 def test_template_download_invalid_file_template(client):
     shutil.copyfile(
         'app/tests/testFiles/test_linux_template_2.audit',
-        os.path.join(app.config['upload_folder'], 'vatemplate', 'test_linux_template_2.audit'))
+        os.path.join(app.config['upload_folder'], 'vatemplate',
+                     'test_linux_template_2.audit'))
     with open('app/tests/testFiles/test_linux_template_2.audit', 'rb') as file:
         uploaded_file = (BytesIO(file.read()), 'test_linux_template_2.audit')
     response = client.post('/template-generate',
@@ -604,7 +635,8 @@ def test_template_download_invalid_file_template(client):
             response = client.get(new_url)
             if response.status_code == 200:
                 os.remove(
-                    os.path.join(app.config['download_folder'], 'test_linux_template_2',
+                    os.path.join(app.config['download_folder'],
+                                 'test_linux_template_2',
                                  'test_linux_template_2-updated.audit'))
                 template_url = '/template-generate/test_linux_template_2/download/template'
                 response = client.get(template_url)
@@ -618,6 +650,8 @@ def test_remove_files():
     for file in os.listdir(os.path.join(root_dir, "app", "uploads", "stig")):
         if file.startswith("test"):
             os.remove(os.path.join(root_dir, "app", "uploads", "stig", file))
-    for file in os.listdir(os.path.join(root_dir, "app", "uploads", "vatemplate")):
+    for file in os.listdir(
+            os.path.join(root_dir, "app", "uploads", "vatemplate")):
         if file.startswith("test"):
-            os.remove(os.path.join(root_dir, "app", "uploads", "vatemplate", file))
+            os.remove(
+                os.path.join(root_dir, "app", "uploads", "vatemplate", file))
