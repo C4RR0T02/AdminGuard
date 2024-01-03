@@ -174,18 +174,6 @@ class StigRule:
         return f"{str(self.rule_name)} - {str(self.rule_title)} - {str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_weight)} - {str(self.rule_severity)} - {str(self.stig_id)} - {str(self.rule_fix_text)} - {str(self.rule_description)} - {str(self.check_content)} - {str(self.category_score)}"
 
 
-class RuleInput:
-
-    def __init__(self, vuln_id: str, check_replacement: str,
-                 fix_replacement: str):
-        self.vuln_id = vuln_id
-        self.check_replacement = check_replacement
-        self.fix_replacement = fix_replacement
-
-    def __str__(self) -> str:
-        return f"{str(self.vuln_id)} - {str(self.check_replacement)} - {str(self.fix_replacement)}"
-
-
 def getPowerShellCommands():
     filepath = os.path.join(root_dir, 'app', 'script',
                             'powershell_commands.txt')

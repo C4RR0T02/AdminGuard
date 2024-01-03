@@ -39,16 +39,6 @@ class RuleItems:
         return f"{str(self.dictionary_fields)}"
 
 
-class RuleTemplateInput:
-
-    def __init__(self, vuln_id: str, replacement: dict):
-        self.vuln_id = vuln_id
-        self.replacement = replacement
-
-    def __str__(self) -> str:
-        return f"{self.vuln_id} : {self.replacement}"
-
-
 def parseTemplate(template_name: str, template_type: str):
 
     audit_file = NessusAudit(template_name)
