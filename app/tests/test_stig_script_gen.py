@@ -373,6 +373,8 @@ def test_remove_files():
     for file in os.listdir(os.path.join(root_dir, "app", "uploads", "stig")):
         if file.startswith("test"):
             os.remove(os.path.join(root_dir, "app", "uploads", "stig", file))
-    for folder in os.listdir(os.path.join(root_dir, "app", "out-files", "zip")):
+    for folder in os.listdir(os.path.join(root_dir, "app", "out-files",
+                                          "zip")):
         if folder.startswith("test"):
-            shutil.rmtree(os.path.join(root_dir, "app", "out-files", "zip", folder))
+            shutil.rmtree(
+                os.path.join(root_dir, "app", "out-files", "zip", folder))

@@ -104,20 +104,30 @@ def test_linux_generate_template():
     template_name = os.path.join(root_dir, "app", "uploads", "vatemplate",
                                  "test_linux_template_1.audit")
     template = parseTemplate(template_name, "Linux")
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["system"] = "TEST"
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["type"] = "TEST"
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["description"] = "TEST"
-    template.template_rule_dict[0]["V-245540"].dictionary_fields.dictionary_fields["info"] = "TEST"
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["solution"] = "TEST"
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["see_also"] = "TEST"
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["file"] = "TEST"
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["regex"] = "TEST"
-    template.template_rule_dict[0]["V-230221"].dictionary_fields.dictionary_fields["expect"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["system"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["type"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["description"] = "TEST"
+    template.template_rule_dict[0][
+        "V-245540"].dictionary_fields.dictionary_fields["info"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["solution"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["see_also"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["file"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["regex"] = "TEST"
+    template.template_rule_dict[0][
+        "V-230221"].dictionary_fields.dictionary_fields["expect"] = "TEST"
     gen_template(template)
     compare_files(
         os.path.join(root_dir, "app", "out-files", "test_linux_template_1",
                      "test_linux_template_1-updated.audit"),
-        os.path.join(root_dir, "app", "tests", "testFiles", "check", "test_linux_template_1", 
+        os.path.join(root_dir, "app", "tests", "testFiles", "check",
+                     "test_linux_template_1",
                      "test_linux_template_1-updated.audit"))
 
 
@@ -127,19 +137,29 @@ def test_windows_generate_template():
     template_name = os.path.join(root_dir, "app", "uploads", "vatemplate",
                                  "test_windows_template_1.audit")
     template = parseTemplate(template_name, "Windows")
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["type"] = "TEST"
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["description"] = "TEST"
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["info"] = "TEST"
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["solution"] = "TEST"
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["see_also"] = "TEST"
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["value_type"] = "TEST"
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["value_data"] = "TEST"
-    template.template_rule_dict[0]["V-254239"].dictionary_fields.dictionary_fields["powershell_args"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields["type"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields["description"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields["info"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields["solution"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields["see_also"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields["value_type"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields["value_data"] = "TEST"
+    template.template_rule_dict[0][
+        "V-254239"].dictionary_fields.dictionary_fields[
+            "powershell_args"] = "TEST"
     gen_template(template)
     compare_files(
         os.path.join(root_dir, "app", "out-files", "test_windows_template_1",
                      "test_windows_template_1-updated.audit"),
-        os.path.join(root_dir, "app", "tests", "testFiles", "check", "test_windows_template_1", 
+        os.path.join(root_dir, "app", "tests", "testFiles", "check",
+                     "test_windows_template_1",
                      "test_windows_template_1-updated.audit"))
 
 
