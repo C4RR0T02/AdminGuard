@@ -4,6 +4,18 @@ from ..app import *
 
 root_dir = os.getcwd()
 
+# Create upload and download folders if they don't exist
+upload_folder = os.path.join(root_dir, 'app', 'uploads')
+if not os.path.isdir(upload_folder):
+    os.mkdir(upload_folder)
+if not os.path.isdir(os.path.join(upload_folder, 'stig')):
+    os.mkdir(os.path.join(upload_folder, 'stig'))
+if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
+    os.mkdir(os.path.join(upload_folder, 'vatemplate'))
+
+download_folder = os.path.join(root_dir, 'app', 'out-files')
+if not os.path.isdir(download_folder):
+    os.mkdir(download_folder)
 
 def compare_files(file1, file2):
     with open(file1, "r") as f:
