@@ -1,0 +1,249 @@
+#TRUSTED 9a8af045897f440b14995b80f5cfd7e9af305381281785e8e0e755599ce2902b4899a114855d279c291cef52105301114fcea50f417dbbf504fef6229e6bed855b0bf54cbf21066be878279564b2744298dd5d8326b3cff2724c27fc0268b9551c020081d4f42dba2d63e1fec8b7fe90b76a899c20e3da6146592b894366ec4416ec5aedbf0176969c55ce08cfc7777b744c631a19440ff73b8266f5d58062c7b43f36da55546a1fd91b72af0541262540def32ead3aacf2c69459f18e247b3615cf1ec7832867705d933504867451e56dd9793f1f174f550ab8da2f035e54e0496ee8da6d28aa0031c1f3bd004870e35ddc5590136a716d75b890d5fd27ccd7565a9219aa2c5ff9c0d767f10e65d4989db4bbe2e2ab57f90952693569c4531470c6bbcb08144d70b3da48ac861b3d74ead30363049202693b6d190bec711966eb98d402dc7e6c446b3015d8df2352764d1e8d58f91070ceda81e26afe43e29a10e15823b3ac6460ca6380dac9cb684fc0d876f79cdcb3c736b0551c1106c10ce8c36315e7b3d0d329f9ee951fd7080bc99c54789ae72c6b39f8c38dd28509f9dec6c198a59144d2215729affb44ff378269a196308bcef31cbcbba63a6b1c4489b6182a66e4fb5028d441aa0a1dd6b1bbba7ef20f6eb0d1f005b8cf359940ced07ab0d6410dbdb4a8f3ca43a579f6c9d8984f5b74b5cc01cbbd821b04a95a67
+#TRUST-RSA-SHA256 9ab91fc5b6c06a4e4a96d3a2e3af93a6c4322b39706a2937bb218152089e726e132a14bdc48071feff88ae0e9bd492082ed31fdda96ca44cb8ca7b42bb99c11d7f5cd965f4e7d01912ac5522f83a922e9b6d10ce8b2645fd354f480d2cebfdef38f2a293dc77b6e8f4774faef042e7b1841605aa2699d17af742a3085fa521852751a5737a26d4516af20ce9b286953d2e8fb6fe9ab6c3fb2d352fd5a8bdcc6df4e5675078eb48264a7366a8bc88d5ff1122b0dff9a624bc2de1ec9dc193c344e48d5a4aed42d3ce7d1aaa07912118ebdb7097c4607660374fd9f36c18297bf36321e6a8a6820cfec3e81dd593e5ce5cecd6f45ed4d2dbaab3639cf709dba318084d3278bac9d0099fc59b7d5cc16fc4a1a950fb0ff9214e2a2b442b4be1c19d4b7615fe3e9d334a12757b248e2c76372cadc78b8074a62f146aa6d43bd4c90d8be99db8953b29540ab2e4d5f4a1db08d0c53ce37cbbeccf43e4e688fd966164ee135d13117a4d3d6fcdeb34391ad0cb4b973ed3bb0bdfeba9a96609502f75c4a82adcbe451e4f7c4e887444b53273d6d3ec316881469515020ad14c169cc584e1adb38ed107e5f0060fc54819538a6d5687a2c9ae46698ad1268102b74eb949e6d55f6be13e16698dbd44e17e3e8f5232e2818998d9d659f910c21e9e890341a865d1cdeda6cc142f0817b73df4bc8125950dfbeffad6d13ca88ce821de4a2c
+#
+# This script is Copyright (C) 2004-2023 and is owned by Tenable, Inc. or an Affiliate thereof.
+#
+# This script is released under the Tenable Subscription License and
+# may not be used from within scripts released under another license
+# without authorization from Tenable, Inc.
+#
+# See the following licenses for details:
+#
+# http://static.tenable.com/prod_docs/Nessus_6_SLA_and_Subscription_Agreement.pdf
+#
+# @PROFESSIONALFEED@
+# $Revision: 1.0 $
+# $Date: 2023/09/06 $
+#
+# Description : This document implements the security configuration as recommended by the
+#               DISA Red Hat Enterprise Linux 8 v1r11 STIG.
+#
+#<ui_metadata>
+#<display_name>DISA Red Hat Enterprise Linux 8 STIG v1r11</display_name>
+#<spec>
+#  <type>DISA STIG</type>
+#  <name>Red Hat Enterprise Linux 8</name>
+#  <version>1.11.0</version>
+#  <link>https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R11_STIG.zip</link>
+#</spec>
+#<labels>unix,disa,rhel_centos_linux_8,agent</labels>
+#<benchmark_refs>CAT,CCI,Rule-ID,STIG-ID,Vuln-ID,Group-ID,STIG-Legacy,CCE,DISA_Benchmark</benchmark_refs>
+#<variables>
+#  <variable>
+#    <name>PLATFORM_VERSION</name>
+#    <default>8</default>
+#    <description>Linux Distribution Version</description>
+#    <info>Linux Distribution Version</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>BOOT_AUTH_SUPERUSERS</name>
+#    <default>root</default>
+#    <description>Boot Auth Superusers</description>
+#    <info>Unique account name of the boot authentication superusers.</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>AUDIT_LOG_PATH</name>
+#    <default>/var/log/audit</default>
+#    <description>Path to auditd log files</description>
+#    <info>The path where auditd log files are stored. Default is /var/log/audit.</info>
+#    <value_type>UNIX_FILE_PATH</value_type>
+#  </variable>
+#  <variable>
+#    <name>ACTION_MAIL_ACCT</name>
+#    <default>root</default>
+#    <description>auditd action mail account</description>
+#    <info>The account to alert for repository maximum audit storage capacity.</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>REMOTE_AUDIT_LOG_SERVER</name>
+#    <default>10.0.21.1</default>
+#    <description>Remote audit log server</description>
+#    <info>The IP address or FQDN of the central log server for as it appears in /etc/audisp/audisp-remote.conf.</info>
+#    <value_type>HOSTNAME_IP_ADDRESS</value_type>
+#  </variable>
+#  <variable>
+#    <name>SSH_BANNER_FILE</name>
+#    <default>/etc/issue</default>
+#    <description>Banner file used in /etc/ssh/sshd_config</description>
+#    <info>Banner file used in /etc/ssh/sshd_config</info>
+#    <value_type>UNIX_FILE_PATH</value_type>
+#  </variable>
+#  <variable>
+#    <name>GDM_BANNER_FILE</name>
+#    <default>/etc/dconf/db/local.d/01-banner-message</default>
+#    <description>Location of the GDM Banner Configuration</description>
+#    <info>Location of the GDM Banner Configuration</info>
+#    <value_type>UNIX_FILE_PATH</value_type>
+#  </variable>
+#  <variable>
+#    <name>BANNER_TEXT</name>
+#    <default>You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.\nBy using this IS (which includes any device attached to this IS), you consent to the following conditions:\n-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.\n-At any time, the USG may inspect and seize data stored on this IS.\n-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.\n-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.\n-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.</default>
+#    <description>Banner File Text</description>
+#    <info>Banner File Text</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>AIDE_CONF</name>
+#    <default>/etc/aide.conf</default>
+#    <description>AIDE Configuration File</description>
+#    <info>Full path to the aide.conf file.</info>
+#    <value_type>UNIX_FILE_PATH</value_type>
+#  </variable>
+#  <variable>
+#    <name>AUDIT_LOG_DIR</name>
+#    <default>/var/log/audit/</default>
+#    <description>Audit Log Directory</description>
+#    <info>The audit log directory as defined in /etc/audit/auditd.conf</info>
+#    <value_type>UNIX_FILE_PATH</value_type>
+#  </variable>
+#  <variable>
+#    <name>FAILLOCK_AUDIT_LOG_FILE</name>
+#    <default>/var/log/faillock</default>
+#    <description>Faillock Audit Log File</description>
+#    <info>The faillock audit log file as defined in /etc/pam.d/system-auth (RHEL 8.0/8.1) or /etc/security/faillock.conf (RHEL 8.2)</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>NAME_SERVER_1</name>
+#    <default>192.168.200.1</default>
+#    <description>Primary Name Server</description>
+#    <info>The primary name server as found in /etc/resolv.conf</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>NAME_SERVER_2</name>
+#    <default>192.168.300.1</default>
+#    <description>Secondary Name Server</description>
+#    <info>The secondary name server as found in /etc/resolv.conf</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>NTP_SERVER</name>
+#    <default>0.us.pool.ntp.mil</default>
+#    <description>NTP server address</description>
+#    <info>The IP address or FQDN of the Network Time Protocol (NTP) server for your organization.</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>LOGIN_DEFS_UMASK</name>
+#    <default>077</default>
+#    <description>login.defs umask</description>
+#    <info>etc/login.defs umask</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>PASSWORD_ENCRYPTION</name>
+#    <default>SHA512</default>
+#    <description>Password encryption method</description>
+#    <info>Password encryption method found in /etc/login.defs</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>HASHING_ROUNDS</name>
+#    <default>([5-9][0-9][0-9][0-9]|[1-9][0-9]{4,})</default>
+#    <description>Password encryption hashing round</description>
+#    <info>Password encryption hashing rounds found in /etc/login.defs</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>CREATE_HOME</name>
+#    <default>yes</default>
+#    <description>login.defs Create Home</description>
+#    <info>Create Home setting found in etc/login.defs umask</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>PASSWORD_MIN_DAYS</name>
+#    <default>([1-9]|[1-9][0-9]+)</default>
+#    <description>Password minimum days</description>
+#    <info>Minimum days between password changes parameter found in /etc/login.defs</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>PASSWORD_MAX_DAYS</name>
+#    <default>([1-9]|[1-5][0-9]|60)</default>
+#    <description>Password expiration</description>
+#    <info>Password expiration parameter found in /etc/login.defs</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>PASSWORD_MINIMUM_LENGTH</name>
+#    <default>(1[5-9]|[2-9][0-9]+)</default>
+#    <description>Password Minimum Length</description>
+#    <info>Password Minimum Length found in /etc/login.defs</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#  <variable>
+#    <name>PASSWORD_FAIL_DELAY</name>
+#    <default>([4-9]|[1-9][0-9]+)</default>
+#    <description>Password fail delay</description>
+#    <info>Value for the delay between successive failed login attempts found in /etc/login.defs</info>
+#    <value_type>STRING</value_type>
+#  </variable>
+#</variables>
+#</ui_metadata>
+
+<check_type:"Unix">
+
+<if>
+  <condition type:"AND">
+    <custom_item>
+      type	:	"FILE_CONTENT_CHECK"
+      description	:	"Red Hat Enterprise/CentOS 8 is installed"
+      file	:	"/etc/system-release"
+      regex	:	"^[\\s]*(Red Hat Enterprise|CentOS) Linux.*release"
+      expect	:	"^[\\s]*(Red Hat Enterprise|CentOS) Linux.*release @PLATFORM_VERSION@"
+    </custom_item>
+  </condition>
+
+  <then>
+    <report type:"PASSED">
+      description : "DISA_STIG_Red_Hat_Enterprise_Linux_8_v1r11.audit from DISA Red Hat Enterprise Linux 8 v1r11 STIG"
+      see_also    : "https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R11_STIG.zip"
+    </report>
+
+    <custom_item>
+      system	:	"TEST"
+      type	:	"TEST"
+      description	:	"TEST"
+      info	:	"An operating system release is considered 'supported' if the vendor continues to provide security patches for the product. With an unsupported release, it will not be possible to resolve security issues discovered in the system software.
+
+Red Hat offers the Extended Update Support (EUS) add-on to a Red Hat Enterprise Linux subscription, for a fee, for those customers who wish to standardize on a specific minor release for an extended period. The RHEL 8 minor releases eligible for EUS are 8.1, 8.2, 8.4, 8.6, and 8.8. Each RHEL 8 EUS stream is available for 24 months from the availability of the minor release. RHEL 8.10 will be the final minor release overall. For more details on the Red Hat Enterprise Linux Life Cycle  visit https://access.redhat.com/support/policy/updates/errata/.
+Note: The life-cycle time spans and dates are subject to adjustment."
+      solution	:	"TEST"
+      reference	:	"800-171|3.4.2,800-53|CM-6b.,800-53r5|CM-6b.,CAT|I,CCI|CCI-000366,CN-L3|8.1.10.6(d),CSF|PR.IP-1,DISA_Benchmark|RHEL_8_STIG,GDPR|32.1.b,HIPAA|164.306(a)(1),ITSG-33|CM-6b.,NESA|T3.2.1,Rule-ID|SV-230221r858734_rule,STIG-ID|RHEL-08-010000,SWIFT-CSCv1|2.3,Vuln-ID|V-230221"
+      see_also	:	"TEST"
+      file	:	"TEST"
+      regex	:	"TEST"
+      expect	:	"TEST"
+    </custom_item>
+
+    <custom_item>
+      system	:	"Linux"
+      type	:	"RPM_CHECK"
+      description	:	"RHEL-08-010001 - The RHEL 8 operating system must implement the Endpoint Security for Linux Threat Prevention tool."
+      info	:	"TEST"
+      solution	:	"Install and enable the latest McAfee ENSLTP package."
+      reference	:	"800-171|3.14.1,800-53|SI-2(2),800-53r5|SI-2(2),CAT|II,CCI|CCI-001233,CN-L3|8.1.4.4(e),CN-L3|8.1.10.5(a),CN-L3|8.1.10.5(b),CN-L3|8.5.4.1(b),CN-L3|8.5.4.1(d),CN-L3|8.5.4.1(e),CSF|ID.RA-1,CSF|PR.IP-12,DISA_Benchmark|RHEL_8_STIG,GDPR|32.1.b,HIPAA|164.306(a)(1),ITSG-33|SI-2(2),NESA|T7.6.2,NESA|T7.7.1,NIAv2|PR9,PCI-DSSv3.2.1|6.2,PCI-DSSv4.0|6.3,PCI-DSSv4.0|6.3.3,QCSC-v1|11.2,Rule-ID|SV-245540r754730_rule,STIG-ID|RHEL-08-010001,SWIFT-CSCv1|2.2,Vuln-ID|V-245540"
+      see_also	:	"https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R11_STIG.zip"
+      rpm	:	"McAfeeTP-0.0.0-0"
+      operator	:	"gt"
+      required	:	YES
+    </custom_item>
+
+    <custom_item>
+      system	:	"Linux"
+      type	:	"CMD_EXEC"
+      description	:	"RHEL-08-010010 - RHEL 8 vendor packaged system security patches and updates must be installed and up to date."
+      info	:	"Timely patching is critical for maintaining the operational availability, confidentiality, and integrity of information technology (IT) systems. However, failure to keep operating system and application software patched is a common mistake made by IT professionals. New patches are released daily, and it is often difficult for even experienced System Administrators to keep abreast of all the new patches. When new weaknesses in an operating system exist, patches are usually made available by the vendor to resolve the problems. If the most recent security patches and updates are not installed, unauthorized users may take advantage of weaknesses in the unpatched software. The lack of prompt attention to patching could result in a system compromise."
+      solution	:	"Install the operating system patches or updated packages available from Red Hat within 30 days or sooner as local policy dictates."
+      reference	:	"800-171|3.4.2,800-53|CM-6b.,800-53r5|CM-6b.,CAT|II,CCI|CCI-000366,CN-L3|8.1.10.6(d),CSF|PR.IP-1,DISA_Benchmark|RHEL_8_STIG,GDPR|32.1.b,HIPAA|164.306(a)(1),ITSG-33|CM-6b.,NESA|T3.2.1,Rule-ID|SV-230222r627750_rule,STIG-ID|RHEL-08-010010,SWIFT-CSCv1|2.3,Vuln-ID|V-230222"
+      see_also	:	"https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R11_STIG.zip"
+      cmd	:	"/usr/bin/yum check-update -q | /usr/bin/awk '{print} END {if (NR == 0) print \"System security patches and updates are up to date\"; else print \"failed\"}'"
+      expect	:	"^System security patches and updates are up to date$"
+    </custom_item>
+  </then>
+</if>
