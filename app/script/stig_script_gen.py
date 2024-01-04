@@ -11,6 +11,7 @@ from lxml import etree
 root_dir = os.getcwd()
 
 
+# Create Classes
 class Guide:
 
     def __init__(self, guide_name: str, file_content: list,

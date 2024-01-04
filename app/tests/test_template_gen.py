@@ -109,7 +109,7 @@ def test_linux_generate_template():
     template.template_rule_dict[0][
         "V-230221"].dictionary_fields.dictionary_fields["description"] = "TEST"
     template.template_rule_dict[0][
-        "V-245540"].dictionary_fields.dictionary_fields["info"] = "TEST"
+        "V-230221"].dictionary_fields.dictionary_fields["info"] = "TEST"
     template.template_rule_dict[0][
         "V-230221"].dictionary_fields.dictionary_fields["solution"] = "TEST"
     template.template_rule_dict[0][
@@ -161,9 +161,6 @@ def test_remove_files():
     for folder in os.listdir(os.path.join("app", "out-files")):
         if folder.startswith("test"):
             shutil.rmtree(os.path.join("app", "out-files", folder))
-    for file in os.listdir(os.path.join("app", "uploads", "stig")):
-        if file.startswith("test"):
-            os.remove(os.path.join("app", "uploads", "stig", file))
     for file in os.listdir(os.path.join("app", "uploads", "vatemplate")):
         if file.startswith("test"):
             os.remove(os.path.join("app", "uploads", "vatemplate", file))

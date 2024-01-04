@@ -209,10 +209,7 @@
       system	:	"TEST"
       type	:	"TEST"
       description	:	"TEST"
-      info	:	"An operating system release is considered 'supported' if the vendor continues to provide security patches for the product. With an unsupported release, it will not be possible to resolve security issues discovered in the system software.
-
-Red Hat offers the Extended Update Support (EUS) add-on to a Red Hat Enterprise Linux subscription, for a fee, for those customers who wish to standardize on a specific minor release for an extended period. The RHEL 8 minor releases eligible for EUS are 8.1, 8.2, 8.4, 8.6, and 8.8. Each RHEL 8 EUS stream is available for 24 months from the availability of the minor release. RHEL 8.10 will be the final minor release overall. For more details on the Red Hat Enterprise Linux Life Cycle  visit https://access.redhat.com/support/policy/updates/errata/.
-Note: The life-cycle time spans and dates are subject to adjustment."
+      info	:	"TEST"
       solution	:	"TEST"
       reference	:	"800-171|3.4.2,800-53|CM-6b.,800-53r5|CM-6b.,CAT|I,CCI|CCI-000366,CN-L3|8.1.10.6(d),CSF|PR.IP-1,DISA_Benchmark|RHEL_8_STIG,GDPR|32.1.b,HIPAA|164.306(a)(1),ITSG-33|CM-6b.,NESA|T3.2.1,Rule-ID|SV-230221r858734_rule,STIG-ID|RHEL-08-010000,SWIFT-CSCv1|2.3,Vuln-ID|V-230221"
       see_also	:	"TEST"
@@ -225,7 +222,7 @@ Note: The life-cycle time spans and dates are subject to adjustment."
       system	:	"Linux"
       type	:	"RPM_CHECK"
       description	:	"RHEL-08-010001 - The RHEL 8 operating system must implement the Endpoint Security for Linux Threat Prevention tool."
-      info	:	"TEST"
+      info	:	"Adding endpoint security tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime."
       solution	:	"Install and enable the latest McAfee ENSLTP package."
       reference	:	"800-171|3.14.1,800-53|SI-2(2),800-53r5|SI-2(2),CAT|II,CCI|CCI-001233,CN-L3|8.1.4.4(e),CN-L3|8.1.10.5(a),CN-L3|8.1.10.5(b),CN-L3|8.5.4.1(b),CN-L3|8.5.4.1(d),CN-L3|8.5.4.1(e),CSF|ID.RA-1,CSF|PR.IP-12,DISA_Benchmark|RHEL_8_STIG,GDPR|32.1.b,HIPAA|164.306(a)(1),ITSG-33|SI-2(2),NESA|T7.6.2,NESA|T7.7.1,NIAv2|PR9,PCI-DSSv3.2.1|6.2,PCI-DSSv4.0|6.3,PCI-DSSv4.0|6.3.3,QCSC-v1|11.2,Rule-ID|SV-245540r754730_rule,STIG-ID|RHEL-08-010001,SWIFT-CSCv1|2.2,Vuln-ID|V-245540"
       see_also	:	"https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RHEL_8_V1R11_STIG.zip"
