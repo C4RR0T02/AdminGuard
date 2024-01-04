@@ -167,6 +167,8 @@ def test_remove_files():
     for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
         if folder.startswith("test"):
             shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
-    for file in os.listdir(os.path.join(root_dir, "app", "uploads", "vatemplate")):
+    for file in os.listdir(
+            os.path.join(root_dir, "app", "uploads", "vatemplate")):
         if file.startswith("test"):
-            os.remove(os.path.join(root_dir, "app", "uploads", "vatemplate", file))
+            os.remove(
+                os.path.join(root_dir, "app", "uploads", "vatemplate", file))
