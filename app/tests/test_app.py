@@ -4,6 +4,7 @@ import shutil
 from io import BytesIO
 from ..app import app
 
+
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
@@ -647,8 +648,6 @@ def test_remove_files():
     for file in os.listdir(os.path.join("app", "uploads", "stig")):
         if file.startswith("test"):
             os.remove(os.path.join("app", "uploads", "stig", file))
-    for file in os.listdir(
-            os.path.join("app", "uploads", "vatemplate")):
+    for file in os.listdir(os.path.join("app", "uploads", "vatemplate")):
         if file.startswith("test"):
-            os.remove(
-                os.path.join("app", "uploads", "vatemplate", file))
+            os.remove(os.path.join("app", "uploads", "vatemplate", file))
