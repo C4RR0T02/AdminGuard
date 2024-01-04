@@ -2,10 +2,8 @@ import os
 import shutil
 from app.script.template_gen import *
 
-root_dir = os.getcwd()
-
 # Create upload and download folders if they don't exist
-upload_folder = os.path.join(root_dir, 'app', 'uploads')
+upload_folder = os.path.join('app', 'uploads')
 if not os.path.isdir(upload_folder):
     os.mkdir(upload_folder)
 if not os.path.isdir(os.path.join(upload_folder, 'stig')):
@@ -13,7 +11,7 @@ if not os.path.isdir(os.path.join(upload_folder, 'stig')):
 if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
     os.mkdir(os.path.join(upload_folder, 'vatemplate'))
 
-download_folder = os.path.join(root_dir, 'app', 'out-files')
+download_folder = os.path.join('app', 'out-files')
 if not os.path.isdir(download_folder):
     os.mkdir(download_folder)
 
@@ -29,7 +27,7 @@ def compare_files(file1, file2):
 def test_parse_template_linux():
     shutil.copyfile("app/tests/testFiles/test_linux_template_1.audit",
                     "app/uploads/vatemplate/test_linux_template_1.audit")
-    template_name = os.path.join(root_dir, "app", "uploads", "vatemplate",
+    template_name = os.path.join("app", "uploads", "vatemplate",
                                  "test_linux_template_1.audit")
     template = parseTemplate(template_name, "Linux")
     assert template.template_rule_dict[0][
@@ -63,7 +61,7 @@ def test_parse_template_linux():
 def test_parse_template_windows():
     shutil.copyfile("app/tests/testFiles/test_windows_template_1.audit",
                     "app/uploads/vatemplate/test_windows_template_1.audit")
-    template_name = os.path.join(root_dir, "app", "uploads", "vatemplate",
+    template_name = os.path.join("app", "uploads", "vatemplate",
                                  "test_windows_template_1.audit")
     template = parseTemplate(template_name, "Windows")
     assert template.template_rule_dict[0][
@@ -101,7 +99,7 @@ https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#win
 def test_linux_generate_template():
     shutil.copyfile("app/tests/testFiles/test_linux_template_1.audit",
                     "app/uploads/vatemplate/test_linux_template_1.audit")
-    template_name = os.path.join(root_dir, "app", "uploads", "vatemplate",
+    template_name = os.path.join("app", "uploads", "vatemplate",
                                  "test_linux_template_1.audit")
     template = parseTemplate(template_name, "Linux")
     template.template_rule_dict[0][
@@ -124,9 +122,9 @@ def test_linux_generate_template():
         "V-230221"].dictionary_fields.dictionary_fields["expect"] = "TEST"
     gen_template(template)
     compare_files(
-        os.path.join(root_dir, "app", "out-files", "test_linux_template_1",
+        os.path.join("app", "out-files", "test_linux_template_1",
                      "test_linux_template_1-updated.audit"),
-        os.path.join(root_dir, "app", "tests", "testFiles", "check",
+        os.path.join("app", "tests", "testFiles", "check",
                      "test_linux_template_1",
                      "test_linux_template_1-updated.audit"))
 
@@ -134,7 +132,7 @@ def test_linux_generate_template():
 def test_windows_generate_template():
     shutil.copyfile("app/tests/testFiles/test_windows_template_1.audit",
                     "app/uploads/vatemplate/test_windows_template_1.audit")
-    template_name = os.path.join(root_dir, "app", "uploads", "vatemplate",
+    template_name = os.path.join("app", "uploads", "vatemplate",
                                  "test_windows_template_1.audit")
     template = parseTemplate(template_name, "Windows")
     template.template_rule_dict[0][
@@ -156,19 +154,19 @@ def test_windows_generate_template():
             "powershell_args"] = "TEST"
     gen_template(template)
     compare_files(
-        os.path.join(root_dir, "app", "out-files", "test_windows_template_1",
+        os.path.join("app", "out-files", "test_windows_template_1",
                      "test_windows_template_1-updated.audit"),
-        os.path.join(root_dir, "app", "tests", "testFiles", "check",
+        os.path.join("app", "tests", "testFiles", "check",
                      "test_windows_template_1",
                      "test_windows_template_1-updated.audit"))
 
 
 def test_remove_files():
-    for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
+    for folder in os.listdir(os.path.join("app", "out-files")):
         if folder.startswith("test"):
-            shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
+            shutil.rmtree(os.path.join("app", "out-files", folder))
     for file in os.listdir(
-            os.path.join(root_dir, "app", "uploads", "vatemplate")):
+            os.path.join("app", "uploads", "vatemplate")):
         if file.startswith("test"):
             os.remove(
-                os.path.join(root_dir, "app", "uploads", "vatemplate", file))
+                os.path.join("app", "uploads", "vatemplate", file))

@@ -4,9 +4,6 @@ import shutil
 from io import BytesIO
 from ..app import app
 
-root_dir = os.getcwd()
-
-
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
@@ -644,14 +641,14 @@ def test_template_download_invalid_file_template(client):
 
 
 def test_remove_files():
-    for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
+    for folder in os.listdir(os.path.join("app", "out-files")):
         if folder.startswith("test"):
-            shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
-    for file in os.listdir(os.path.join(root_dir, "app", "uploads", "stig")):
+            shutil.rmtree(os.path.join("app", "out-files", folder))
+    for file in os.listdir(os.path.join("app", "uploads", "stig")):
         if file.startswith("test"):
-            os.remove(os.path.join(root_dir, "app", "uploads", "stig", file))
+            os.remove(os.path.join("app", "uploads", "stig", file))
     for file in os.listdir(
-            os.path.join(root_dir, "app", "uploads", "vatemplate")):
+            os.path.join("app", "uploads", "vatemplate")):
         if file.startswith("test"):
             os.remove(
-                os.path.join(root_dir, "app", "uploads", "vatemplate", file))
+                os.path.join("app", "uploads", "vatemplate", file))
