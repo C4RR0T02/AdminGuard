@@ -2,10 +2,8 @@ import os
 import shutil
 from app.script.stig_script_gen import *
 
-root_dir = os.getcwd()
-
 # Create upload and download folders if they don't exist
-upload_folder = os.path.join(root_dir, 'app', 'uploads')
+upload_folder = os.path.join('app', 'uploads')
 if not os.path.isdir(upload_folder):
     os.mkdir(upload_folder)
 if not os.path.isdir(os.path.join(upload_folder, 'stig')):
@@ -13,7 +11,7 @@ if not os.path.isdir(os.path.join(upload_folder, 'stig')):
 if not os.path.isdir(os.path.join(upload_folder, 'vatemplate')):
     os.mkdir(os.path.join(upload_folder, 'vatemplate'))
 
-download_folder = os.path.join(root_dir, 'app', 'out-files')
+download_folder = os.path.join('app', 'out-files')
 if not os.path.isdir(download_folder):
     os.mkdir(download_folder)
 
@@ -367,14 +365,12 @@ def test_windows_zip_file_generate():
 
 
 def test_remove_files():
-    for folder in os.listdir(os.path.join(root_dir, "app", "out-files")):
+    for folder in os.listdir(os.path.join("app", "out-files")):
         if folder.startswith("test"):
-            shutil.rmtree(os.path.join(root_dir, "app", "out-files", folder))
-    for file in os.listdir(os.path.join(root_dir, "app", "uploads", "stig")):
+            shutil.rmtree(os.path.join("app", "out-files", folder))
+    for file in os.listdir(os.path.join("app", "uploads", "stig")):
         if file.startswith("test"):
-            os.remove(os.path.join(root_dir, "app", "uploads", "stig", file))
-    for folder in os.listdir(os.path.join(root_dir, "app", "out-files",
-                                          "zip")):
+            os.remove(os.path.join("app", "uploads", "stig", file))
+    for folder in os.listdir(os.path.join("app", "out-files", "zip")):
         if folder.startswith("test"):
-            shutil.rmtree(
-                os.path.join(root_dir, "app", "out-files", "zip", folder))
+            shutil.rmtree(os.path.join("app", "out-files", "zip", folder))
