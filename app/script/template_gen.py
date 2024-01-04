@@ -123,7 +123,7 @@ def gen_template(template: Template):
         line_number += 1
 
     output_folder = os.path.join(root_dir, "app", "out-files")
-    template_name = template_name.split(".")[0].split("\\")[-1]
+    template_name = template_name.split(".")[0].split("\\")[-1].split("/")[-1]
 
     # Remove existing files if they exist or create folders if they don't exist
     if os.path.isdir(output_folder) and os.path.isdir(
