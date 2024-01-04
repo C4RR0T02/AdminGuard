@@ -4,8 +4,6 @@
 
 AdminGuard is a Web Application Tool which allows users to read, modify and generate scripts for fixing and checking based on the Security Technical Implementation Guide (STIG) provided by The DoD Cyber Exchange. To download the STIG guides, the following link can be used https://public.cyber.mil/stigs/downloads/
 
-![AdminGuard-frontend](app/static/img/AdminGuardHomePage.jpg)
-
 ## :clipboard: Table Of Content
 
 - [AdminGuard: Strengthening OS Security from Within](#adminguard-strengthening-os-security-from-within)
