@@ -122,11 +122,9 @@ def test_linux_generate_template():
         "V-230221"].dictionary_fields.dictionary_fields["expect"] = "TEST"
     gen_template(template)
     compare_files(
-        os.path.join("app", "out-files", "test_linux_template_1",
-                     "test_linux_template_1-updated.audit"),
-        os.path.join("app", "tests", "testFiles", "check",
-                     "test_linux_template_1",
-                     "test_linux_template_1-updated.audit"))
+        "app/out-files/test_linux_template_1/test_linux_template_1-updated",
+        "app/tests/testFiles/check/test_linux_template_1/test_linux_template_1-updated"
+    )
 
 
 def test_windows_generate_template():
@@ -153,16 +151,10 @@ def test_windows_generate_template():
         "V-254239"].dictionary_fields.dictionary_fields[
             "powershell_args"] = "TEST"
     gen_template(template)
-    for folder in os.listdir(os.path.join("app", "out-files")):
-        print(folder)
-        for file in os.listdir(os.path.join("app", "out-files", folder)):
-            print(file)
     compare_files(
-        os.path.join("app", "out-files", "test_windows_template_1",
-                     "test_windows_template_1-updated.audit"),
-        os.path.join("app", "tests", "testFiles", "check",
-                     "test_windows_template_1",
-                     "test_windows_template_1-updated.audit"))
+        "app/out-files/test_windows_template_1/test_windows_template_1-updated",
+        "app/tests/testFiles/check/test_windows_template_1/test_windows_template_1-updated"
+    )
 
 
 def test_remove_files():
