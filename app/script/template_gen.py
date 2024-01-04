@@ -134,9 +134,7 @@ def gen_template(template: Template):
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
     if not os.path.isdir(os.path.join(output_folder, template_name)):
-        os.chdir(output_folder)
-        os.mkdir(template_name)
-        os.chdir(root_dir)
+        os.makedirs(os.path.join(output_folder, template_name))
 
     with open(
             os.path.join(output_folder, template_name,

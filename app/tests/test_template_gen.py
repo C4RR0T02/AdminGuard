@@ -122,7 +122,7 @@ def test_linux_generate_template():
         "V-230221"].dictionary_fields.dictionary_fields["expect"] = "TEST"
     gen_template(template)
     compare_files(
-        "app/out-files/vatemplate/test_linux_template_1/test_linux_template_1-updated.audit",
+        "app/out-files/test_linux_template_1/test_linux_template_1-updated.audit",
         "app/tests/testFiles/check/test_linux_template_1/test_linux_template_1-updated.audit"
     )
 
@@ -152,7 +152,7 @@ def test_windows_generate_template():
             "powershell_args"] = "TEST"
     gen_template(template)
     compare_files(
-        "app/upload/stig/test_windows_template_1/test_windows_template_1-updated.audit",
+        "app/out-files/test_windows_template_1/test_windows_template_1-updated.audit",
         "app/tests/testFiles/check/test_windows_template_1/test_windows_template_1-updated.audit"
     )
 
