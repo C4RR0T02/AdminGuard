@@ -153,6 +153,10 @@ def test_windows_generate_template():
         "V-254239"].dictionary_fields.dictionary_fields[
             "powershell_args"] = "TEST"
     gen_template(template)
+    for folder in os.listdir(os.path.join("app", "out-files")):
+        print(folder)
+        for file in os.listdir(os.path.join("app", "out-files", folder)):
+            print(file)
     compare_files(
         os.path.join("app", "out-files", "test_windows_template_1",
                      "test_windows_template_1-updated.audit"),
