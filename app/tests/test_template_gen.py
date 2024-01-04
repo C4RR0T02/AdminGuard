@@ -99,9 +99,9 @@ https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview#win
 def test_linux_generate_template():
     shutil.copyfile("app/tests/testFiles/test_linux_template_1.audit",
                     "app/uploads/vatemplate/test_linux_template_1.audit")
-    template_name = os.path.join("app", "uploads", "vatemplate",
+    template_path = os.path.join("app", "uploads", "vatemplate",
                                  "test_linux_template_1.audit")
-    template = parseTemplate(template_name, "Linux")
+    template = parseTemplate(template_path, "Linux")
     template.template_rule_dict[0][
         "V-230221"].dictionary_fields.dictionary_fields["system"] = "TEST"
     template.template_rule_dict[0][
@@ -122,8 +122,8 @@ def test_linux_generate_template():
         "V-230221"].dictionary_fields.dictionary_fields["expect"] = "TEST"
     gen_template(template)
     compare_files(
-        "app/out-files/test_linux_template_1/test_linux_template_1-updated",
-        "app/tests/testFiles/check/test_linux_template_1/test_linux_template_1-updated"
+        "app/out-files/test_linux_template_1/test_linux_template_1-updated.audit",
+        "app/tests/testFiles/check/test_linux_template_1/test_linux_template_1-updated.audit"
     )
 
 
@@ -152,8 +152,8 @@ def test_windows_generate_template():
             "powershell_args"] = "TEST"
     gen_template(template)
     compare_files(
-        "app/out-files/test_windows_template_1/test_windows_template_1-updated",
-        "app/tests/testFiles/check/test_windows_template_1/test_windows_template_1-updated"
+        "app/out-files/test_windows_template_1/test_windows_template_1-updated.audit",
+        "app/tests/testFiles/check/test_windows_template_1/test_windows_template_1-updated.audit"
     )
 
 
