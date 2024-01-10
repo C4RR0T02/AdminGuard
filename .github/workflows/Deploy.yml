@@ -2,12 +2,8 @@ name: Deploy GitHub Packages
 
 on:
   push:
-    branches:
-      - main
-      - seed
     tags:
-      - v1.0.0
-  pull_request:
+      - v*
 
 env:
   IMAGE_NAME: adminguard
