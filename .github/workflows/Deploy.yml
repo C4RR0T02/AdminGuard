@@ -10,16 +10,15 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: image_name
+  IMAGE_NAME: AdminGuard
 
 jobs:
-  # This pushes the image to GitHub Packages.
   push:
     runs-on: ubuntu-latest
     permissions:
       packages: write
       contents: read
-      #
+
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +27,7 @@ jobs:
 
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-        #
+        
       - name: Push image
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
