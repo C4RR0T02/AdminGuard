@@ -21,3 +21,4 @@
 # Ignore non application files
 **/old_codes/
 **/documentation/
+**/wiki/
