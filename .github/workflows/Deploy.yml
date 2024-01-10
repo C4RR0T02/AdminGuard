@@ -10,7 +10,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: AdminGuard
+  IMAGE_NAME: adminguard
 
 jobs:
   push:
