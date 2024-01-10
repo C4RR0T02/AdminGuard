@@ -411,4 +411,4 @@ def internal_server_error(e):
 
 # main driver function
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
