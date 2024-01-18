@@ -2,7 +2,8 @@
 
 ## :thought_balloon: What is AdminGuard?
 
-AdminGuard is a Web Application Tool which allows users to read, modify and generate scripts for fixing and checking based on the Security Technical Implementation Guide (STIG) provided by The DoD Cyber Exchange. To download the STIG guides, the following link can be used https://public.cyber.mil/stigs/downloads/
+AdminGuard is a Web Application Tool that allows users to read, modify and generate scripts for fixing and checking based on the Security Technical Implementation Guide (STIG) provided by The DoD Cyber Exchange. To download the STIG guides, the following link can be used https://public.cyber.mil/stigs/downloads/  
+The tool also allows users to modify the Tenable Nessus Template file based on the user's STIG file. The Tenable Nessus Template File can be downloaded from the following link https://www.tenable.com/downloads/download-all-compliance-audit-files  
 
 ## :clipboard: Table Of Content
 
