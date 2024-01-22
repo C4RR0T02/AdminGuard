@@ -1,13 +1,13 @@
-# AdminGuard: Strengthening OS Security from Within
+# Welcome to the AdminGuard: Strengthening OS Security from Within Wiki
 
 ## :thought_balloon: What is AdminGuard?
 
-AdminGuard is a Web Application Tool that allows users to read, modify and generate scripts for fixing and checking based on the Security Technical Implementation Guide (STIG) provided by The DoD Cyber Exchange. To download the STIG guides, the following link can be used https://public.cyber.mil/stigs/downloads/  
+AdminGuard is a Web Application Tool which allows users to read, modify and generate scripts for fixing and checking based on the Security Technical Implementation Guide (STIG) provided by The DoD Cyber Exchange. To download the STIG guides, the following link can be used https://public.cyber.mil/stigs/downloads/  
 The tool also allows users to modify the Tenable Nessus Template file based on the user's STIG file. The Tenable Nessus Template File can be downloaded from the following link https://www.tenable.com/downloads/download-all-compliance-audit-files  
 
 ## :clipboard: Table Of Content
 
-- [AdminGuard: Strengthening OS Security from Within](#adminguard-strengthening-os-security-from-within)
+- [Welcome to the AdminGuard: Strengthening OS Security from Within Wiki](#welcome-to-the-adminguard-strengthening-os-security-from-within-wiki)
   - [:thought\_balloon: What is AdminGuard?](#thought_balloon-what-is-adminguard)
   - [:clipboard: Table Of Content](#clipboard-table-of-content)
 - [Ways to Run :runner:](#ways-to-run-runner)
@@ -20,6 +20,7 @@ The tool also allows users to modify the Tenable Nessus Template file based on t
     - [Installing Python Dependencies](#installing-python-dependencies)
   - [:arrow\_forward: Running the Web Application](#arrow_forward-running-the-web-application)
 - [Project Structure](#project-structure)
+
 
 # Ways to Run :runner:
     
@@ -105,7 +106,7 @@ Navigate to the following site on your browser
 http://<your ip address>:<port>
 ```
 
-![AdminGuard Home Page](/wiki/images/select_tool.jpg)
+![AdminGuard Home Page](https://github.com/C4RR0T02/CSIT_AdminGuard_Website/blob/main/wiki/images/select_tool.jpg)
 
 # Project Structure
 

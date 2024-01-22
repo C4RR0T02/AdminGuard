@@ -81,7 +81,6 @@ class StigRule:
             command_list = []
             field_split = field.split("\n")
             for field_line in field_split:
-
                 field_line = field_line.strip()
 
                 if not field_line.startswith("$ "):
@@ -118,8 +117,6 @@ class StigRule:
                         field_command = field_command[:line_end_index]
 
                 for powershell_command in powershell_command_list:
-                    if powershell_command.startswith("# "):
-                        continue
                     if not field_line.startswith(powershell_command):
                         continue
                     field_command = field_line.strip()
@@ -164,13 +161,6 @@ class StigRule:
 
         return self.category_score
 
-    def replaceFields(self, field: str, replacement: str):
-        field_data = self.field
-        if field_data is None:
-            self.field = field_data
-        else:
-            self.field = replacement
-
     def __str__(self) -> str:
         return f"{str(self.rule_name)} - {str(self.rule_title)} - {str(self.vuln_id)} - {str(self.rule_id)} - {str(self.rule_weight)} - {str(self.rule_severity)} - {str(self.stig_id)} - {str(self.rule_fix_text)} - {str(self.rule_description)} - {str(self.check_content)} - {str(self.category_score)}"
 
@@ -180,6 +170,9 @@ def getPowerShellCommands():
                             'powershell_commands.txt')
     with open(filepath, 'r', encoding='utf-8') as powershell_command_file:
         powershell_commands = powershell_command_file.read().splitlines()
+    for commands in powershell_commands:
+        if commands.startswith('#'):
+            powershell_commands.remove(commands)
     return powershell_commands
 
 
@@ -348,7 +341,6 @@ mkdir AdminGuard
 cd AdminGuard
 touch check_script_logs.txt
 touch manual_check.txt
-cd ..
 
 """
 
@@ -357,7 +349,6 @@ mkdir AdminGuard
 cd AdminGuard
 touch fix_script_logs.txt
 touch manual_fix.txt
-cd ..
 
 """
 

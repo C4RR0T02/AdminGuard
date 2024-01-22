@@ -3,7 +3,6 @@ mkdir AdminGuard
 cd AdminGuard
 touch check_script_logs.txt
 touch manual_check.txt
-cd ..
 
 echo 'sudo grep silent /etc/security/faillock.conf' >> check_script_logs.txt
 sudo grep silent /etc/security/faillock.conf >> check_script_logs.txt || echo "Error while running Check Script for V-230341" >> error_logs.txt

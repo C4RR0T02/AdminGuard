@@ -120,7 +120,7 @@ def test_linux_generate_template():
         "V-230221"].dictionary_fields.dictionary_fields["regex"] = "TEST"
     template.template_rule_dict[0][
         "V-230221"].dictionary_fields.dictionary_fields["expect"] = "TEST"
-    gen_template(template)
+    genTemplate(template)
     compare_files(
         "app/out-files/test_linux_template_1/test_linux_template_1-updated.audit",
         "app/tests/testFiles/check/test_linux_template_1/test_linux_template_1-updated.audit"
@@ -150,7 +150,7 @@ def test_windows_generate_template():
     template.template_rule_dict[0][
         "V-254239"].dictionary_fields.dictionary_fields[
             "powershell_args"] = "TEST"
-    gen_template(template)
+    genTemplate(template)
     compare_files(
         "app/out-files/test_windows_template_1/test_windows_template_1-updated.audit",
         "app/tests/testFiles/check/test_windows_template_1/test_windows_template_1-updated.audit"

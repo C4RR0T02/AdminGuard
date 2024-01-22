@@ -3,7 +3,6 @@ mkdir AdminGuard
 cd AdminGuard
 touch fix_script_logs.txt
 touch manual_fix.txt
-cd ..
 
 echo 'Manual fix required for V-230341' >> fix_script_logs.txt
 echo 'Manual fix required for V-230222' >> fix_script_logs.txt

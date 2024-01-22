@@ -14,14 +14,14 @@ root_dir = os.getcwd()
 class Template:
 
     def __init__(self, template_name: str, file_content: list,
-                 template_rule_dict: dict, guide_type: str):
+                 template_rule_dict: dict, template_type: str):
         self.template_name = template_name
         self.file_content = file_content
         self.template_rule_dict = template_rule_dict
-        self.guide_type = guide_type
+        self.template_type = template_type
 
     def __str__(self) -> str:
-        return f"{self.template_name} : {self.file_content} : {self.template_rule_dict} : {self.guide_type}"
+        return f"{self.template_name} : {self.file_content} : {self.template_rule_dict} : {self.template_type}"
 
 
 class RuleItems:
@@ -29,13 +29,6 @@ class RuleItems:
     def __init__(self, vuln_id: str, dictionary_fields: dict):
         self.vuln_id = vuln_id
         self.dictionary_fields = dictionary_fields
-
-    def replaceTemplateFields(self, field: str, replacement: dict):
-        field_data = self.field
-        if field_data is None:
-            self.field = field_data
-        else:
-            self.field = replacement
 
     def __str__(self) -> str:
         return f"{str(self.dictionary_fields)}"
@@ -72,7 +65,7 @@ def parseTemplate(template_name: str, template_type: str):
     return template
 
 
-def gen_template(template: Template):
+def genTemplate(template: Template):
 
     # Defining Variables
     new_file_content = ""

@@ -15,14 +15,13 @@ else:
 
 import os
 
-# Flask Server
-app = Flask(__name__)
-
 guide_dictionary = {}
 template_dictionary = {}
 form_data_rule_dictionary = {}
-
 path = os.getcwd()
+
+# Flask Server
+app = Flask(__name__)
 
 # Create upload and download folders if they don't exist
 upload_folder = os.path.join(path, 'app', 'uploads')
@@ -50,32 +49,34 @@ def index():
 
 
 # Script Generation
+@app.route('/script-generate', methods=['GET'])
+def scriptGenerateGet():
+    return render_template('script-generate.html')
 
 
-@app.route('/script-generate', methods=['GET', 'POST'])
-def scriptGenerate():
-    if request.method == 'POST':
-        # Get the guide type and uploaded file
-        selected_guide_type = request.form.get('guide_type', default=None)
-        uploaded_file = request.files['file']
-        # Check if the file is valid and upload it to the server
-        if uploaded_file.filename != '':
-            file_ext = os.path.splitext(uploaded_file.filename)[1]
-            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
-                abort(400)
-            upload_file_path = os.path.join(app.config['upload_folder'],
-                                            "stig", uploaded_file.filename)
-            uploaded_file.save(upload_file_path)
-            # Parse the guide
-            guide = parseGuide(upload_file_path, selected_guide_type)
-            guide_name = uploaded_file.filename.split('.')[0]
-            # Add the guide to the dictionary with the guide name as the key
-            guide_dictionary[guide_name] = dict()
-            guide_dictionary[guide_name]["guide_content"] = guide
-            guide_dictionary[guide_name]["guide_type"] = selected_guide_type
-            return redirect(
-                url_for('scriptFieldsGet',
-                        guide_name=uploaded_file.filename.split('.')[0]))
+@app.route('/script-generate', methods=['POST'])
+def scriptGeneratePost():
+    # Get the guide type and uploaded file
+    selected_guide_type = request.form.get('guide_type', default=None)
+    uploaded_file = request.files['file']
+    # Check if the file is valid and upload it to the server
+    if uploaded_file.filename != '' and selected_guide_type is not None:
+        file_ext = os.path.splitext(uploaded_file.filename)[1]
+        if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+            abort(400)
+        upload_file_path = os.path.join(app.config['upload_folder'], "stig",
+                                        uploaded_file.filename)
+        uploaded_file.save(upload_file_path)
+        # Parse the guide
+        guide = parseGuide(upload_file_path, selected_guide_type)
+        guide_name = uploaded_file.filename.split('.')[0]
+        # Add the guide to the dictionary with the guide name as the key
+        guide_dictionary[guide_name] = dict()
+        guide_dictionary[guide_name]["guide_content"] = guide
+        guide_dictionary[guide_name]["guide_type"] = selected_guide_type
+        return redirect(
+            url_for('scriptFieldsGet',
+                    guide_name=uploaded_file.filename.split('.')[0]))
     return render_template('script-generate.html')
 
 
@@ -269,35 +270,35 @@ def downloadScript(guide_name: str, file: str):
 
 
 # Template Generation
+@app.route('/template-generate', methods=['GET'])
+def templateGenerateGet():
+    return render_template('template-generate.html')
 
 
-@app.route('/template-generate', methods=['GET', 'POST'])
-def templateGenerate():
-    if request.method == 'POST':
-        # Get the template type and uploaded file
-        selected_template_type = request.form.get('template_type',
-                                                  default=None)
-        uploaded_file = request.files['file']
-        # Check if the file is valid and upload it to the server
-        if uploaded_file.filename != '':
-            file_ext = os.path.splitext(uploaded_file.filename)[1]
-            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
-                abort(400)
-            upload_file_path = os.path.join(app.config['upload_folder'],
-                                            "vatemplate",
-                                            uploaded_file.filename)
-            uploaded_file.save(upload_file_path)
-            # Parse the template
-            template = parseTemplate(upload_file_path, selected_template_type)
-            template_name = uploaded_file.filename.split('.')[0]
-            # Add the template to the dictionary with the template name as the key
-            template_dictionary[template_name] = dict()
-            template_dictionary[template_name]["template_content"] = template
-            template_dictionary[template_name][
-                "template_type"] = selected_template_type
-            return redirect(
-                url_for('templateFieldsGet',
-                        template_name=uploaded_file.filename.split('.')[0]))
+@app.route('/template-generate', methods=['POST'])
+def templateGeneratePost():
+    # Get the template type and uploaded file
+    selected_template_type = request.form.get('template_type', default=None)
+    uploaded_file = request.files['file']
+    # Check if the file is valid and upload it to the server
+    if uploaded_file.filename != '':
+        file_ext = os.path.splitext(uploaded_file.filename)[1]
+        if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+            abort(400)
+        upload_file_path = os.path.join(app.config['upload_folder'],
+                                        "vatemplate", uploaded_file.filename)
+        uploaded_file.save(upload_file_path)
+        # Parse the template
+        template = parseTemplate(upload_file_path, selected_template_type)
+        template_name = uploaded_file.filename.split('.')[0]
+        # Add the template to the dictionary with the template name as the key
+        template_dictionary[template_name] = dict()
+        template_dictionary[template_name]["template_content"] = template
+        template_dictionary[template_name][
+            "template_type"] = selected_template_type
+        return redirect(
+            url_for('templateFieldsGet',
+                    template_name=uploaded_file.filename.split('.')[0]))
     return render_template('template-generate.html')
 
 
@@ -352,14 +353,14 @@ def templateFieldsPost(template_name: str):
         # Check if the vuln_id is enabled and add it to the list
         if field_name == "enable" and value == 'y':
             enable_list.append(vuln_id)
-        # Update the rule attributes
         else:
+            # Update the rule attributes
             if vuln_id in template.template_rule_dict[0].keys():
                 rule = template.template_rule_dict[0][vuln_id]
                 rule.dictionary_fields.dictionary_fields[field_name] = value
 
     # Generate the template file
-    gen_template(template)
+    genTemplate(template)
 
     return redirect(url_for('templateDownload', template_name=template_name))
 

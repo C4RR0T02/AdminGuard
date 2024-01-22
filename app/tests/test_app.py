@@ -13,8 +13,6 @@ def client():
 
 
 # Flask app tests for home page
-
-
 def test_get_home_page(client):
     response = client.get('/')
     assert response.status_code == 200
@@ -22,8 +20,6 @@ def test_get_home_page(client):
 
 
 # Flask app tests for script generation
-
-
 def test_get_script_generate_page(client):
     response = client.get('/script-generate')
     assert response.status_code == 200
@@ -354,8 +350,6 @@ def test_download_invalid_file_script(client):
 
 
 # Flask app tests for template generation
-
-
 def test_get_template_generate_page(client):
     response = client.get('/template-generate')
     assert response.status_code == 200
