@@ -30,10 +30,10 @@ The tool also allows users to modify the Tenable Nessus Template file based on t
 
 ```
 # clone repository
-git clone https://github.com/C4RR0T02/CSIT_AdminGuard_Website.git
+git clone https://github.com/C4RR0T02/AdminGuard.git
 
 # access the AdminGuard directory
-cd CSIT_AdminGuard_Website
+cd AdminGuard
 
 # build the Dockerfile
 docker build -t adminguard_flask .
@@ -48,10 +48,10 @@ docker run -p 8080:8080 adminguard_flask
 
 ```
 # clone repository
-git clone https://github.com/C4RR0T02/CSIT_AdminGuard_Website.git
+git clone https://github.com/C4RR0T02/AdminGuard.git
 
 # access the AdminGuard directory
-cd CSIT_AdminGuard_Website
+cd AdminGuard
 ```
 
 ## Automated Installation
