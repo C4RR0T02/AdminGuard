@@ -45,7 +45,7 @@ The audit file allows users to specify the various vulnerabilities and the comma
 
 With the audit file being generated with the content of the fields displayed to the end user, end-users are able to compare and make modification to the audit file based on the company regulations and the STIG guide. 
 
-![Template Generator - Customize Template File](https://github.com/C4RR0T02/CSIT_AdminGuard_Website/blob/main/wiki/images/customize_template_file.png)
+![Template Generator - Customize Template File](https://github.com/C4RR0T02/AdminGuard/blob/main/wiki/images/customize_template_file.png)
 
 ### Generation of Updated Audit File
 
@@ -71,19 +71,19 @@ Editing the Vulnerabily Scanner Template file based on STIG guidelines can be ti
 
 1. Select Vulnerability Scanner Template Converter
 
-![AdminGuard - Select Tool](https://github.com/C4RR0T02/CSIT_AdminGuard_Website/blob/main/wiki/images/select_tool.jpg)
+![AdminGuard - Select Tool](https://github.com/C4RR0T02/AdminGuard/blob/main/wiki/images/select_tool.jpg)
 
 2. Upload the Nessus Template file that can be downloaded from this [link](https://www.tenable.com/downloads/download-all-compliance-audit-files) and select the type of template file
 
-![Template Generator - Upload Template File](https://github.com/C4RR0T02/CSIT_AdminGuard_Website/blob/main/wiki/images/upload_template_file.png)
+![Template Generator - Upload Template File](https://github.com/C4RR0T02/AdminGuard/blob/main/wiki/images/upload_template_file.png)
 
 3. Once the file has been successfully uploaded, the check values can be edited
 
-![Template Generator - Customize Template File](https://github.com/C4RR0T02/CSIT_AdminGuard_Website/blob/main/wiki/images/customize_template_file.png)
+![Template Generator - Customize Template File](https://github.com/C4RR0T02/AdminGuard/blob/main/wiki/images/customize_template_file.png)
 
 4. Once all rules have be reviewed, the Generate Template button, once clicked will redirect to the Template download page
 
-![Template Generator - Download Files](https://github.com/C4RR0T02/CSIT_AdminGuard_Website/blob/main/wiki/images/download_template_file.png)
+![Template Generator - Download Files](https://github.com/C4RR0T02/AdminGuard/blob/main/wiki/images/download_template_file.png)
 
 ## Limitations
 
