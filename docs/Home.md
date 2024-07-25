@@ -31,10 +31,10 @@ The tool also allows users to modify the Tenable Nessus Template file based on t
 
 ```
 # clone repository
-git clone https://github.com/C4RR0T02/CSIT_AdminGuard_Website.git
+git clone https://github.com/C4RR0T02/AdminGuard.git
 
 # access the AdminGuard directory
-cd CSIT_AdminGuard_Website
+cd AdminGuard
 
 # build the Dockerfile
 docker build -t adminguard_flask .
@@ -49,10 +49,10 @@ docker run -p 8080:8080 adminguard_flask
 
 ```
 # clone repository
-git clone https://github.com/C4RR0T02/CSIT_AdminGuard_Website.git
+git clone https://github.com/C4RR0T02/AdminGuard.git
 
 # access the AdminGuard directory
-cd CSIT_AdminGuard_Website
+cd AdminGuard
 ```
 
 ## Automated Installation
@@ -106,7 +106,7 @@ Navigate to the following site on your browser
 http://<your ip address>:<port>
 ```
 
-![AdminGuard Home Page](https://github.com/C4RR0T02/CSIT_AdminGuard_Website/blob/main/wiki/images/select_tool.jpg)
+![AdminGuard Home Page](https://github.com/C4RR0T02/AdminGuard/blob/main/wiki/images/select_tool.jpg)
 
 # Project Structure
 
